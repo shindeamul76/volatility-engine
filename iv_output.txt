@@ -1,0 +1,14 @@
+﻿go : # command-line-arguments
+At line:1 char:1
++ go run cmd/volengine/main.go snapshot-run 
+2>&1 | Out-File -FilePath i ...
++ 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ( 
+   # command-line-arguments:String) [], Remo  
+  teException
+    + FullyQualifiedErrorId : NativeCommandEr 
+   ror
+ 
+cmd\volengine\main.go:218:20: undefined: tte
+cmd\volengine\main.go:222:21: undefined: df

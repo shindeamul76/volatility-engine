@@ -1,0 +1,13 @@
+﻿go : # volatility-engine/cmd/volengine
+At line:1 char:1
++ go build ./... 2>&1 | Out-File -FilePath 
+errors.txt -Encoding utf8
++ ~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ( 
+   # volatility-engine/cmd/volengine:String)  
+   [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandEr 
+   ror
+ 
+cmd\volengine\main.go:218:20: undefined: tte
+cmd\volengine\main.go:222:21: undefined: df

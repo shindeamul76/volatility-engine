@@ -1,0 +1,156 @@
+package market
+
+import (
+	"time"
+)
+
+// OptionType represents Call or Put.
+type OptionType string
+
+const (
+	Call OptionType = "CALL"
+	Put  OptionType = "PUT"
+)
+
+// Contract identifies a specific option contract.
+type Contract struct {
+	Symbol string     `json:"symbol"`
+	Expiry time.Time  `json:"expiry"`
+	Strike float64    `json:"strike"`
+	Type   OptionType `json:"type"`
+}
+
+// MarketData holds raw price and volume data.
+type MarketData struct {
+	Bid          float64 `json:"bid"`
+	Ask          float64 `json:"ask"`
+	Mid          float64 `json:"mid"`
+	Last         float64 `json:"last"`
+	Volume       int64   `json:"volume"`
+	OpenInterest int64   `json:"open_interest"`
+}
+
+// DerivedMetrics holds computed values like spread.
+type DerivedMetrics struct {
+	Spread     float64 `json:"spread"`
+	SpreadPct  float64 `json:"spread_pct"`
+	MarkSource string  `json:"mark_source"` // e.g., "MID", "LAST"
+}
+
+// QualityFlags holds validation results.
+type QualityFlags struct {
+	IsTradable bool     `json:"is_tradable"`
+	Flags      []string `json:"flags"`
+}
+
+// Quote represents a single option quote with all metadata.
+type Quote struct {
+	Contract Contract       `json:"contract"`
+	Market   MarketData     `json:"market"`
+	Derived  DerivedMetrics `json:"derived"`
+	Quality  QualityFlags   `json:"quality"`
+}
+
+// Underlying represents the spot instrument.
+type Underlying struct {
+	Symbol string  `json:"symbol"`
+	Spot   float64 `json:"spot"`
+	Source string  `json:"source"`
+}
+
+// ExpiryMetadata holds info about an expiration date.
+type ExpiryMetadata struct {
+	Expiry       time.Time `json:"expiry"`
+	TTEYears     float64   `json:"time_to_expiry_years"` // Trading years or calendar years
+	DaysToExpiry int       `json:"calendar_days_to_expiry"`
+	TradingDays  int       `json:"trading_sessions_to_expiry"`
+}
+
+// QualitySummary aggregates counts of good/bad quotes.
+type QualitySummary struct {
+	TotalQuotes      int            `json:"total_quotes"`
+	TradableQuotes   int            `json:"tradable_quotes"`
+	RejectedQuotes   int            `json:"rejected_quotes"`
+	RejectionReasons map[string]int `json:"rejection_reasons"`
+}
+
+// RawDumpMetadata holds info about the original data source.
+type RawDumpMetadata struct {
+	Stored bool   `json:"stored"`
+	S3Key  string `json:"s3_key"`
+}
+
+// Snapshot is the canonical representation of the market at a point in time.
+type Snapshot struct {
+	ID             string           `json:"snapshot_id"`
+	AsOf           time.Time        `json:"as_of"`
+	Underlying     Underlying       `json:"underlying"`
+	Expiries       []ExpiryMetadata `json:"expiries"`
+	Quotes         []Quote          `json:"quotes"`
+	QualitySummary QualitySummary   `json:"quality_summary"`
+	RawDump        RawDumpMetadata  `json:"raw_dump"`
+}
+
+// ChainSnapshot represents a structured view of the option chain for a specific expiry.
+type ChainSnapshot struct {
+	ID                  string                  `json:"chain_snapshot_id"`
+	AsOf                time.Time               `json:"as_of"`
+	Underlying          Underlying              `json:"underlying"`
+	Expiry              ExpiryMetadata          `json:"expiry"`
+	ChainState          ChainState              `json:"chain_state"`
+	ByStrike            map[string]*StrikeChain `json:"by_strike"` // Map Key is string(strike)
+	LiquiditySummary    LiquiditySummary        `json:"liquidity_summary"`
+	DownstreamReadySets DownstreamReadySets     `json:"downstream_ready_sets"`
+}
+
+type ChainState struct {
+	ATMStrike        float64          `json:"atm_strike"`
+	ImpliedForward   float64          `json:"implied_forward"`
+	StrikeStep       float64          `json:"strike_step"`
+	Strikes          []float64        `json:"strikes"`
+	EligibleStrikes  []float64        `json:"eligible_strikes"`
+	EligibilityRules EligibilityRules `json:"eligibility_rules"`
+}
+
+type EligibilityRules struct {
+	MaxSpreadPct    float64 `json:"max_spread_pct"`
+	MinVolume       int64   `json:"min_volume"`
+	MinOpenInterest int64   `json:"min_open_interest"`
+	RequireBidAsk   bool    `json:"require_bid_ask"`
+}
+
+type StrikeChain struct {
+	Moneyness float64 `json:"moneyness"`
+	Call      *Option `json:"call"` // Nullable
+	Put       *Option `json:"put"`  // Nullable
+}
+
+type Option struct {
+	Mid     float64      `json:"mid"`
+	Bid     float64      `json:"bid"`
+	Ask     float64      `json:"ask"`
+	Quality QualityFlags `json:"quality"`
+}
+
+type LiquiditySummary struct {
+	TradableNearATM     bool     `json:"tradable_near_atm"`
+	AvgSpreadPctNearATM float64  `json:"avg_spread_pct_near_atm"`
+	Notes               []string `json:"notes"`
+}
+
+type DownstreamReadySets struct {
+	IVSurfaceInputs     []IVPoint           `json:"iv_surface_inputs"`
+	StrategyLegUniverse StrategyLegUniverse `json:"strategy_leg_universe"`
+}
+
+type IVPoint struct {
+	Strike float64    `json:"strike"`
+	Type   OptionType `json:"type"`
+	Mark   float64    `json:"mark"`
+}
+
+type StrategyLegUniverse struct {
+	AllowedStrikes []float64    `json:"allowed_strikes"`
+	AllowedTypes   []OptionType `json:"allowed_types"`
+	Notes          []string     `json:"notes"`
+}

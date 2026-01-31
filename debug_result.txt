@@ -1,0 +1,5 @@
+Price: 10.4506 (Expected: 10.4506)
+Delta: 0.6368 (Expected: 0.6368)
+Vega:  0.3752 (Expected: 0.3752)
+Theta: -0.0176 (Expected: -0.0175)
+Manual d1: 0.3500

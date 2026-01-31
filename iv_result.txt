@@ -1,0 +1,2107 @@
+﻿.\volengine.exe : 2026/01/31 05:50:40 
+Starting Volatility Engine...
+At line:1 char:1
++ .\volengine.exe snapshot-run 2>&1 | 
+Out-File -FilePath iv_result.txt  ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ( 
+   2026/01/31 05:5...ility Engine...:String)  
+   [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandEr 
+   ror
+ 
+2026/01/31 05:50:40 Running snapshot pipeline 
+(prototype)...
+2026/01/31 05:50:40 Snapshot Ingested: 
+snap_20260131_055040_nifty
+2026/01/31 05:50:40 Underlying: NIFTY, Spot: 
+25320.65
+2026/01/31 05:50:40 Total Quotes: 194
+2026/01/31 05:50:40 Tradable: 148, Rejected: 
+46
+2026/01/31 05:50:40 Sample Quote (first 3):
+2026/01/31 05:50:40  - NIFTY 23300.00 CALL: 
+Mid=2094.28, Flags=[ILLIQUID]
+2026/01/31 05:50:40  - NIFTY 23300.00 PUT: 
+Mid=4.10, Flags=[]
+2026/01/31 05:50:40  - NIFTY 23350.00 CALL: 
+Mid=1980.53, Flags=[ILLIQUID]
+2026/01/31 05:50:40 Generating Chain 
+Snapshot...
+2026/01/31 05:50:40 Chain Generated: 
+chain_20260131_055040_nifty_20260205 (ATM: 
+25350.00)
+2026/01/31 05:50:40 Calculating Pricing for 
+ATM Strike...
+2026/01/31 05:50:40 Using Implied Forward: 
+25350.38
+2026/01/31 05:50:40 === ForwardState JSON ===
+{
+  "forward_state_id": "fwd_20260131_055040_nifty_20260205",
+  "as_of": "2026-01-31T05:50:40.4400808+05:30",
+  "underlying": {
+    "symbol": "NIFTY",
+    "spot": 25320.65,
+    "source": ""
+  },
+  "expiry": {
+    "date": "2026-02-05",
+    "time_to_expiry_years": 0.015428702432749873
+  },
+  "rates": {
+    "risk_free_rate_cc": 0.06,
+    "discount_factor": 0.9990747062025933
+  },
+  "source_preference": [
+    "FUTURES",
+    "PUT_CALL_PARITY"
+  ],
+  "selected_source": "PUT_CALL_PARITY",
+  "forward": {
+    "mid": 25350.382824845714,
+    "confidence": 0.6597938144329897,
+    "method": "MEDIAN_PARITY_NEAR_ATM",
+    "notes": [
+      "Computed from put-call parity using near-ATM tradable pairs",
+      "Excluded pairs with wide spreads"
+    ]
+  },
+  "forward_by_strike": [
+    {
+      "strike": 23300,
+      "call": {
+        "mark": 2094.275,
+        "spread_pct": 0.09738453641474976,
+        "is_tradable": false
+      },
+      "put": {
+        "mark": 4.1,
+        "spread_pct": 0.024390243902439157,
+        "is_tradable": true
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 23350,
+      "call": {
+        "mark": 1980.525,
+        "spread_pct": 0.1452897590285404,
+        "is_tradable": false
+      },
+      "put": {
+        "mark": 4.4,
+        "spread_pct": 0.04545454545454549,
+        "is_tradable": true
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 23400,
+      "call": {
+        "mark": 1942.6750000000002,
+        "spread_pct": 0.05870770973014011,
+        "is_tradable": false
+      },
+      "put": {
+        "mark": 4.699999999999999,
+        "spread_pct": 0.04255319148936175,
+        "is_tradable": true
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 23450,
+      "call": {
+        "mark": 1907.7,
+        "spread_pct": 0.18954762279184353,
+        "is_tradable": false
+      },
+      "put": {
+        "mark": 4.825,
+        "spread_pct": 0.05181347150259067,
+        "is_tradable": true
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 23500,
+      "call": {
+        "mark": 1853.25,
+        "spread_pct": 0.006852826116282109,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 5.1,
+        "spread_pct": 0.03921568627450984,
+        "is_tradable": true
+      },
+      "parity_forward": 25349.86166552517,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 23550,
+      "call": {
+        "mark": 1793.55,
+        "spread_pct": 0.05319059964874138,
+        "is_tradable": false
+      },
+      "put": {
+        "mark": 5.225,
+        "spread_pct": 0.04784688995215311,
+        "is_tradable": true
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 23600,
+      "call": {
+        "mark": 1734.925,
+        "spread_pct": 0.04504517486346677,
+        "is_tradable": false
+      },
+      "put": {
+        "mark": 5.25,
+        "spread_pct": 0.07619047619047625,
+        "is_tradable": true
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 23650,
+      "call": {
+        "mark": 1687,
+        "spread_pct": 0.047006520450503964,
+        "is_tradable": false
+      },
+      "put": {
+        "mark": 5.725,
+        "spread_pct": 0.04366812227074236,
+        "is_tradable": true
+      },
+      "parity_forward": 25332.83211411727,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 23700,
+      "call": {
+        "mark": 1646.35,
+        "spread_pct": 0.0671181704983752,
+        "is_tradable": false
+      },
+      "put": {
+        "mark": 5.949999999999999,
+        "spread_pct": 0.033613445378151294,
+        "is_tradable": true
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 23750,
+      "call": {
+        "mark": 1593.05,
+        "spread_pct": 0.05706035592103204,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 6.35,
+        "spread_pct": 0.01574803149606308,
+        "is_tradable": true
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 23800,
+      "call": {
+        "mark": 1560.4,
+        "spread_pct": 0.031850807485260216,
+        "is_tradable": false
+      },
+      "put": {
+        "mark": 6.8,
+        "spread_pct": 0.014705882352941124,
+        "is_tradable": true
+      },
+      "parity_forward": 25355.03886781912,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 23850,
+      "call": {
+        "mark": 1496.225,
+        "spread_pct": 0.06232351417734633,
+        "is_tradable": false
+      },
+      "put": {
+        "mark": 7.125,
+        "spread_pct": 0.02105263157894742,
+        "is_tradable": true
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 23900,
+      "call": {
+        "mark": 1434.375,
+        "spread_pct": 0.04827886710239651,
+        "is_tradable": false
+      },
+      "put": {
+        "mark": 7.675,
+        "spread_pct": 0.04560260586319214,
+        "is_tradable": true
+      },
+      "parity_forward": 25328.021339287807,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 23950,
+      "call": {
+        "mark": 1396.5749999999998,
+        "spread_pct": 0.07056549057515706,
+        "is_tradable": false
+      },
+      "put": {
+        "mark": 8.375,
+        "spread_pct": 0.01791044776119386,
+        "is_tradable": true
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 24000,
+      "call": {
+        "mark": 1355.925,
+        "spread_pct": 0.004535649095635888,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 8.899999999999999,
+        "spread_pct": 0.04494382022471915,
+        "is_tradable": true
+      },
+      "parity_forward": 25348.272548226087,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 24050,
+      "call": {
+        "mark": 1302.625,
+        "spread_pct": 0.07880241819403136,
+        "is_tradable": false
+      },
+      "put": {
+        "mark": 9.625,
+        "spread_pct": 0.025974025974025976,
+        "is_tradable": true
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 24100,
+      "call": {
+        "mark": 1234.9,
+        "spread_pct": 0.051259211272167746,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 10.025,
+        "spread_pct": 0.024937655860349125,
+        "is_tradable": true
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 24150,
+      "call": {
+        "mark": 1205.4250000000002,
+        "spread_pct": 0.0849907708899351,
+        "is_tradable": false
+      },
+      "put": {
+        "mark": 10.925,
+        "spread_pct": 0.013729977116704838,
+        "is_tradable": true
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 24200,
+      "call": {
+        "mark": 1136.2,
+        "spread_pct": 0.054567857771519096,
+        "is_tradable": false
+      },
+      "put": {
+        "mark": 11.825,
+        "spread_pct": 0.02959830866807608,
+        "is_tradable": true
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 24250,
+      "call": {
+        "mark": 1088.725,
+        "spread_pct": 0.05919768536590971,
+        "is_tradable": false
+      },
+      "put": {
+        "mark": 12.775,
+        "spread_pct": 0.035225048923679,
+        "is_tradable": true
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 24300,
+      "call": {
+        "mark": 1062.725,
+        "spread_pct": 0.012091557082029818,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 13.925,
+        "spread_pct": 0.039497307001795254,
+        "is_tradable": true
+      },
+      "parity_forward": 25349.771346915997,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 24350,
+      "call": {
+        "mark": 1017.3,
+        "spread_pct": 0.013663619384645609,
+        "is_tradable": false
+      },
+      "put": {
+        "mark": 15.2,
+        "spread_pct": 0.013157894736842176,
+        "is_tradable": true
+      },
+      "parity_forward": 25353.028095675552,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 24400,
+      "call": {
+        "mark": 967.925,
+        "spread_pct": 0.010383035875713582,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 16.799999999999997,
+        "spread_pct": 0.011904761904761864,
+        "is_tradable": true
+      },
+      "parity_forward": 25352.005885140614,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 24450,
+      "call": {
+        "mark": 918.2249999999999,
+        "spread_pct": 0.010727218274388111,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 18.475,
+        "spread_pct": 0.02435723951285517,
+        "is_tradable": true
+      },
+      "parity_forward": 25350.583304145373,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 24500,
+      "call": {
+        "mark": 870.2,
+        "spread_pct": 0.004711560560790648,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 20.35,
+        "spread_pct": 0.009828009828009793,
+        "is_tradable": true
+      },
+      "parity_forward": 25350.637089222502,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 24550,
+      "call": {
+        "mark": 819.825,
+        "spread_pct": 0.009209282468819647,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 22.375,
+        "spread_pct": 0.020111731843575547,
+        "is_tradable": true
+      },
+      "parity_forward": 25348.18855892273,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 24600,
+      "call": {
+        "mark": 773.825,
+        "spread_pct": 0.0067844796950214835,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 24.75,
+        "spread_pct": 0.012121212121212007,
+        "is_tradable": true
+      },
+      "parity_forward": 25349.768756379766,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 24650,
+      "call": {
+        "mark": 728.425,
+        "spread_pct": 0.014757868002882934,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 27.75,
+        "spread_pct": 0.010810810810810709,
+        "is_tradable": true
+      },
+      "parity_forward": 25351.323930683033,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 24700,
+      "call": {
+        "mark": 681.075,
+        "spread_pct": 0.013287817053922207,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 31.299999999999997,
+        "spread_pct": 0.009584664536741238,
+        "is_tradable": true
+      },
+      "parity_forward": 25350.376789609403,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 24750,
+      "call": {
+        "mark": 637,
+        "spread_pct": 0.018524332810047024,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 35.4,
+        "spread_pct": 0.00847457627118636,
+        "is_tradable": true
+      },
+      "parity_forward": 25352.15717229659,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 24800,
+      "call": {
+        "mark": 589.55,
+        "spread_pct": 0.005088626918836401,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 40.075,
+        "spread_pct": 0.003742981908920738,
+        "is_tradable": true
+      },
+      "parity_forward": 25349.983896688278,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 24850,
+      "call": {
+        "mark": 548.5250000000001,
+        "spread_pct": 0.02032724123786514,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 45.775,
+        "spread_pct": 0.009830693610049216,
+        "is_tradable": true
+      },
+      "parity_forward": 25353.21562229407,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 24900,
+      "call": {
+        "mark": 501.85,
+        "spread_pct": 0.004383780013948368,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 52.025000000000006,
+        "spread_pct": 0.006727534839019729,
+        "is_tradable": true
+      },
+      "parity_forward": 25350.24160576515,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 24950,
+      "call": {
+        "mark": 461.25,
+        "spread_pct": 0.018861788617886278,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 60.075,
+        "spread_pct": 0.005826050769871018,
+        "is_tradable": true
+      },
+      "parity_forward": 25351.546548530725,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 25000,
+      "call": {
+        "mark": 418.45000000000005,
+        "spread_pct": 0.004301589198231596,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 69.375,
+        "spread_pct": 0.006486486486486322,
+        "is_tradable": true
+      },
+      "parity_forward": 25349.398296076182,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 25050,
+      "call": {
+        "mark": 379.8,
+        "spread_pct": 0.0042127435492365,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 79.975,
+        "spread_pct": 0.006877149109096557,
+        "is_tradable": true
+      },
+      "parity_forward": 25350.102683151305,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 25100,
+      "call": {
+        "mark": 341.975,
+        "spread_pct": 0.005702171211345825,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 92.42500000000001,
+        "spread_pct": 0.0059507708953204985,
+        "is_tradable": true
+      },
+      "parity_forward": 25349.7811209219,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 25150,
+      "call": {
+        "mark": 306.45000000000005,
+        "spread_pct": 0.005547397617882161,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 106.5,
+        "spread_pct": 0.0037558685446009922,
+        "is_tradable": true
+      },
+      "parity_forward": 25350.135183844253,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 25200,
+      "call": {
+        "mark": 272.35,
+        "spread_pct": 0.004406095098219161,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 123.175,
+        "spread_pct": 0.005277044854881313,
+        "is_tradable": true
+      },
+      "parity_forward": 25349.31315853947,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 25250,
+      "call": {
+        "mark": 241.125,
+        "spread_pct": 0.004769310523587257,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 141.52499999999998,
+        "spread_pct": 0.004592828122239928,
+        "is_tradable": true
+      },
+      "parity_forward": 25349.69224461559,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 25300,
+      "call": {
+        "mark": 212.375,
+        "spread_pct": 0.004944084755738723,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 162.975,
+        "spread_pct": 0.0003067955207854663,
+        "is_tradable": true
+      },
+      "parity_forward": 25349.445751847492,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 25350,
+      "call": {
+        "mark": 186.575,
+        "spread_pct": 0.0029478761891999624,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 185.75,
+        "spread_pct": 0.0026917900403768506,
+        "is_tradable": true
+      },
+      "parity_forward": 25350.825764074376,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 25400,
+      "call": {
+        "mark": 161.85000000000002,
+        "spread_pct": 0.005560704355885113,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 211.425,
+        "spread_pct": 0.0035473572188719402,
+        "is_tradable": true
+      },
+      "parity_forward": 25350.379086076126,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 25450,
+      "call": {
+        "mark": 140.175,
+        "spread_pct": 0.005350454788657036,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 239.75,
+        "spread_pct": 0.0020855057351407717,
+        "is_tradable": true
+      },
+      "parity_forward": 25350.332778538177,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 25500,
+      "call": {
+        "mark": 121.025,
+        "spread_pct": 0.007023342284652002,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 270.5,
+        "spread_pct": 0.004436229205175769,
+        "is_tradable": true
+      },
+      "parity_forward": 25350.386563615306,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 25550,
+      "call": {
+        "mark": 103.75,
+        "spread_pct": 0.0067469879518071195,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 303.6,
+        "spread_pct": 0.004940711462450592,
+        "is_tradable": true
+      },
+      "parity_forward": 25349.96490877082,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 25600,
+      "call": {
+        "mark": 89.19999999999999,
+        "spread_pct": 0.003363228699551538,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 338.6,
+        "spread_pct": 0.004725339633786078,
+        "is_tradable": true
+      },
+      "parity_forward": 25350.369018000714,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 25650,
+      "call": {
+        "mark": 76.35,
+        "spread_pct": 0.007858546168958855,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 376.275,
+        "spread_pct": 0.009168825991628434,
+        "is_tradable": true
+      },
+      "parity_forward": 25349.797224233618,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 25700,
+      "call": {
+        "mark": 64.925,
+        "spread_pct": 0.013092029264535916,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 414.225,
+        "spread_pct": 0.004949001146719805,
+        "is_tradable": true
+      },
+      "parity_forward": 25350.376495539895,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 25750,
+      "call": {
+        "mark": 55.8,
+        "spread_pct": 0.010752688172043038,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 456.45000000000005,
+        "spread_pct": 0.010515938218862987,
+        "is_tradable": true
+      },
+      "parity_forward": 25348.978937698423,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 25800,
+      "call": {
+        "mark": 47.900000000000006,
+        "spread_pct": 0.008350730688935252,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 497.55,
+        "spread_pct": 0.004823635815495884,
+        "is_tradable": true
+      },
+      "parity_forward": 25349.933556311233,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 25850,
+      "call": {
+        "mark": 40.9,
+        "spread_pct": 0.012224938875305624,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 537.9,
+        "spread_pct": 0.013571295779884652,
+        "is_tradable": true
+      },
+      "parity_forward": 25352.539703072798,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 25900,
+      "call": {
+        "mark": 34.975,
+        "spread_pct": 0.015725518227305137,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 584.4000000000001,
+        "spread_pct": 0.007871321013004829,
+        "is_tradable": true
+      },
+      "parity_forward": 25350.06614961926,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 25950,
+      "call": {
+        "mark": 30.175,
+        "spread_pct": 0.011599005799502947,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 624.625,
+        "spread_pct": 0.0176906143686211,
+        "is_tradable": true
+      },
+      "parity_forward": 25354.999449681338,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 26000,
+      "call": {
+        "mark": 26.025,
+        "spread_pct": 0.009606147934678195,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 674.7,
+        "spread_pct": 0.005928560841855639,
+        "is_tradable": true
+      },
+      "parity_forward": 25350.724229156433,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 26050,
+      "call": {
+        "mark": 22.35,
+        "spread_pct": 0.01342281879194634,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 719.75,
+        "spread_pct": 0.01681139284473763,
+        "is_tradable": true
+      },
+      "parity_forward": 25351.954102460702,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 26100,
+      "call": {
+        "mark": 19.45,
+        "spread_pct": 0.02056555269922872,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 767.125,
+        "spread_pct": 0.014143718429199816,
+        "is_tradable": true
+      },
+      "parity_forward": 25351.632540231294,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 26150,
+      "call": {
+        "mark": 16.825,
+        "spread_pct": 0.01485884101040119,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 814.3,
+        "spread_pct": 0.014613778705636717,
+        "is_tradable": true
+      },
+      "parity_forward": 25351.7864179235,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 26200,
+      "call": {
+        "mark": 14.575,
+        "spread_pct": 0.017152658662092625,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 864.175,
+        "spread_pct": 0.005612289177539298,
+        "is_tradable": true
+      },
+      "parity_forward": 25349.61314231519,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 26250,
+      "call": {
+        "mark": 12.875,
+        "spread_pct": 0.019417475728155338,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 910.7750000000001,
+        "spread_pct": 0.013559880321704066,
+        "is_tradable": true
+      },
+      "parity_forward": 25351.26840923353,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 26300,
+      "call": {
+        "mark": 11.399999999999999,
+        "spread_pct": 0.008771929824561374,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 957.95,
+        "spread_pct": 0.007620439480139953,
+        "is_tradable": true
+      },
+      "parity_forward": 25352.573351999108,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 26350,
+      "call": {
+        "mark": 10.149999999999999,
+        "spread_pct": 0.00985221674876844,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 1001.925,
+        "spread_pct": 0.02450283204830708,
+        "is_tradable": false
+      },
+      "parity_forward": 25357.306466831033,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 26400,
+      "call": {
+        "mark": 8.925,
+        "spread_pct": 0.016806722689075668,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 1057.35,
+        "spread_pct": 0.01276776847779827,
+        "is_tradable": true
+      },
+      "parity_forward": 25350.604000390536,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 26450,
+      "call": {
+        "mark": 8.024999999999999,
+        "spread_pct": 0.043613707165109,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 1103.525,
+        "spread_pct": 0.017444099589950385,
+        "is_tradable": false
+      },
+      "parity_forward": 25353.48540184356,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 26500,
+      "call": {
+        "mark": 7.199999999999999,
+        "spread_pct": 0.027777777777777804,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 1155.075,
+        "spread_pct": 0.007488691210527533,
+        "is_tradable": true
+      },
+      "parity_forward": 25351.06189469756,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 26550,
+      "call": {
+        "mark": 6.425000000000001,
+        "spread_pct": 0.007782101167315147,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 1187.775,
+        "spread_pct": 0.04870451053440267,
+        "is_tradable": false
+      },
+      "parity_forward": 25367.555891800905,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 26600,
+      "call": {
+        "mark": 5.575,
+        "spread_pct": 0.02690582959641262,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 1253.9,
+        "spread_pct": 0.01331844644708513,
+        "is_tradable": true
+      },
+      "parity_forward": 25350.518862853824,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 26650,
+      "call": {
+        "mark": 5,
+        "spread_pct": 0.060000000000000143,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 1295.225,
+        "spread_pct": 0.0645061668822019,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 26700,
+      "call": {
+        "mark": 4.5,
+        "spread_pct": 0.04444444444444429,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 1342.275,
+        "spread_pct": 0.02745339069862743,
+        "is_tradable": false
+      },
+      "parity_forward": 25360.986018668435,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 26750,
+      "call": {
+        "mark": 3.9,
+        "spread_pct": 0.05128205128205133,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 1391.3000000000002,
+        "spread_pct": 0.05663767699274056,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 26800,
+      "call": {
+        "mark": 3.4,
+        "spread_pct": 0.05882352941176476,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 1452.025,
+        "spread_pct": 0.020488627950620685,
+        "is_tradable": true
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 26850,
+      "call": {
+        "mark": 3.05,
+        "spread_pct": 0.0655737704918032,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 1502.85,
+        "spread_pct": 0.021692118308547188,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 26900,
+      "call": {
+        "mark": 2.725,
+        "spread_pct": 0.09174311926605504,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 1536.95,
+        "spread_pct": 0.03767201275252942,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 26950,
+      "call": {
+        "mark": 2.5999999999999996,
+        "spread_pct": 0.0384615384615385,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 1586.075,
+        "spread_pct": 0.03231246946077582,
+        "is_tradable": false
+      },
+      "parity_forward": 25365.058463426958,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 27000,
+      "call": {
+        "mark": 2.425,
+        "spread_pct": 0.02061855670103104,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 1649.225,
+        "spread_pct": 0.005123618669375037,
+        "is_tradable": true
+      },
+      "parity_forward": 25351.674814930146,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 27050,
+      "call": {
+        "mark": 2.175,
+        "spread_pct": 0.06896551724137928,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 1687.725,
+        "spread_pct": 0.036943222385163545,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 27100,
+      "call": {
+        "mark": 2.075,
+        "spread_pct": 0.12048192771084347,
+        "is_tradable": false
+      },
+      "put": {
+        "mark": 1748.4,
+        "spread_pct": 0.05410661175932288,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 27150,
+      "call": {
+        "mark": 1.9249999999999998,
+        "spread_pct": 0.025974025974026,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 1783.15,
+        "spread_pct": 0.0390320500238343,
+        "is_tradable": false
+      },
+      "parity_forward": 25367.125317114373,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 27200,
+      "call": {
+        "mark": 1.85,
+        "spread_pct": 0.05405405405405398,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 1833.275,
+        "spread_pct": 0.035810230325510284,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 27250,
+      "call": {
+        "mark": 1.7999999999999998,
+        "spread_pct": 0.11111111111111109,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 1886.375,
+        "spread_pct": 0.035544364190577264,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 27300,
+      "call": {
+        "mark": 1.675,
+        "spread_pct": 0.08955223880597009,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 1949.75,
+        "spread_pct": 0.04595460956532884,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 27350,
+      "call": {
+        "mark": 1.625,
+        "spread_pct": 0.09230769230769226,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 2002.9,
+        "spread_pct": 0.05087622946727238,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 27400,
+      "call": {
+        "mark": 1.625,
+        "spread_pct": 0.03076923076923066,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 2050.4,
+        "spread_pct": 0.044771751853297,
+        "is_tradable": false
+      },
+      "parity_forward": 25349.327525478813,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 27450,
+      "call": {
+        "mark": 1.525,
+        "spread_pct": 0.03278688524590167,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 2096.125,
+        "spread_pct": 0.04787405331266033,
+        "is_tradable": false
+      },
+      "parity_forward": 25353.460084620285,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 27500,
+      "call": {
+        "mark": 1.525,
+        "spread_pct": 0.03278688524590167,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 2167.625,
+        "spread_pct": 0.025811660227207114,
+        "is_tradable": true
+      },
+      "parity_forward": 25331.89386484102,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 27550,
+      "call": {
+        "mark": 1.45,
+        "spread_pct": 0.06896551724137938,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 2202.8,
+        "spread_pct": 0.047212638460141634,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+2026/01/31 05:50:40 === PricingResult JSON ===
+      "weight": 0,
+2026/01/31 05:50:40 === IV Solving ===
+2026/01/31 05:50:40   23300 PUT: IV=32.29% 
+(conf=0.80)
+2026/01/31 05:50:40   23350 PUT: IV=31.88% 
+(conf=0.80)
+2026/01/31 05:50:40   23400 PUT: IV=31.45% 
+(conf=0.80)
+2026/01/31 05:50:40   23450 PUT: IV=30.84% 
+(conf=0.65)
+2026/01/31 05:50:40   23500 CALL: IV=29.76% 
+(conf=0.80)
+2026/01/31 05:50:40   23500 PUT: IV=30.35% 
+(conf=0.80)
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 27600,
+2026/01/31 05:50:40   23550 PUT: IV=29.72% 
+(conf=0.80)
+2026/01/31 05:50:40   23600 PUT: IV=29.00% 
+(conf=0.65)
+      "call": {
+        "mark": 1.475,
+        "spread_pct": 0.03389830508474579,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 2253.325,
+        "spread_pct": 0.04417915746729821,
+        "is_tradable": false
+2026/01/31 05:50:40   23650 PUT: IV=28.63% 
+(conf=0.80)
+2026/01/31 05:50:40   23700 PUT: IV=28.05% 
+(conf=0.80)
+2026/01/31 05:50:40   23750 PUT: IV=27.57% 
+(conf=0.80)
+2026/01/31 05:50:40   23800 PUT: IV=27.10% 
+(conf=0.80)
+2026/01/31 05:50:40   23850 PUT: IV=26.54% 
+(conf=0.80)
+2026/01/31 05:50:40   23900 PUT: IV=26.09% 
+(conf=0.80)
+      },
+      "parity_forward": 25346.06444741344,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 27650,
+      "call": {
+        "mark": 1.375,
+        "spread_pct": 0.03636363636363624,
+        "is_tradable": true
+      },
+      "put": {
+2026/01/31 05:50:40   23950 PUT: IV=25.68% 
+(conf=0.80)
+2026/01/31 05:50:40   24000 CALL: IV=23.96% 
+(conf=0.80)
+2026/01/31 05:50:40   24000 PUT: IV=25.15% 
+(conf=0.80)
+2026/01/31 05:50:40   24050 PUT: IV=24.69% 
+(conf=0.80)
+2026/01/31 05:50:40   24100 PUT: IV=24.06% 
+(conf=0.80)
+2026/01/31 05:50:40   24150 PUT: IV=23.62% 
+(conf=0.80)
+2026/01/31 05:50:40   24200 PUT: IV=23.14% 
+(conf=0.80)
+2026/01/31 05:50:40   24250 PUT: IV=22.64% 
+(conf=0.80)
+2026/01/31 05:50:40   24300 CALL: IV=21.97% 
+(conf=0.80)
+2026/01/31 05:50:40   24300 PUT: IV=22.18% 
+(conf=0.80)
+2026/01/31 05:50:40   24350 PUT: IV=21.71% 
+(conf=0.80)
+2026/01/31 05:50:40   24400 CALL: IV=21.71% 
+(conf=0.80)
+2026/01/31 05:50:40   24400 PUT: IV=21.29% 
+(conf=0.80)
+        "mark": 2295.0249999999996,
+        "spread_pct": 0.05104519558610478,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 27700,
+2026/01/31 05:50:40   24450 CALL: IV=20.87% 
+(conf=0.80)
+2026/01/31 05:50:40   24450 PUT: IV=20.83% 
+(conf=0.80)
+2026/01/31 05:50:40   24500 CALL: IV=20.42% 
+(conf=0.80)
+2026/01/31 05:50:40   24500 PUT: IV=20.38% 
+(conf=0.80)
+2026/01/31 05:50:40   24550 CALL: IV=19.39% 
+(conf=0.80)
+2026/01/31 05:50:40   24550 PUT: IV=19.90% 
+(conf=0.80)
+2026/01/31 05:50:40   24600 CALL: IV=19.30% 
+(conf=0.80)
+2026/01/31 05:50:40   24600 PUT: IV=19.44% 
+(conf=0.80)
+2026/01/31 05:50:40   24650 CALL: IV=19.21% 
+(conf=0.80)
+2026/01/31 05:50:40   24650 PUT: IV=19.04% 
+(conf=0.80)
+2026/01/31 05:50:40   24700 CALL: IV=18.65% 
+(conf=0.80)
+2026/01/31 05:50:40   24700 PUT: IV=18.67% 
+(conf=0.80)
+2026/01/31 05:50:40   24750 CALL: IV=18.57% 
+(conf=0.80)
+      "call": {
+        "mark": 1.4249999999999998,
+        "spread_pct": 0.03508771929824565,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 2335.7,
+        "spread_pct": 0.02697264203450786,
+        "is_tradable": false
+      },
+      "parity_forward": 25363.56310943713,
+      "weight": 1,
+2026/01/31 05:50:40   24750 PUT: IV=18.30% 
+(conf=0.80)
+2026/01/31 05:50:40   24800 CALL: IV=17.86% 
+(conf=0.80)
+2026/01/31 05:50:40   24800 PUT: IV=17.93% 
+(conf=0.80)
+2026/01/31 05:50:40   24850 CALL: IV=17.98% 
+(conf=0.80)
+2026/01/31 05:50:40   24850 PUT: IV=17.60% 
+(conf=0.80)
+2026/01/31 05:50:40   24900 CALL: IV=17.23% 
+(conf=0.80)
+2026/01/31 05:50:40   24900 PUT: IV=17.25% 
+(conf=0.80)
+2026/01/31 05:50:40   24950 CALL: IV=17.13% 
+(conf=0.80)
+2026/01/31 05:50:40   24950 PUT: IV=17.00% 
+(conf=0.80)
+2026/01/31 05:50:40   25000 CALL: IV=16.65% 
+(conf=0.80)
+2026/01/31 05:50:40   25000 PUT: IV=16.76% 
+(conf=0.80)
+2026/01/31 05:50:40   25050 CALL: IV=16.49% 
+(conf=0.80)
+2026/01/31 05:50:40   25050 PUT: IV=16.52% 
+(conf=0.80)
+2026/01/31 05:50:40   25100 CALL: IV=16.27% 
+(conf=0.80)
+2026/01/31 05:50:40   25100 PUT: IV=16.33% 
+(conf=0.80)
+2026/01/31 05:50:40   25150 CALL: IV=16.11% 
+(conf=0.80)
+2026/01/31 05:50:40   25150 PUT: IV=16.13% 
+(conf=0.80)
+2026/01/31 05:50:40   25200 CALL: IV=15.92% 
+(conf=0.80)
+2026/01/31 05:50:40   25200 PUT: IV=16.02% 
+(conf=0.80)
+2026/01/31 05:50:40   25250 CALL: IV=15.82% 
+(conf=0.80)
+2026/01/31 05:50:40   25250 PUT: IV=15.88% 
+(conf=0.80)
+2026/01/31 05:50:40   25300 CALL: IV=15.75% 
+(conf=0.80)
+2026/01/31 05:50:40   25300 PUT: IV=15.83% 
+(conf=0.80)
+2026/01/31 05:50:40   25350 CALL: IV=15.76% 
+(conf=0.80)
+2026/01/31 05:50:40   25350 PUT: IV=15.72% 
+(conf=0.80)
+      "quality_flags": []
+    },
+    {
+      "strike": 27750,
+      "call": {
+        "mark": 1.35,
+        "spread_pct": 0.07407407407407397,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 2398.1000000000004,
+        "spread_pct": 0.04666194070305662,
+        "is_tradable": false
+2026/01/31 05:50:40   25400 CALL: IV=15.68% 
+(conf=0.80)
+2026/01/31 05:50:40   25400 PUT: IV=15.68% 
+(conf=0.80)
+2026/01/31 05:50:40   25450 CALL: IV=15.67% 
+(conf=0.80)
+      },
+2026/01/31 05:50:40   25450 PUT: IV=15.68% 
+(conf=0.80)
+2026/01/31 05:50:40   25500 CALL: IV=15.71% 
+(conf=0.80)
+2026/01/31 05:50:40   25500 PUT: IV=15.71% 
+(conf=0.80)
+2026/01/31 05:50:40   25550 CALL: IV=15.73% 
+(conf=0.80)
+2026/01/31 05:50:40   25550 PUT: IV=15.77% 
+(conf=0.80)
+2026/01/31 05:50:40   25600 CALL: IV=15.83% 
+(conf=0.80)
+2026/01/31 05:50:40   25600 PUT: IV=15.83% 
+(conf=0.80)
+2026/01/31 05:50:40   25650 CALL: IV=15.94% 
+(conf=0.80)
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+2026/01/31 05:50:40   25650 PUT: IV=16.00% 
+(conf=0.80)
+2026/01/31 05:50:40   25700 CALL: IV=16.03% 
+(conf=0.80)
+    {
+      "strike": 27800,
+      "call": {
+2026/01/31 05:50:40   25700 PUT: IV=16.02% 
+(conf=0.80)
+2026/01/31 05:50:40   25750 CALL: IV=16.22% 
+(conf=0.80)
+2026/01/31 05:50:40   25750 PUT: IV=16.38% 
+(conf=0.80)
+        "mark": 1.3250000000000002,
+        "spread_pct": 0.0377358490566038,
+        "is_tradable": true
+      },
+      "put": {
+2026/01/31 05:50:40   25800 CALL: IV=16.41% 
+(conf=0.80)
+2026/01/31 05:50:40   25800 PUT: IV=16.46% 
+(conf=0.80)
+2026/01/31 05:50:40   25850 CALL: IV=16.58% 
+(conf=0.80)
+2026/01/31 05:50:40   25850 PUT: IV=16.27% 
+(conf=0.80)
+2026/01/31 05:50:40   25900 CALL: IV=16.77% 
+(conf=0.80)
+2026/01/31 05:50:40   25900 PUT: IV=16.81% 
+(conf=0.80)
+        "mark": 2453.1,
+        "spread_pct": 0.04129468835351196,
+        "is_tradable": false
+      },
+      "parity_forward": 25345.954286722954,
+2026/01/31 05:50:40   25950 CALL: IV=17.01% 
+(conf=0.80)
+2026/01/31 05:50:40   25950 PUT: IV=16.21% 
+(conf=0.80)
+2026/01/31 05:50:40   26000 CALL: IV=17.25% 
+(conf=0.80)
+2026/01/31 05:50:40   26000 PUT: IV=17.18% 
+(conf=0.80)
+2026/01/31 05:50:40   26050 CALL: IV=17.47% 
+(conf=0.80)
+2026/01/31 05:50:40   26050 PUT: IV=17.13% 
+(conf=0.80)
+2026/01/31 05:50:40   26100 CALL: IV=17.75% 
+(conf=0.80)
+2026/01/31 05:50:40   26100 PUT: IV=17.45% 
+(conf=0.80)
+2026/01/31 05:50:40   26150 CALL: IV=18.00% 
+(conf=0.80)
+2026/01/31 05:50:40   26150 PUT: IV=17.63% 
+(conf=0.80)
+2026/01/31 05:50:40   26200 CALL: IV=18.25% 
+(conf=0.80)
+2026/01/31 05:50:40   26200 PUT: IV=18.44% 
+(conf=0.80)
+2026/01/31 05:50:40   26250 CALL: IV=18.57% 
+(conf=0.80)
+2026/01/31 05:50:40   26250 PUT: IV=18.29% 
+(conf=0.80)
+2026/01/31 05:50:40   26300 CALL: IV=18.89% 
+(conf=0.80)
+2026/01/31 05:50:40   26300 PUT: IV=18.09% 
+(conf=0.80)
+2026/01/31 05:50:40   26350 CALL: IV=19.23% 
+(conf=0.80)
+2026/01/31 05:50:40   26400 CALL: IV=19.51% 
+(conf=0.80)
+2026/01/31 05:50:40   26400 PUT: IV=19.37% 
+(conf=0.80)
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 27850,
+      "call": {
+        "mark": 1.3,
+        "spread_pct": 0.07692307692307698,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 2382.625,
+        "spread_pct": 0.14519699910812647,
+        "is_tradable": false
+      },
+2026/01/31 05:50:40   26450 CALL: IV=19.86% 
+(conf=0.80)
+2026/01/31 05:50:40   26500 CALL: IV=20.20% 
+(conf=0.80)
+2026/01/31 05:50:40   26500 PUT: IV=19.81% 
+(conf=0.80)
+2026/01/31 05:50:40   26550 CALL: IV=20.51% 
+(conf=0.80)
+2026/01/31 05:50:40   26600 CALL: IV=20.72% 
+(conf=0.80)
+2026/01/31 05:50:40   26600 PUT: IV=20.57% 
+(conf=0.80)
+2026/01/31 05:50:40   26650 CALL: IV=21.04% 
+(conf=0.65)
+2026/01/31 05:50:40   26700 CALL: IV=21.36% 
+(conf=0.80)
+2026/01/31 05:50:40   26750 CALL: IV=21.55% 
+(conf=0.65)
+2026/01/31 05:50:40   26800 CALL: IV=21.76% 
+(conf=0.65)
+2026/01/31 05:50:40   26800 PUT: IV=21.99% 
+(conf=0.80)
+2026/01/31 05:50:40   26850 CALL: IV=22.06% 
+(conf=0.65)
+2026/01/31 05:50:40   26900 CALL: IV=22.33% 
+(conf=0.65)
+2026/01/31 05:50:40   26950 CALL: IV=22.80% 
+(conf=0.80)
+2026/01/31 05:50:40   27000 CALL: IV=23.19% 
+(conf=0.80)
+2026/01/31 05:50:40   27000 PUT: IV=20.88% 
+(conf=0.80)
+2026/01/31 05:50:40   27050 CALL: IV=23.46% 
+(conf=0.65)
+2026/01/31 05:50:40   27150 CALL: IV=24.26% 
+(conf=0.80)
+2026/01/31 05:50:40   27200 CALL: IV=24.72% 
+(conf=0.65)
+2026/01/31 05:50:40   27250 CALL: IV=25.18% 
+(conf=0.50)
+2026/01/31 05:50:40   27300 CALL: IV=25.53% 
+(conf=0.65)
+2026/01/31 05:50:40   27350 CALL: IV=25.99% 
+(conf=0.65)
+2026/01/31 05:50:40   27400 CALL: IV=26.54% 
+(conf=0.80)
+2026/01/31 05:50:40   27450 CALL: IV=26.90% 
+(conf=0.80)
+2026/01/31 05:50:40   27500 CALL: IV=27.44% 
+(conf=0.80)
+2026/01/31 05:50:40   27500 PUT: IV=39.76% 
+(conf=0.80)
+2026/01/31 05:50:40   27550 CALL: IV=27.82% 
+(conf=0.65)
+2026/01/31 05:50:40   27600 CALL: IV=28.41% 
+(conf=0.80)
+2026/01/31 05:50:40   27650 CALL: IV=28.73% 
+(conf=0.80)
+2026/01/31 05:50:40   27700 CALL: IV=29.37% 
+(conf=0.80)
+2026/01/31 05:50:40   27750 CALL: IV=29.72% 
+(conf=0.65)
+2026/01/31 05:50:40   27800 CALL: IV=30.19% 
+(conf=0.80)
+2026/01/31 05:50:40   27850 CALL: IV=30.65% 
+(conf=0.65)
+2026/01/31 05:50:40   27900 CALL: IV=31.04% 
+(conf=0.65)
+2026/01/31 05:50:40   27950 CALL: IV=31.49% 
+(conf=0.80)
+2026/01/31 05:50:40   28000 CALL: IV=31.86% 
+(conf=0.80)
+2026/01/31 05:50:40   28000 PUT: IV=28.01% 
+(conf=0.80)
+2026/01/31 05:50:40   28050 CALL: IV=32.37% 
+(conf=0.80)
+2026/01/31 05:50:40   28100 CALL: IV=32.73% 
+(conf=0.80)
+2026/01/31 05:50:40 === Sample IVResults JSON 
+===
+2026/01/31 05:50:40 IV Solved: 147 quotes
+2026/01/31 05:50:40 Pipeline finished.
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 27900,
+      "call": {
+        "mark": 1.25,
+        "spread_pct": 0.08000000000000007,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 2546.325,
+        "spread_pct": 0.03944900984752547,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 27950,
+      "call": {
+        "mark": 1.225,
+        "spread_pct": 0.040816326530612276,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 2598.85,
+        "spread_pct": 0.03540027319776055,
+        "is_tradable": false
+      },
+      "parity_forward": 25349.969207634756,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 28000,
+      "call": {
+        "mark": 1.1749999999999998,
+        "spread_pct": 0.04255319148936175,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 2647.525,
+        "spread_pct": 0.006628832588927463,
+        "is_tradable": true
+      },
+      "parity_forward": 25351.199080939026,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 28050,
+      "call": {
+        "mark": 1.1749999999999998,
+        "spread_pct": 0.04255319148936175,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 2755.05,
+        "spread_pct": 0.07629625596631649,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 28100,
+      "call": {
+        "mark": 1.125,
+        "spread_pct": 0.04444444444444429,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 2683.3999999999996,
+        "spread_pct": 0.1050532906014758,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    }
+  ],
+  "filters_used": {
+    "max_spread_pct_per_leg": 0.05,
+    "near_atm_strike_window": 5,
+    "require_both_call_put": true
+  }
+}
+{
+  "request_id": "prc_req_055040",
+  "model_used": "BLACK_SCHOLES_FORWARD",
+  "inputs_echo": {
+    "forward": 25350.382824845714,
+    "strike": 25350,
+    "time_to_expiry_years": 0.0136986301369863,
+    "risk_free_rate_cc": 0.06,
+    "discount_factor": 0.9991784198737006,
+    "volatility": 0.176,
+    "type": "CALL"
+  },
+  "outputs": {
+    "theoretical_price": 208.34202928976993,
+    "greeks": {
+      "delta": 0.5044013325406269,
+      "gamma": 0.0007645481273186143,
+      "theta": -22.880289568781677,
+      "vega": 11.826323977178433
+    },
+    "intermediates": {
+      "d1": 0.011032728407601479,
+      "d2": -0.009566513498917496,
+      "nd1": 0.5044013325406269,
+      "nd2": 0.49618357150143827
+    }
+  },
+  "quality": {
+    "ok": true,
+    "flags": [],
+    "warnings": []
+  }
+}
+{
+  "iv_request_id": "iv_20260205_23300_PUT",
+  "status": "CONVERGED",
+  "result": {
+    "implied_vol": 0.3229437416457444,
+    "volatility_units": "DECIMAL",
+    "fit_error_abs": 0.0004112689446404971,
+    "fit_error_rel": 0.00010030949869280418,
+    "iterations": 7,
+    "method_used": "NEWTON"
+  },
+  "diagnostics": {
+    "price_at_solution": 4.10041126894464,
+    "vega_at_solution_per_vol_point": 0.9403957188734785,
+    "bracket": {
+      "low": 0.0001,
+      "high": 3
+    },
+    "notes": [
+      "Solved using MID mark"
+    ]
+  },
+  "quality": {
+    "confidence": 0.8,
+    "flags": [],
+    "warnings": []
+  }
+}
+{
+  "iv_request_id": "iv_20260205_23350_PUT",
+  "status": "CONVERGED",
+  "result": {
+    "implied_vol": 0.31884727888222875,
+    "volatility_units": "DECIMAL",
+    "fit_error_abs": 0.0002716105014197723,
+    "fit_error_rel": 0.0000617296594135846,
+    "iterations": 7,
+    "method_used": "NEWTON"
+  },
+  "diagnostics": {
+    "price_at_solution": 4.40027161050142,
+    "vega_at_solution_per_vol_point": 1.0034183474610514,
+    "bracket": {
+      "low": 0.0001,
+      "high": 3
+    },
+    "notes": [
+      "Solved using MID mark"
+    ]
+  },
+  "quality": {
+    "confidence": 0.8,
+    "flags": [],
+    "warnings": []
+  }
+}
+{
+  "iv_request_id": "iv_20260205_23400_PUT",
+  "status": "CONVERGED",
+  "result": {
+    "implied_vol": 0.31450623425710994,
+    "volatility_units": "DECIMAL",
+    "fit_error_abs": 0.0001792149759474171,
+    "fit_error_rel": 0.00003813084594625896,
+    "iterations": 7,
+    "method_used": "NEWTON"
+  },
+  "diagnostics": {
+    "price_at_solution": 4.700179214975947,
+    "vega_at_solution_per_vol_point": 1.0673006756194505,
+    "bracket": {
+      "low": 0.0001,
+      "high": 3
+    },
+    "notes": [
+      "Solved using MID mark"
+    ]
+  },
+  "quality": {
+    "confidence": 0.8,
+    "flags": [],
+    "warnings": []
+  }
+}

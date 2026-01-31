@@ -1,0 +1,43 @@
+﻿=== RUN   TestRoundTrip
+=== RUN   TestRoundTrip/ATM_Call
+    solver_test.go:95: Γ£ô Round-trip passed: ╧â=0.1800 ΓåÆ price=222.6956 ΓåÆ IV=0.1800
+=== RUN   TestRoundTrip/ATM_Put
+    solver_test.go:95: Γ£ô Round-trip passed: ╧â=0.1800 ΓåÆ price=202.7120 ΓåÆ IV=0.1800
+=== RUN   TestRoundTrip/OTM_Call
+    solver_test.go:95: Γ£ô Round-trip passed: ╧â=0.2000 ΓåÆ price=157.9508 ΓåÆ IV=0.2000
+=== RUN   TestRoundTrip/ITM_Put
+    solver_test.go:95: Γ£ô Round-trip passed: ╧â=0.2000 ΓåÆ price=337.8029 ΓåÆ IV=0.2000
+=== RUN   TestRoundTrip/Low_Vol
+    solver_test.go:95: Γ£ô Round-trip passed: ╧â=0.1000 ΓåÆ price=128.3480 ΓåÆ IV=0.1000
+=== RUN   TestRoundTrip/High_Vol
+    solver_test.go:95: Γ£ô Round-trip passed: ╧â=0.3500 ΓåÆ price=423.3475 ΓåÆ IV=0.3500
+--- PASS: TestRoundTrip (0.00s)
+    --- PASS: TestRoundTrip/ATM_Call (0.00s)
+    --- PASS: TestRoundTrip/ATM_Put (0.00s)
+    --- PASS: TestRoundTrip/OTM_Call (0.00s)
+    --- PASS: TestRoundTrip/ITM_Put (0.00s)
+    --- PASS: TestRoundTrip/Low_Vol (0.00s)
+    --- PASS: TestRoundTrip/High_Vol (0.00s)
+=== RUN   TestMarketReprice
+=== RUN   TestMarketReprice/ATM_Call
+    solver_test.go:187: Γ£ô Market re-price passed: mid=285.00 ΓåÆ IV=0.2328 ΓåÆ price=285.0000 (err=0.0000)
+=== RUN   TestMarketReprice/ATM_Put
+    solver_test.go:187: Γ£ô Market re-price passed: mid=270.00 ΓåÆ IV=0.2370 ΓåÆ price=270.0000 (err=0.0000)
+=== RUN   TestMarketReprice/OTM_Call
+    solver_test.go:187: Γ£ô Market re-price passed: mid=125.00 ΓåÆ IV=0.1707 ΓåÆ price=125.0102 (err=0.0102)
+=== RUN   TestMarketReprice/OTM_Put
+    solver_test.go:187: Γ£ô Market re-price passed: mid=100.00 ΓåÆ IV=0.1616 ΓåÆ price=100.0000 (err=0.0000)
+--- PASS: TestMarketReprice (0.00s)
+    --- PASS: TestMarketReprice/ATM_Call (0.00s)
+    --- PASS: TestMarketReprice/ATM_Put (0.00s)
+    --- PASS: TestMarketReprice/OTM_Call (0.00s)
+    --- PASS: TestMarketReprice/OTM_Put (0.00s)
+=== RUN   TestEdgeCases
+=== RUN   TestEdgeCases/Zero_Price
+=== RUN   TestEdgeCases/Price_Out_of_Bounds_(Too_Low)
+    solver_test.go:249: Deep OTM result: status=CONVERGED, IV=0.1098
+--- PASS: TestEdgeCases (0.00s)
+    --- PASS: TestEdgeCases/Zero_Price (0.00s)
+    --- PASS: TestEdgeCases/Price_Out_of_Bounds_(Too_Low) (0.00s)
+PASS
+ok  	volatility-engine/internal/quant/iv	0.922s
