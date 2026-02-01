@@ -39,8 +39,11 @@ type DerivedMetrics struct {
 
 // QualityFlags holds validation results.
 type QualityFlags struct {
-	IsTradable bool     `json:"is_tradable"`
-	Flags      []string `json:"flags"`
+	IsTradable           bool     `json:"is_tradable"`             // Strict flag (Strategy ready)
+	IsUsableForIV        bool     `json:"is_usable_for_iv"`        // Good price, spread ok
+	IsUsableForStrategy  bool     `json:"is_usable_for_strategy"`  // Strict liquidity
+	IsUsableForAnalytics bool     `json:"is_usable_for_analytics"` // Present, even if wide spread
+	Flags                []string `json:"flags"`
 }
 
 // Quote represents a single option quote with all metadata.
@@ -104,32 +107,39 @@ type ChainSnapshot struct {
 }
 
 type ChainState struct {
-	ATMStrike        float64          `json:"atm_strike"`
-	ImpliedForward   float64          `json:"implied_forward"`
-	StrikeStep       float64          `json:"strike_step"`
-	Strikes          []float64        `json:"strikes"`
-	EligibleStrikes  []float64        `json:"eligible_strikes"`
-	EligibilityRules EligibilityRules `json:"eligibility_rules"`
+	ATMStrike           float64          `json:"atm_strike"`
+	ImpliedForward      float64          `json:"implied_forward"`
+	StrikeStep          float64          `json:"strike_step"`
+	Strikes             []float64        `json:"strikes"`
+	EligibleStrikes     []float64        `json:"eligible_strikes"`      // Deprecated: use specific arrays
+	EligibleForIV       []float64        `json:"eligible_for_iv"`       // At least one IV-usable option
+	EligibleForStrategy []float64        `json:"eligible_for_strategy"` // At least one strategy-usable option
+	EligibleForParity   []float64        `json:"eligible_for_parity"`   // Both legs + parity conditions
+	EligibilityRules    EligibilityRules `json:"eligibility_rules"`
 }
 
 type EligibilityRules struct {
 	MaxSpreadPct    float64 `json:"max_spread_pct"`
 	MinVolume       int64   `json:"min_volume"`
 	MinOpenInterest int64   `json:"min_open_interest"`
+	NearATMStrikeWindow int     `json:"near_atm_strike_window"` // For forward parity calc
 	RequireBidAsk   bool    `json:"require_bid_ask"`
 }
 
 type StrikeChain struct {
-	Moneyness float64 `json:"moneyness"`
-	Call      *Option `json:"call"` // Nullable
-	Put       *Option `json:"put"`  // Nullable
+	Moneyness    float64 `json:"moneyness"`     // K/S (spot-based)
+	LogMoneyness float64 `json:"log_moneyness"` // ln(K/F) (forward-based)
+	Call         *Option `json:"call"`          // Nullable
+	Put          *Option `json:"put"`           // Nullable
 }
 
 type Option struct {
-	Mid     float64      `json:"mid"`
-	Bid     float64      `json:"bid"`
-	Ask     float64      `json:"ask"`
-	Quality QualityFlags `json:"quality"`
+	Mid          float64      `json:"mid"`
+	Bid          float64      `json:"bid"`
+	Ask          float64      `json:"ask"`
+	Volume       int64        `json:"volume"`
+	OpenInterest int64        `json:"open_interest"`
+	Quality      QualityFlags `json:"quality"`
 }
 
 type LiquiditySummary struct {
@@ -144,9 +154,16 @@ type DownstreamReadySets struct {
 }
 
 type IVPoint struct {
-	Strike float64    `json:"strike"`
-	Type   OptionType `json:"type"`
-	Mark   float64    `json:"mark"`
+	Expiry       string     `json:"expiry"`
+	Strike       float64    `json:"strike"`
+	Type         OptionType `json:"type"`
+	ImpliedVol   float64    `json:"implied_vol"`
+	Confidence   float64    `json:"confidence"`
+	LogMoneyness float64    `json:"log_moneyness"`
+	Weight       float64    `json:"weight"` // Calculated as confidence^p
+	MarkPrice    float64    `json:"mark_price"`
+	MarkSource   string     `json:"mark_source"`
+	Flags        []string   `json:"flags"`
 }
 
 type StrategyLegUniverse struct {
@@ -154,3 +171,136 @@ type StrategyLegUniverse struct {
 	AllowedTypes   []OptionType `json:"allowed_types"`
 	Notes          []string     `json:"notes"`
 }
+
+// SkewFitParams holds quadratic fit coefficients: a + bx + cx^2
+type SkewFitParams struct {
+	A float64 `json:"a_atm"`
+	B float64 `json:"b_slope"`
+	C float64 `json:"c_curvature"`
+}
+
+type SkewFitQuality struct {
+	WeightedRMSE float64 `json:"weighted_rmse"`
+	PointsUsed   int     `json:"points_used"`
+}
+
+type SkewFit struct {
+	Type    string         `json:"type"` // e.g., "QUADRATIC_WLS"
+	Params  SkewFitParams  `json:"params"`
+	Quality SkewFitQuality `json:"quality"`
+}
+
+type SkewMetrics struct {
+	ATMVol     float64 `json:"atm_iv"`
+	SkewSlope  float64 `json:"skew_slope"`
+	Curvature  float64 `json:"curvature"`
+	Confidence float64 `json:"confidence"`
+}
+
+type IVSkewSnapshot struct {
+	AsOf       time.Time   `json:"as_of"`
+	Underlying string      `json:"underlying"`
+	Expiry     string      `json:"expiry"`
+	Forward    float64     `json:"forward"`
+	TTEYears   float64     `json:"time_to_expiry_years"`
+	Points     []IVPoint   `json:"points_used"`
+	Fit        SkewFit     `json:"fit"`
+	Metrics    SkewMetrics `json:"metrics"`
+}
+
+type TermStructurePoint struct {
+	Expiry     string  `json:"expiry"`
+	TTEYears   float64 `json:"tte_years"`
+	ATMVol     float64 `json:"atm_iv"`
+	Confidence float64 `json:"confidence"`
+}
+
+type TermStructureMetrics struct {
+	NearExpiry string  `json:"near_expiry"`
+	FarExpiry  string  `json:"far_expiry"`
+	TermSlope  float64 `json:"term_slope"` // (VolFar - VolNear) / (TFar - TNear)
+}
+
+type TermStructure struct {
+	Points  []TermStructurePoint `json:"points"`
+	Metrics TermStructureMetrics `json:"metrics"`
+}
+
+type IVSurfaceSnapshot struct {
+	AsOf          time.Time        `json:"as_of"`
+	Underlying    string           `json:"underlying"`
+	Skews         []IVSkewSnapshot `json:"skews"`
+	TermStructure TermStructure    `json:"term_structure"`
+}
+
+// IVReference holds the calculated constant maturity IV (e.g., IV30)
+type IVReference struct {
+	TenorDays  int     `json:"tenor_days"` // e.g., 30
+	IV         float64 `json:"iv"`
+	Method     string  `json:"method"` // e.g., "VARIANCE_INTERP"
+	Confidence float64 `json:"confidence"`
+}
+
+// HistoricalContext holds IV Rank and Percentile data
+type HistoricalContext struct {
+	LookbackDays int     `json:"lookback_days"`
+	MinIV        float64 `json:"min_iv"`
+	MaxIV        float64 `json:"max_iv"`
+	IVRank       float64 `json:"iv_rank"`       // 0.0 to 1.0
+	IVPercentile float64 `json:"iv_percentile"` // 0.0 to 1.0
+}
+
+// RealizedVol holds historical/realized volatility metrics
+type RealizedVol struct {
+	WindowDays int     `json:"window_days"` // e.g., 20
+	HV         float64 `json:"hv"`
+	IVHVRatio  float64 `json:"iv_hv_ratio"`
+	IVHVSpread float64 `json:"iv_hv_spread"`
+}
+
+// RegimeDecision holds the final classification
+type RegimeDecision struct {
+	Regime    string   `json:"regime"` // HIGH_VOL, LOW_VOL, TRANSITION
+	Bias      string   `json:"bias"`   // BUY_PREMIUM, SELL_PREMIUM, NEUTRAL
+	Score     float64  `json:"score"`
+	Rationale []string `json:"rationale"`
+}
+
+type RegimeTermStructure struct {
+	NearExpiry  string  `json:"near_expiry"`
+	NextExpiry  string  `json:"next_expiry"`
+	NearATMIV   float64 `json:"near_atm_iv"`
+	NextATMIV   float64 `json:"next_atm_iv"`
+	TermPremium float64 `json:"term_premium"`
+}
+
+type RegimeSkew struct {
+	ExpiryUsed string  `json:"expiry_used"`
+	SkewSlope  float64 `json:"skew_slope"`
+	Curvature  float64 `json:"curvature"`
+}
+
+// RegimeState is the top-level output of the Regime Detector
+type RegimeState struct {
+	AsOf              time.Time           `json:"as_of"`
+	Underlying        string              `json:"underlying"`
+	IVReference       IVReference         `json:"iv_reference"`
+	HistoricalContext HistoricalContext   `json:"historical_window"`
+	RealizedVol       RealizedVol         `json:"realized_vol"`
+	TermStructure     RegimeTermStructure `json:"term_structure"`
+	Skew              RegimeSkew          `json:"skew"`
+	Decision          RegimeDecision      `json:"decision"`
+	Quality           IVQuality           `json:"quality"`
+}
+
+const (
+	RegimeHighVol    = "HIGH_VOL"
+	RegimeLowVol     = "LOW_VOL"
+	RegimeTransition = "TRANSITION"
+)
+
+const (
+	BiasSellPremium = "SELL_PREMIUM"
+	BiasBuyPremium  = "BUY_PREMIUM"
+	BiasNeutral     = "NEUTRAL_OR_DEFINED_RISK"
+)

@@ -127,10 +127,10 @@ type PricingOutputs struct {
 
 // GreeksOutput is styled for JSON
 type GreeksOutput struct {
-	Delta float64 `json:"delta"`
-	Gamma float64 `json:"gamma"`
-	Theta float64 `json:"theta"`
-	Vega  float64 `json:"vega"`
+	Delta           float64 `json:"delta"`
+	Gamma           float64 `json:"gamma"`
+	ThetaPerDay     float64 `json:"theta_per_day"`
+	VegaPerVolPoint float64 `json:"vega_per_vol_point"`
 }
 
 // PricingIntermediates has d1, d2, etc.

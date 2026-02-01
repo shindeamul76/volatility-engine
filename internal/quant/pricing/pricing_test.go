@@ -41,8 +41,8 @@ func TestGoldenValues(t *testing.T) {
 	assertAlmostEqual(t, "Price", 10.4506, res.Price)
 	assertAlmostEqual(t, "Delta", 0.6368, res.Greeks.Delta)
 	// assertAlmostEqual(t, "Gamma", 0.0188, res.Greeks.Gamma) // Might vary slightly depending on exact PDF impl
-	assertAlmostEqual(t, "Vega", 0.3752, res.Greeks.Vega)
-	assertAlmostEqual(t, "Theta", -0.0176, res.Greeks.Theta)
+	assertAlmostEqual(t, "Vega", 0.3752, res.Greeks.VegaPerVolPoint)
+	assertAlmostEqual(t, "Theta", -0.0176, res.Greeks.ThetaPerDay)
 }
 
 // 2. Finite Difference Checks
@@ -84,7 +84,7 @@ func TestFiniteDifference(t *testing.T) {
 	// Make sure to align units. approxVega is change per 1.0 (if sigma is raw).
 	// Our Vega is per 0.01 (1%).
 	// So approxVega (change per 1 unit of sigma) * 0.01 = approxVega1Pct
-	assertAlmostEqual(t, "FD Vega", approxVega*0.01, base.Greeks.Vega)
+	assertAlmostEqual(t, "FD Vega", approxVega*0.01, base.Greeks.VegaPerVolPoint)
 }
 
 // 3. Call-Put Parity

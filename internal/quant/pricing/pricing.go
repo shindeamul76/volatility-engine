@@ -21,11 +21,11 @@ type PricingContext struct {
 
 // Greeks holds the calculated risk sensitivities.
 type Greeks struct {
-	Delta float64
-	Gamma float64
-	Vega  float64 // Per 1 vol point (0.01 change in Sigma)
-	Theta float64 // Per day (1/365 year)
-	Rho   float64 // Not strictly required but good to have
+	Delta           float64
+	Gamma           float64
+	VegaPerVolPoint float64 // Per 1 vol point (0.01 change in Sigma)
+	ThetaPerDay     float64 // Per day (1/365 year)
+	Rho             float64 // Not strictly required but good to have
 }
 
 // Intermediates holds d1, d2, nd1, nd2 for diagnostics
@@ -183,10 +183,10 @@ func calculateBS(ctx PricingContext, d1, d2 float64) Result {
 	return Result{
 		Price: price,
 		Greeks: Greeks{
-			Delta: delta,
-			Gamma: gamma,
-			Vega:  vega,
-			Theta: theta,
+			Delta:           delta,
+			Gamma:           gamma,
+			VegaPerVolPoint: vega,
+			ThetaPerDay:     theta,
 		},
 		Intermediates: Intermediates{
 			D1:  d1,
@@ -239,10 +239,10 @@ func priceNearExpiry(ctx PricingContext) Result {
 	return Result{
 		Price: intrinsic,
 		Greeks: Greeks{
-			Delta: delta,
-			Gamma: 0, // Unstable
-			Vega:  0,
-			Theta: 0, // Unstable
+			Delta:           delta,
+			Gamma:           0, // Unstable
+			VegaPerVolPoint: 0,
+			ThetaPerDay:     0, // Unstable
 		},
 		Quality: Quality{
 			OK:       true,
@@ -286,10 +286,10 @@ func priceLowVol(ctx PricingContext) Result {
 	return Result{
 		Price: price,
 		Greeks: Greeks{
-			Delta: delta,
-			Gamma: 0,
-			Vega:  0,
-			Theta: 0, // Only interest/carry theta
+			Delta:           delta,
+			Gamma:           0,
+			VegaPerVolPoint: 0,
+			ThetaPerDay:     0, // Only interest/carry theta
 		},
 		Quality: Quality{
 			OK:       true,

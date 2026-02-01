@@ -30,8 +30,8 @@ func main() {
 
 	fmt.Fprintf(f, "Price: %.4f (Expected: 10.4506)\n", res.Price)
 	fmt.Fprintf(f, "Delta: %.4f (Expected: 0.6368)\n", res.Greeks.Delta)
-	fmt.Fprintf(f, "Vega:  %.4f (Expected: 0.3752)\n", res.Greeks.Vega)
-	fmt.Fprintf(f, "Theta: %.4f (Expected: -0.0175)\n", res.Greeks.Theta)
+	fmt.Fprintf(f, "Vega:  %.4f (Expected: 0.3752)\n", res.Greeks.VegaPerVolPoint)
+	fmt.Fprintf(f, "Theta: %.4f (Expected: -0.0175)\n", res.Greeks.ThetaPerDay)
 
 	d1Test := (math.Log(100/100) + (0.05+0.5*0.2*0.2)*1.0) / (0.2 * 1.0)
 	fmt.Fprintf(f, "Manual d1: %.4f\n", d1Test)

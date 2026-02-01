@@ -93,7 +93,7 @@ func (s *Solver) Solve(req market.IVRequest) market.IVResult {
 			IsForwardModel: true,
 		}
 		res := pricing.Calculate(ctx)
-		return res.Price, res.Greeks.Vega * 100 // Convert back to gross vega
+		return res.Price, res.Greeks.VegaPerVolPoint * 100 // Convert back to gross vega
 	}
 
 	priceLow, _ := priceFn(volLow)
@@ -192,47 +192,125 @@ func (s *Solver) Solve(req market.IVRequest) market.IVResult {
 	return result
 }
 
-// calculateConfidence computes confidence based on quote quality and solver stability
+// calculateConfidence computes confidence based on weighted components
 func (s *Solver) calculateConfidence(req market.IVRequest, res market.IVResult) float64 {
-	conf := 1.0
-
-	// Penalize wide spreads (biggest factor)
-	if req.Market.SpreadPct > 0.10 {
-		conf -= 0.3
-		res.Quality.Warnings = append(res.Quality.Warnings, "Wide spread")
-	} else if req.Market.SpreadPct > 0.05 {
-		conf -= 0.15
+	// Status check
+	if res.Status != market.IVStatusConverged {
+		return 0.0
 	}
 
-	// Penalize many iterations
-	if res.Result.Iterations > 30 {
-		conf -= 0.15
-	} else if res.Result.Iterations > 15 {
-		conf -= 0.05
+	// Step A: Component Scores
+	spreadScore := scoreSpread(req.Market.SpreadPct)
+	liqScore := scoreLiquidity(req.Market.Volume, req.Market.OpenInterest, spreadScore)
+	markScore := scoreMarkSource(req.Market.MarkSource)
+	solverScore := scoreSolverStability(res.Result.Iterations, res.Diagnostics.VegaAtSolution)
+	consistencyScore := scoreConsistency() // Placeholder 0.8
+
+	// Step B: Weighted Combination
+	// 45% liquidity + 25% solver + 15% mark + 15% consistency
+	confidence := 0.45*liqScore + 0.25*solverScore + 0.15*markScore + 0.15*consistencyScore
+
+	// Clamp 0-1
+	if confidence < 0 {
+		return 0
+	}
+	if confidence > 1 {
+		return 1
+	}
+	return confidence
+}
+
+// Helper scoring functions
+
+func scoreSpread(spreadPct float64) float64 {
+	switch {
+	case spreadPct <= 0.02:
+		return 1.00
+	case spreadPct <= 0.05: // 2-5%
+		return 0.80
+	case spreadPct <= 0.10: // 5-10%
+		return 0.50
+	case spreadPct <= 0.15: // 10-15%
+		return 0.20
+	default: // > 15%
+		return 0.00
+	}
+}
+
+func scoreLiquidity(volume, oi int, spreadScore float64) float64 {
+	volScore := 0.3
+	if volume >= 1000 {
+		volScore = 1.0
+	} else if volume > 0 { // Assume logical intermediate step, but sticking to user prompt thresholds
+		// User said: else 0.6 else 0.3. Let's assume some intermediate threshold or just default to 0.6 for >0?
+		// User: volume >= 1000 -> 1.0 else 0.6 else 0.3
+		// Let's interpret "else 0.6" as intermediate volume. Maybe > 100?
+		// For strict adherence to "else 0.6" being the middle case, we need a middle threshold.
+		// Since none provided, I'll use 0.6 for any volume > 0 and < 1000, and 0.3 for 0.
+		volScore = 0.6
 	}
 
-	// Penalize extreme IV
-	if res.Result.ImpliedVol > 1.0 {
-		conf -= 0.2
-		res.Quality.Warnings = append(res.Quality.Warnings, "Extreme IV")
+	// Refined interpretation based on "else":
+	// if volume >= 1000 -> 1.0
+	// else (if volume < 1000) -> 0.6? Or is there a lower bound?
+	// User prompt: "volume >= 1000 -> 1.0 else 0.6 else 0.3" imply 3 states.
+	// likely: >= 1000 -> 1.0, >= something_else -> 0.6, else 0.3.
+	// I'll assume 100 as the "something else" for now, or just use 0.6 as fallback for <1000 and 0.3 for 0.
+	// Let's implement strict interpretation of "else 0.6" meaning < 1000 but reasonable, and 0.3 meaning very low.
+	// I will treat < 100 as very low.
+	if volume >= 1000 {
+		volScore = 1.0
+	} else if volume >= 100 {
+		volScore = 0.6
+	} else {
+		volScore = 0.3
 	}
 
-	// Penalize low vega (unstable)
-	if res.Diagnostics.VegaAtSolution < 0.1 {
-		conf -= 0.2
-		res.Quality.Warnings = append(res.Quality.Warnings, "Low vega")
+	oiScore := 0.3
+	if oi >= 10000 {
+		oiScore = 1.0
+	} else if oi >= 1000 { // Assuming 1000 as intermediate based on volume ratios
+		oiScore = 0.6
+	} else {
+		oiScore = 0.3
 	}
 
-	// Penalize low liquidity
-	if req.Market.Volume < 100 {
-		conf -= 0.1
+	// Geometric mean
+	return math.Sqrt(spreadScore * volScore * oiScore)
+}
+
+func scoreMarkSource(source string) float64 {
+	switch source {
+	case "MID":
+		return 1.0
+	case "LAST", "LTP":
+		return 0.6
+	case "MODEL", "MODEL_MARK":
+		return 0.4
+	default:
+		return 0.4 // Missing bid-ask or unknown
 	}
-	if req.Market.OpenInterest < 1000 {
-		conf -= 0.1
+}
+
+func scoreSolverStability(iterations int, vega float64) float64 {
+	iterScore := 1.0
+	if iterations > 20 {
+		iterScore = 0.5
+	} else if iterations > 10 { // 11-20
+		iterScore = 0.8
 	}
 
-	if conf < 0 {
-		conf = 0
+	vegaScore := 0.3
+	if vega >= 2.0 {
+		vegaScore = 1.0
+	} else if vega >= 0.5 { // 0.5-2.0
+		vegaScore = 0.7
 	}
-	return conf
+
+	return iterScore * vegaScore
+}
+
+func scoreConsistency() float64 {
+	// Not implemented in this version (requires option pair lookup)
+	return 0.8
 }
