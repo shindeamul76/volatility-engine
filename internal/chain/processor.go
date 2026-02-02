@@ -218,6 +218,7 @@ func (p *Processor) GenerateForwardState(snap *market.Snapshot, chainSnap *marke
 		sort.Float64s(forwards)
 		mid := len(forwards) / 2
 		var medianFwd float64
+		
 		if len(forwards)%2 == 1 {
 			medianFwd = forwards[mid]
 		} else {
@@ -304,13 +305,20 @@ func (p *Processor) GenerateChain(snap *market.Snapshot, expiry time.Time) (*mar
 
 	// 3. Determine ATM Strike
 	centerPrice := snap.Underlying.Spot
+
+	fmt.Println("Implied Forward: ", impliedFwd)
+	fmt.Println("Center Price: ", centerPrice)
 	if impliedFwd > 0 {
 		centerPrice = impliedFwd
 	}
+
+	// fmt.Println("Strikes: ", strikes)
+
 	atmIdx := findATMIndex(strikes, centerPrice)
 	var atmStrike float64
 	if atmIdx >= 0 && atmIdx < len(strikes) {
 		atmStrike = strikes[atmIdx]
+
 	}
 	cs.ChainState.ATMStrike = atmStrike
 
@@ -477,6 +485,7 @@ func (p *Processor) GenerateChain(snap *market.Snapshot, expiry time.Time) (*mar
 // ---------------------------------------------------------------------
 
 func findATMIndex(strikes []float64, spot float64) int {
+
 	bestDist := math.MaxFloat64
 	bestIdx := -1
 	for i, k := range strikes {
@@ -485,6 +494,7 @@ func findATMIndex(strikes []float64, spot float64) int {
 			bestDist = dist
 			bestIdx = i
 		}
+
 	}
 	return bestIdx
 }

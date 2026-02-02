@@ -147,9 +147,9 @@ func (s *Solver) Solve(req market.IVRequest) market.IVResult {
 				methodUsed = "NEWTON"
 				// Update bracket
 				if err > 0 {
-					volHigh = sigma + newtonStep*0.5 // Shrink from above
+					volHigh = sigma
 				} else {
-					volLow = sigma - newtonStep*0.5 // Shrink from below
+					volLow = sigma
 				}
 				continue
 			}
@@ -204,7 +204,7 @@ func (s *Solver) calculateConfidence(req market.IVRequest, res market.IVResult) 
 	liqScore := scoreLiquidity(req.Market.Volume, req.Market.OpenInterest, spreadScore)
 	markScore := scoreMarkSource(req.Market.MarkSource)
 	solverScore := scoreSolverStability(res.Result.Iterations, res.Diagnostics.VegaAtSolution)
-	consistencyScore := scoreConsistency() // Placeholder 0.8
+	consistencyScore := scoreConsistency(req)
 
 	// Step B: Weighted Combination
 	// 45% liquidity + 25% solver + 15% mark + 15% consistency
@@ -310,7 +310,96 @@ func scoreSolverStability(iterations int, vega float64) float64 {
 	return iterScore * vegaScore
 }
 
-func scoreConsistency() float64 {
-	// Not implemented in this version (requires option pair lookup)
-	return 0.8
+func scoreConsistency(req market.IVRequest) float64 {
+	// If paired market data is missing, return a neutral/conservative score
+	if req.Market.PairedMid <= 0 {
+		return 0.7
+	}
+
+	K := req.Instrument.Strike
+	r := req.Rates.RiskFreeRateCC
+	T := req.Context.TTEYears
+	F_ref := req.Context.Forward
+
+	// Option prices
+	C, P := 0.0, 0.0
+	C_bid, P_ask := 0.0, 0.0 // For F_low calculation
+	C_ask, P_bid := 0.0, 0.0 // For F_high calculation
+
+	if req.Instrument.Type == market.Call {
+		C = req.Market.MarkPrice
+		P = req.Market.PairedMid
+		C_bid = req.Market.Bid
+		C_ask = req.Market.Ask
+		P_bid = req.Market.PairedBid
+		P_ask = req.Market.PairedAsk
+	} else {
+		P = req.Market.MarkPrice
+		C = req.Market.PairedMid
+		P_bid = req.Market.Bid
+		P_ask = req.Market.Ask
+		C_bid = req.Market.PairedBid
+		C_ask = req.Market.PairedAsk
+	}
+
+	// 1. Calculate implied forward from Mids: F_implied = K + e^rT * (C - P)
+	dfInv := math.Exp(r * T)
+	F_implied := K + dfInv*(C-P)
+
+	// Dispersion Metric: |F_impl - F_ref| / F_ref
+	if F_ref <= 0 {
+		return 0.5 // Should generally not happen if pipeline is correct
+	}
+	dispersion := math.Abs(F_implied-F_ref) / F_ref
+
+	// Piecewise scoring for dispersion
+	dispScore := 0.0
+	switch {
+	case dispersion <= 0.0005: // <= 0.05%
+		dispScore = 1.0
+	case dispersion <= 0.0015: // <= 0.15%
+		dispScore = 0.85
+	case dispersion <= 0.0030: // <= 0.30%
+		dispScore = 0.65
+	case dispersion <= 0.0060: // <= 0.60%
+		dispScore = 0.40
+	default:
+		dispScore = 0.15
+	}
+
+	// 2. Bid-Ask Bounds Check (Strictness)
+	// If we have valid bid/ask for both legs, we can verify if F_ref lies within the arbitrage-free band.
+	// F_low  = K + e^rT * (C_bid - P_ask)
+	// F_high = K + e^rT * (C_ask - P_bid)
+	boundsPenalty := 1.0
+	if C_bid > 0 && P_ask > 0 && C_ask > 0 && P_bid > 0 {
+		F_low := K + dfInv*(C_bid-P_ask)
+		F_high := K + dfInv*(C_ask-P_bid)
+
+		// Check if F_ref is within [F_low, F_high]
+		if F_ref >= F_low && F_ref <= F_high {
+			boundsPenalty = 1.0 // Perfect consistency with market width
+		} else {
+			// Calculate how far outside it is (relative) - simplified penalty
+			// If it's just slightly outside (e.g. within 0.10%), minor penalty
+			// If far outside, major penalty
+			distLow := F_low - F_ref
+			distHigh := F_ref - F_high
+			maxDist := 0.0
+			if distLow > 0 {
+				maxDist = distLow
+			} else if distHigh > 0 {
+				maxDist = distHigh
+			}
+
+			relDist := maxDist / F_ref
+			if relDist <= 0.0010 { // 0.10% tolerance
+				boundsPenalty = 0.7
+			} else {
+				boundsPenalty = 0.3
+			}
+		}
+	}
+
+	return dispScore * boundsPenalty
 }

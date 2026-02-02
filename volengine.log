@@ -1,0 +1,3248 @@
+2026/02/03 00:43:06 Starting Volatility Engine...
+2026/02/03 00:43:06 Running snapshot pipeline (prototype)...
+2026/02/03 00:43:06 Snapshot Ingested: snap_20260203_004306_nifty
+2026/02/03 00:43:06 Underlying: NIFTY, Spot: 25088.40
+2026/02/03 00:43:06 Total Quotes: 202
+2026/02/03 00:43:06 Tradable: 117, Rejected: 85
+2026/02/03 00:43:06 Sample Quote (first 200):
+2026/02/03 00:43:06  - NIFTY 23100.00 CALL: Mid=2216.32, Flags=[WIDE_SPREAD WIDE_SPREAD_ABS ILLIQUID_STRATEGY ILLIQUID]
+2026/02/03 00:43:06 Generating Chain Snapshot...
+2026/02/03 00:43:06 Chain Generated: chain_20260203_004306_nifty_20260203 (ATM: 25050.00)
+2026/02/03 00:43:06 Calculating Pricing for ATM Strike...
+2026/02/03 00:43:06 ImpliedForward:  25072.002227472614
+2026/02/03 00:43:06 Using Implied Forward: 25072.00
+2026/02/03 00:43:06 IsForward:  true
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 === ForwardState JSON ===
+2026/02/03 00:43:06 {
+  "forward_state_id": "fwd_20260203_004306_nifty_20260203",
+  "as_of": "2026-02-03T00:43:06.3480988+05:30",
+  "underlying": {
+    "symbol": "NIFTY",
+    "spot": 25088.4,
+    "source": ""
+  },
+  "expiry": {
+    "date": "2026-02-03",
+    "time_to_expiry_years": 0.0016873938324835109
+  },
+  "rates": {
+    "risk_free_rate_cc": 0.06,
+    "discount_factor": 0.9998987614950143
+  },
+  "source_preference": [
+    "FUTURES",
+    "PUT_CALL_PARITY"
+  ],
+  "selected_source": "PUT_CALL_PARITY",
+  "forward": {
+    "mid": 25072.002227472614,
+    "confidence": 0.10891089108910891,
+    "method": "MEDIAN_PARITY_NEAR_ATM",
+    "notes": [
+      "Computed from put-call parity using near-ATM tradable pairs",
+      "Excluded pairs with wide spreads"
+    ]
+  },
+  "forward_by_strike": [
+    {
+      "strike": 23100,
+      "call": {
+        "mark": 2216.325,
+        "spread_pct": 0.26455957497208216,
+        "is_tradable": false
+      },
+      "put": {
+        "mark": 1.4249999999999998,
+        "spread_pct": 0.03508771929824565,
+        "is_tradable": true
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 23150,
+      "call": {
+        "mark": 0,
+        "spread_pct": 0,
+        "is_tradable": false
+      },
+      "put": {
+        "mark": 1.375,
+        "spread_pct": 0.03636363636363624,
+        "is_tradable": true
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "OUTSIDE_ATM_WINDOW"
+      ]
+    },
+    {
+      "strike": 23200,
+      "call": {
+        "mark": 0,
+        "spread_pct": 0,
+        "is_tradable": false
+      },
+      "put": {
+        "mark": 1.425,
+        "spread_pct": 0.10526315789473678,
+        "is_tradable": true
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 23250,
+      "call": {
+        "mark": 1510.9,
+        "spread_pct": 0.5106228075981203,
+        "is_tradable": false
+      },
+      "put": {
+        "mark": 1.4,
+        "spread_pct": 0.14285714285714282,
+        "is_tradable": true
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 23300,
+      "call": {
+        "mark": 1774.375,
+        "spread_pct": 0.005833039802747395,
+        "is_tradable": false
+      },
+      "put": {
+        "mark": 1.475,
+        "spread_pct": 0.03389830508474579,
+        "is_tradable": true
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "OUTSIDE_ATM_WINDOW"
+      ]
+    },
+    {
+      "strike": 23350,
+      "call": {
+        "mark": 1722.725,
+        "spread_pct": 0.056102976389150835,
+        "is_tradable": false
+      },
+      "put": {
+        "mark": 1.525,
+        "spread_pct": 0.03278688524590167,
+        "is_tradable": true
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 23400,
+      "call": {
+        "mark": 1676.8000000000002,
+        "spread_pct": 0.05021469465648857,
+        "is_tradable": false
+      },
+      "put": {
+        "mark": 1.525,
+        "spread_pct": 0.03278688524590167,
+        "is_tradable": true
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 23450,
+      "call": {
+        "mark": 1623.125,
+        "spread_pct": 0.059114362726222454,
+        "is_tradable": false
+      },
+      "put": {
+        "mark": 1.475,
+        "spread_pct": 0.10169491525423738,
+        "is_tradable": true
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 23500,
+      "call": {
+        "mark": 1575.575,
+        "spread_pct": 0.006822905923234374,
+        "is_tradable": false
+      },
+      "put": {
+        "mark": 1.45,
+        "spread_pct": 0.06896551724137938,
+        "is_tradable": true
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 23550,
+      "call": {
+        "mark": 1521.75,
+        "spread_pct": 0.06485953671759476,
+        "is_tradable": false
+      },
+      "put": {
+        "mark": 1.5,
+        "spread_pct": 0.13333333333333344,
+        "is_tradable": true
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 23600,
+      "call": {
+        "mark": 1477.4,
+        "spread_pct": 0.011371328008663837,
+        "is_tradable": false
+      },
+      "put": {
+        "mark": 1.475,
+        "spread_pct": 0.1694915254237288,
+        "is_tradable": true
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 23650,
+      "call": {
+        "mark": 1419.85,
+        "spread_pct": 0.04500475402331223,
+        "is_tradable": false
+      },
+      "put": {
+        "mark": 1.625,
+        "spread_pct": 0.09230769230769226,
+        "is_tradable": true
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 23700,
+      "call": {
+        "mark": 1377.9250000000002,
+        "spread_pct": 0.010849647114320477,
+        "is_tradable": false
+      },
+      "put": {
+        "mark": 1.725,
+        "spread_pct": 0.0869565217391305,
+        "is_tradable": true
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 23750,
+      "call": {
+        "mark": 1326.025,
+        "spread_pct": 0.009992270130653645,
+        "is_tradable": false
+      },
+      "put": {
+        "mark": 1.7,
+        "spread_pct": 0.05882352941176476,
+        "is_tradable": true
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 23800,
+      "call": {
+        "mark": 1274.825,
+        "spread_pct": 0.007255897868334869,
+        "is_tradable": false
+      },
+      "put": {
+        "mark": 1.625,
+        "spread_pct": 0.09230769230769226,
+        "is_tradable": true
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 23850,
+      "call": {
+        "mark": 1223.4,
+        "spread_pct": 0.008582638548307993,
+        "is_tradable": false
+      },
+      "put": {
+        "mark": 1.775,
+        "spread_pct": 0.08450704225352121,
+        "is_tradable": true
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 23900,
+      "call": {
+        "mark": 1174.875,
+        "spread_pct": 0.007022023619533993,
+        "is_tradable": false
+      },
+      "put": {
+        "mark": 1.85,
+        "spread_pct": 0.05405405405405398,
+        "is_tradable": true
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 23950,
+      "call": {
+        "mark": 1124.4250000000002,
+        "spread_pct": 0.009382573315249975,
+        "is_tradable": false
+      },
+      "put": {
+        "mark": 2.2,
+        "spread_pct": 0.09090909090909079,
+        "is_tradable": true
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 24000,
+      "call": {
+        "mark": 1074.225,
+        "spread_pct": 0.002839256207963839,
+        "is_tradable": false
+      },
+      "put": {
+        "mark": 2.4000000000000004,
+        "spread_pct": 0.0416666666666667,
+        "is_tradable": true
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "OUTSIDE_ATM_WINDOW"
+      ]
+    },
+    {
+      "strike": 24050,
+      "call": {
+        "mark": 1024.525,
+        "spread_pct": 0.0067836314389595614,
+        "is_tradable": false
+      },
+      "put": {
+        "mark": 2.575,
+        "spread_pct": 0.019417475728155442,
+        "is_tradable": true
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "OUTSIDE_ATM_WINDOW"
+      ]
+    },
+    {
+      "strike": 24100,
+      "call": {
+        "mark": 974.2,
+        "spread_pct": 0.006056251283104061,
+        "is_tradable": false
+      },
+      "put": {
+        "mark": 2.7,
+        "spread_pct": 0.03703703703703707,
+        "is_tradable": true
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "OUTSIDE_ATM_WINDOW"
+      ]
+    },
+    {
+      "strike": 24150,
+      "call": {
+        "mark": 924.1500000000001,
+        "spread_pct": 0.004761131850889982,
+        "is_tradable": false
+      },
+      "put": {
+        "mark": 2.95,
+        "spread_pct": 0.03389830508474579,
+        "is_tradable": true
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "OUTSIDE_ATM_WINDOW"
+      ]
+    },
+    {
+      "strike": 24200,
+      "call": {
+        "mark": 875.025,
+        "spread_pct": 0.003371332247650119,
+        "is_tradable": false
+      },
+      "put": {
+        "mark": 3.175,
+        "spread_pct": 0.01574803149606308,
+        "is_tradable": true
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "OUTSIDE_ATM_WINDOW"
+      ]
+    },
+    {
+      "strike": 24250,
+      "call": {
+        "mark": 824.725,
+        "spread_pct": 0.007942041286489381,
+        "is_tradable": false
+      },
+      "put": {
+        "mark": 3.4000000000000004,
+        "spread_pct": 0.029411764705882377,
+        "is_tradable": true
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "OUTSIDE_ATM_WINDOW"
+      ]
+    },
+    {
+      "strike": 24300,
+      "call": {
+        "mark": 775.35,
+        "spread_pct": 0.0028374282582060303,
+        "is_tradable": false
+      },
+      "put": {
+        "mark": 3.7,
+        "spread_pct": 0.05405405405405398,
+        "is_tradable": true
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 24350,
+      "call": {
+        "mark": 724.625,
+        "spread_pct": 0.00572710022425405,
+        "is_tradable": false
+      },
+      "put": {
+        "mark": 4.05,
+        "spread_pct": 0.02469135802469127,
+        "is_tradable": true
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "OUTSIDE_ATM_WINDOW"
+      ]
+    },
+    {
+      "strike": 24400,
+      "call": {
+        "mark": 675.9000000000001,
+        "spread_pct": 0.004290575528924363,
+        "is_tradable": false
+      },
+      "put": {
+        "mark": 4.575,
+        "spread_pct": 0.03278688524590172,
+        "is_tradable": true
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "OUTSIDE_ATM_WINDOW"
+      ]
+    },
+    {
+      "strike": 24450,
+      "call": {
+        "mark": 625.95,
+        "spread_pct": 0.0051122294112947225,
+        "is_tradable": false
+      },
+      "put": {
+        "mark": 5.1,
+        "spread_pct": 0.01960784313725501,
+        "is_tradable": true
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "OUTSIDE_ATM_WINDOW"
+      ]
+    },
+    {
+      "strike": 24500,
+      "call": {
+        "mark": 576.925,
+        "spread_pct": 0.004246652511158178,
+        "is_tradable": false
+      },
+      "put": {
+        "mark": 5.925,
+        "spread_pct": 0.025316455696202594,
+        "is_tradable": true
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "OUTSIDE_ATM_WINDOW"
+      ]
+    },
+    {
+      "strike": 24550,
+      "call": {
+        "mark": 527.875,
+        "spread_pct": 0.008051148472649775,
+        "is_tradable": false
+      },
+      "put": {
+        "mark": 6.699999999999999,
+        "spread_pct": 0.029850746268656747,
+        "is_tradable": true
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "OUTSIDE_ATM_WINDOW"
+      ]
+    },
+    {
+      "strike": 24600,
+      "call": {
+        "mark": 479.9,
+        "spread_pct": 0.0029172744321734408,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 7.9,
+        "spread_pct": 0.012658227848101333,
+        "is_tradable": true
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "OUTSIDE_ATM_WINDOW"
+      ]
+    },
+    {
+      "strike": 24650,
+      "call": {
+        "mark": 431.25,
+        "spread_pct": 0.002550724637681212,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 9.350000000000001,
+        "spread_pct": 0.010695187165775362,
+        "is_tradable": true
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "OUTSIDE_ATM_WINDOW"
+      ]
+    },
+    {
+      "strike": 24700,
+      "call": {
+        "mark": 383,
+        "spread_pct": 0.002872062663185438,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 11.625,
+        "spread_pct": 0.004301075268817265,
+        "is_tradable": true
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "OUTSIDE_ATM_WINDOW"
+      ]
+    },
+    {
+      "strike": 24750,
+      "call": {
+        "mark": 336.20000000000005,
+        "spread_pct": 0.0023795359904818895,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 14.725000000000001,
+        "spread_pct": 0.010186757215619718,
+        "is_tradable": true
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "OUTSIDE_ATM_WINDOW"
+      ]
+    },
+    {
+      "strike": 24800,
+      "call": {
+        "mark": 290.375,
+        "spread_pct": 0.002927249246663875,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 18.924999999999997,
+        "spread_pct": 0.002642007926023816,
+        "is_tradable": true
+      },
+      "parity_forward": 25071.477483974613,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 24850,
+      "call": {
+        "mark": 246.7,
+        "spread_pct": 0.0024321037697608203,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 25.25,
+        "spread_pct": 0.003960396039604017,
+        "is_tradable": true
+      },
+      "parity_forward": 25071.47242153685,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 24900,
+      "call": {
+        "mark": 205.775,
+        "spread_pct": 0.0021868545741707624,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 34.05,
+        "spread_pct": 0.002936857562408265,
+        "is_tradable": true
+      },
+      "parity_forward": 25071.742386942497,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 24950,
+      "call": {
+        "mark": 167.7,
+        "spread_pct": 0.0029815146094215863,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 45.925,
+        "spread_pct": 0.003266194882961319,
+        "is_tradable": true
+      },
+      "parity_forward": 25071.78732956717,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 25000,
+      "call": {
+        "mark": 132.825,
+        "spread_pct": 0.0026350461133069405,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 61.224999999999994,
+        "spread_pct": 0.002449979583503448,
+        "is_tradable": true
+      },
+      "parity_forward": 25071.607249410878,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 25050,
+      "call": {
+        "mark": 102.875,
+        "spread_pct": 0.002430133657351154,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 80.875,
+        "spread_pct": 0.0030911901081916537,
+        "is_tradable": true
+      },
+      "parity_forward": 25072.002227472614,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 25100,
+      "call": {
+        "mark": 77.225,
+        "spread_pct": 0.0045322110715442995,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 105.1,
+        "spread_pct": 0.0019029495718363735,
+        "is_tradable": true
+      },
+      "parity_forward": 25072.122177690948,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 25150,
+      "call": {
+        "mark": 56.225,
+        "spread_pct": 0.004446420631391729,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 133.95,
+        "spread_pct": 0.0029861888764464778,
+        "is_tradable": true
+      },
+      "parity_forward": 25072.267130440498,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 25200,
+      "call": {
+        "mark": 39.5,
+        "spread_pct": 0.005063291139240578,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 167.47500000000002,
+        "spread_pct": 0.002089864158829642,
+        "is_tradable": true
+      },
+      "parity_forward": 25072.012042690545,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 25250,
+      "call": {
+        "mark": 27.425,
+        "spread_pct": 0.0054694621695532755,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 205.4,
+        "spread_pct": 0.003407984420642593,
+        "is_tradable": true
+      },
+      "parity_forward": 25072.006980252783,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 25300,
+      "call": {
+        "mark": 18.85,
+        "spread_pct": 0.005305039787798295,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 246.625,
+        "spread_pct": 0.0026355803345158735,
+        "is_tradable": true
+      },
+      "parity_forward": 25072.201938064773,
+      "weight": 1,
+      "quality_flags": []
+    },
+    {
+      "strike": 25350,
+      "call": {
+        "mark": 13.075,
+        "spread_pct": 0.0038240917782025956,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 291.2,
+        "spread_pct": 0.0013736263736262957,
+        "is_tradable": true
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "OUTSIDE_ATM_WINDOW"
+      ]
+    },
+    {
+      "strike": 25400,
+      "call": {
+        "mark": 9.125,
+        "spread_pct": 0.016438356164383407,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 336.825,
+        "spread_pct": 0.0034142358791656715,
+        "is_tradable": true
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "OUTSIDE_ATM_WINDOW"
+      ]
+    },
+    {
+      "strike": 25450,
+      "call": {
+        "mark": 6.875,
+        "spread_pct": 0.007272727272727376,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 384.675,
+        "spread_pct": 0.0032494963280691493,
+        "is_tradable": true
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "OUTSIDE_ATM_WINDOW"
+      ]
+    },
+    {
+      "strike": 25500,
+      "call": {
+        "mark": 5.425000000000001,
+        "spread_pct": 0.009216589861751117,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 433.1,
+        "spread_pct": 0.0030016162549065142,
+        "is_tradable": true
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "OUTSIDE_ATM_WINDOW"
+      ]
+    },
+    {
+      "strike": 25550,
+      "call": {
+        "mark": 4.225,
+        "spread_pct": 0.011834319526627177,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 482.95,
+        "spread_pct": 0.008282430893467233,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "OUTSIDE_ATM_WINDOW"
+      ]
+    },
+    {
+      "strike": 25600,
+      "call": {
+        "mark": 3.25,
+        "spread_pct": 0.03076923076923066,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 532.225,
+        "spread_pct": 0.004227535346892761,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "OUTSIDE_ATM_WINDOW"
+      ]
+    },
+    {
+      "strike": 25650,
+      "call": {
+        "mark": 2.75,
+        "spread_pct": 0.0727272727272728,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 581.95,
+        "spread_pct": 0.006701606667239414,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 25700,
+      "call": {
+        "mark": 2.225,
+        "spread_pct": 0.02247191011235947,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 631.325,
+        "spread_pct": 0.004514315130875576,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "OUTSIDE_ATM_WINDOW"
+      ]
+    },
+    {
+      "strike": 25750,
+      "call": {
+        "mark": 1.9749999999999999,
+        "spread_pct": 0.07594936708860756,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 680.45,
+        "spread_pct": 0.00955250202072158,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 25800,
+      "call": {
+        "mark": 1.775,
+        "spread_pct": 0.028169014084507067,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 731.0250000000001,
+        "spread_pct": 0.003625047023015597,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "OUTSIDE_ATM_WINDOW"
+      ]
+    },
+    {
+      "strike": 25850,
+      "call": {
+        "mark": 1.725,
+        "spread_pct": 0.028985507246376836,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 779.05,
+        "spread_pct": 0.006161350362621229,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "OUTSIDE_ATM_WINDOW"
+      ]
+    },
+    {
+      "strike": 25900,
+      "call": {
+        "mark": 1.475,
+        "spread_pct": 0.10169491525423738,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 830.2750000000001,
+        "spread_pct": 0.003793923699978895,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 25950,
+      "call": {
+        "mark": 1.4249999999999998,
+        "spread_pct": 0.03508771929824565,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 879.45,
+        "spread_pct": 0.010915913354937771,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "OUTSIDE_ATM_WINDOW"
+      ]
+    },
+    {
+      "strike": 26000,
+      "call": {
+        "mark": 1.375,
+        "spread_pct": 0.03636363636363624,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 930.7,
+        "spread_pct": 0.0030084882346621553,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "OUTSIDE_ATM_WINDOW"
+      ]
+    },
+    {
+      "strike": 26050,
+      "call": {
+        "mark": 1.3250000000000002,
+        "spread_pct": 0.0377358490566038,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 978.9,
+        "spread_pct": 0.00970477066094596,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "OUTSIDE_ATM_WINDOW"
+      ]
+    },
+    {
+      "strike": 26100,
+      "call": {
+        "mark": 1.15,
+        "spread_pct": 0.08695652173913032,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 1030.9,
+        "spread_pct": 0.00436511785818217,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 26150,
+      "call": {
+        "mark": 1.125,
+        "spread_pct": 0.13333333333333325,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 1080.925,
+        "spread_pct": 0.008464972130351404,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 26200,
+      "call": {
+        "mark": 1.1749999999999998,
+        "spread_pct": 0.04255319148936175,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 1131.975,
+        "spread_pct": 0.0015459705382186004,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "OUTSIDE_ATM_WINDOW"
+      ]
+    },
+    {
+      "strike": 26250,
+      "call": {
+        "mark": 1.0750000000000002,
+        "spread_pct": 0.04651162790697678,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 1179.425,
+        "spread_pct": 0.00741886936430888,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "OUTSIDE_ATM_WINDOW"
+      ]
+    },
+    {
+      "strike": 26300,
+      "call": {
+        "mark": 1.075,
+        "spread_pct": 0.13953488372093015,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 1231.0500000000002,
+        "spread_pct": 0.004630193737053771,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 26350,
+      "call": {
+        "mark": 1.05,
+        "spread_pct": 0.09523809523809532,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 1279.1,
+        "spread_pct": 0.008052536940035928,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 26400,
+      "call": {
+        "mark": 0.875,
+        "spread_pct": 0.0571428571428572,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 1330.15,
+        "spread_pct": 0.005488102845543701,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 26450,
+      "call": {
+        "mark": 0.925,
+        "spread_pct": 0.16216216216216217,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 1378.325,
+        "spread_pct": 0.008524839932526798,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 26500,
+      "call": {
+        "mark": 0.925,
+        "spread_pct": 0.05405405405405398,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 1428.25,
+        "spread_pct": 0.006511465079643047,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 26550,
+      "call": {
+        "mark": 0.925,
+        "spread_pct": 0.16216216216216217,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 1477,
+        "spread_pct": 0.011306702775896965,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 26600,
+      "call": {
+        "mark": 1.025,
+        "spread_pct": 0.0487804878048781,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 1528.5,
+        "spread_pct": 0.008570493948315282,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "OUTSIDE_ATM_WINDOW"
+      ]
+    },
+    {
+      "strike": 26650,
+      "call": {
+        "mark": 0.875,
+        "spread_pct": 0.17142857142857132,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 1578.525,
+        "spread_pct": 0.05292915854991207,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 26700,
+      "call": {
+        "mark": 0.825,
+        "spread_pct": 0.06060606060606053,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 1627.2,
+        "spread_pct": 0.009587020648967496,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 26750,
+      "call": {
+        "mark": 0.7749999999999999,
+        "spread_pct": 0.19354838709677424,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 1675.325,
+        "spread_pct": 0.05052750958769199,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 26800,
+      "call": {
+        "mark": 0.725,
+        "spread_pct": 0.06896551724137938,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 1727.025,
+        "spread_pct": 0.007093122566262792,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 26850,
+      "call": {
+        "mark": 0.825,
+        "spread_pct": 0.06060606060606053,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 1513.9,
+        "spread_pct": 0,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 26900,
+      "call": {
+        "mark": 0.675,
+        "spread_pct": 0.07407407407407397,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 1825.625,
+        "spread_pct": 0.009667921944539592,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 26950,
+      "call": {
+        "mark": 0.7,
+        "spread_pct": 0.14285714285714282,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 1856.95,
+        "spread_pct": 0.03015697784000646,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 27000,
+      "call": {
+        "mark": 0.625,
+        "spread_pct": 0.08000000000000007,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 1929.25,
+        "spread_pct": 0.0032655176882209055,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 27050,
+      "call": {
+        "mark": 0.725,
+        "spread_pct": 0.06896551724137938,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 1972.6,
+        "spread_pct": 0.043039643110615367,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 27100,
+      "call": {
+        "mark": 0.8,
+        "spread_pct": 0.25000000000000006,
+        "is_tradable": false
+      },
+      "put": {
+        "mark": 2026.3,
+        "spread_pct": 0.009870206780832058,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 27150,
+      "call": {
+        "mark": 0.8,
+        "spread_pct": 0.12499999999999997,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 2076.9,
+        "spread_pct": 0.041022678029755906,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 27200,
+      "call": {
+        "mark": 0.7250000000000001,
+        "spread_pct": 0.20689655172413793,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 2127.15,
+        "spread_pct": 0.0075218014714524125,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 27250,
+      "call": {
+        "mark": 0.775,
+        "spread_pct": 0.06451612903225812,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 2173.25,
+        "spread_pct": 0.03809962038421727,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 27300,
+      "call": {
+        "mark": 0.7749999999999999,
+        "spread_pct": 0.19354838709677424,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 2227.7,
+        "spread_pct": 0.008618754769493323,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 27350,
+      "call": {
+        "mark": 0.75,
+        "spread_pct": 0.13333333333333344,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 2278.9,
+        "spread_pct": 0.04116020887270182,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 27400,
+      "call": {
+        "mark": 0.7749999999999999,
+        "spread_pct": 0.19354838709677424,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 2308.9,
+        "spread_pct": 0.02369093507730946,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 27450,
+      "call": {
+        "mark": 0.7250000000000001,
+        "spread_pct": 0.20689655172413793,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 2376.15,
+        "spread_pct": 0.037160953643499015,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 27500,
+      "call": {
+        "mark": 0.625,
+        "spread_pct": 0.08000000000000007,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 2426.7,
+        "spread_pct": 0.007129022952981303,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 27550,
+      "call": {
+        "mark": 0.725,
+        "spread_pct": 0.06896551724137938,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 2478.725,
+        "spread_pct": 0.03975834350321241,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 27600,
+      "call": {
+        "mark": 0.8,
+        "spread_pct": 0.12499999999999997,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 2518.55,
+        "spread_pct": 0.043199460006749804,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 27650,
+      "call": {
+        "mark": 0.8,
+        "spread_pct": 0.12499999999999997,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 2577.2749999999996,
+        "spread_pct": 0.038858872258490114,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 27700,
+      "call": {
+        "mark": 0.75,
+        "spread_pct": 0.2666666666666666,
+        "is_tradable": false
+      },
+      "put": {
+        "mark": 2626.1,
+        "spread_pct": 0.03465214576748791,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 27750,
+      "call": {
+        "mark": 0.7749999999999999,
+        "spread_pct": 0.19354838709677424,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 2675.9,
+        "spread_pct": 0.03393250868866556,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 27800,
+      "call": {
+        "mark": 0.75,
+        "spread_pct": 0.13333333333333344,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 2732.4,
+        "spread_pct": 0.039269506660811075,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 27850,
+      "call": {
+        "mark": 0.75,
+        "spread_pct": 0.13333333333333344,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 2777.2,
+        "spread_pct": 0.008281722598300447,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 27900,
+      "call": {
+        "mark": 0.7250000000000001,
+        "spread_pct": 0.20689655172413793,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 2808.225,
+        "spread_pct": 0.021561662616065375,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 27950,
+      "call": {
+        "mark": 0.7,
+        "spread_pct": 0.2857142857142858,
+        "is_tradable": false
+      },
+      "put": {
+        "mark": 2876.975,
+        "spread_pct": 0.03269058646668817,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 28000,
+      "call": {
+        "mark": 0.7,
+        "spread_pct": 0.14285714285714282,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 2933.075,
+        "spread_pct": 0.004312879827484838,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 28050,
+      "call": {
+        "mark": 0.675,
+        "spread_pct": 0.22222222222222224,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 2978.05,
+        "spread_pct": 0.03250449119390195,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    },
+    {
+      "strike": 28100,
+      "call": {
+        "mark": 0.525,
+        "spread_pct": 0.09523809523809532,
+        "is_tradable": true
+      },
+      "put": {
+        "mark": 2911.125,
+        "spread_pct": 0.12203186053501654,
+        "is_tradable": false
+      },
+      "parity_forward": null,
+      "weight": 0,
+      "quality_flags": [
+        "WIDE_SPREAD"
+      ]
+    }
+  ],
+  "filters_used": {
+    "max_spread_pct_per_leg": 0.05,
+    "near_atm_strike_window": 5,
+    "require_both_call_put": true
+  }
+}
+2026/02/03 00:43:06 === PricingResult JSON ===
+2026/02/03 00:43:06 {
+  "request_id": "prc_req_004306",
+  "model_used": "BLACK_SCHOLES_FORWARD",
+  "inputs_echo": {
+    "forward": 25072.002227472614,
+    "strike": 25050,
+    "time_to_expiry_years": 0.0016873938324835109,
+    "risk_free_rate_cc": 0.06,
+    "discount_factor": 0.9998987614950143,
+    "volatility": 0.175,
+    "type": "CALL"
+  },
+  "outputs": {
+    "theoretical_price": 83.3990283623898,
+    "greeks": {
+      "delta": 0.55002488207225,
+      "gamma": 0.0021962733187155027,
+      "theta_per_day": -60.15976781671985,
+      "vega_per_vol_point": 4.075970086039299
+    },
+    "intermediates": {
+      "d1": 0.12572421159449212,
+      "d2": 0.1185355791710191,
+      "nd1": 0.55002488207225,
+      "nd2": 0.5471783471485274
+    }
+  },
+  "quality": {
+    "ok": true,
+    "flags": [],
+    "warnings": []
+  }
+}
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   24350 PUT: IV=37.21% (conf=0.60)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   24400 PUT: IV=35.76% (conf=0.60)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   24450 PUT: IV=34.18% (conf=0.61)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   24500 PUT: IV=32.81% (conf=0.60)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   24550 PUT: IV=31.21% (conf=0.60)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   24600 CALL: IV=29.85% (conf=0.61)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   24600 PUT: IV=29.80% (conf=0.61)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   24650 CALL: IV=28.32% (conf=0.61)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   24650 PUT: IV=28.36% (conf=0.61)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   24700 CALL: IV=26.81% (conf=0.56)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   24700 PUT: IV=27.17% (conf=0.56)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   24750 CALL: IV=25.80% (conf=0.56)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   24750 PUT: IV=26.06% (conf=0.56)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   24800 CALL: IV=24.77% (conf=0.64)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   24800 PUT: IV=25.00% (conf=0.64)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   24850 CALL: IV=24.04% (conf=0.64)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   24850 PUT: IV=24.23% (conf=0.64)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   24900 CALL: IV=23.53% (conf=0.69)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   24900 PUT: IV=23.61% (conf=0.69)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   24950 CALL: IV=23.04% (conf=0.69)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   24950 PUT: IV=23.10% (conf=0.69)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   25000 CALL: IV=22.52% (conf=0.64)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   25000 PUT: IV=22.63% (conf=0.64)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   25050 CALL: IV=22.27% (conf=0.69)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   25050 PUT: IV=22.27% (conf=0.69)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   25100 CALL: IV=22.02% (conf=0.69)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   25100 PUT: IV=22.00% (conf=0.69)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   25150 CALL: IV=21.85% (conf=0.69)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   25150 PUT: IV=21.78% (conf=0.69)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   25200 CALL: IV=21.68% (conf=0.69)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   25200 PUT: IV=21.67% (conf=0.69)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   25250 CALL: IV=21.76% (conf=0.69)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   25250 PUT: IV=21.75% (conf=0.69)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   25300 CALL: IV=21.98% (conf=0.69)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   25300 PUT: IV=21.91% (conf=0.69)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   25350 CALL: IV=22.41% (conf=0.69)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   25350 PUT: IV=22.49% (conf=0.69)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   25400 CALL: IV=22.94% (conf=0.61)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   25400 PUT: IV=22.78% (conf=0.61)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   25450 CALL: IV=23.90% (conf=0.61)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   25450 PUT: IV=23.79% (conf=0.61)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   25500 CALL: IV=25.04% (conf=0.61)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   25500 PUT: IV=24.81% (conf=0.61)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   25550 CALL: IV=26.05% (conf=0.61)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   25600 CALL: IV=26.96% (conf=0.60)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   25650 CALL: IV=28.26% (conf=0.57)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   25700 CALL: IV=29.30% (conf=0.60)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   25750 CALL: IV=30.68% (conf=0.47)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   25800 CALL: IV=32.09% (conf=0.50)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   23100 PUT: IV=78.86% (conf=0.37)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   23150 PUT: IV=76.70% (conf=0.45)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   23200 PUT: IV=75.15% (conf=0.39)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   23250 PUT: IV=73.15% (conf=0.31)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   23300 PUT: IV=71.72% (conf=0.50)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   23350 PUT: IV=70.13% (conf=0.50)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   23400 PUT: IV=68.26% (conf=0.50)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   23450 PUT: IV=66.14% (conf=0.44)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   23500 PUT: IV=64.09% (conf=0.47)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   23550 PUT: IV=62.47% (conf=0.44)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   23600 PUT: IV=60.47% (conf=0.38)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   23650 PUT: IV=59.29% (conf=0.47)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   23700 PUT: IV=57.82% (conf=0.47)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   23750 PUT: IV=55.81% (conf=0.47)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   23800 PUT: IV=53.60% (conf=0.47)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   23850 PUT: IV=52.27% (conf=0.47)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   23900 PUT: IV=50.62% (conf=0.47)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   23950 PUT: IV=49.84% (conf=0.47)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   24000 PUT: IV=48.43% (conf=0.50)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   24050 PUT: IV=46.88% (conf=0.51)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   24100 PUT: IV=45.17% (conf=0.50)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   24150 PUT: IV=43.69% (conf=0.50)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   24200 PUT: IV=42.08% (conf=0.51)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   24250 PUT: IV=40.42% (conf=0.60)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   24300 PUT: IV=38.81% (conf=0.57)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   25850 CALL: IV=33.81% (conf=0.50)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   25900 CALL: IV=34.90% (conf=0.44)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   25950 CALL: IV=36.52% (conf=0.50)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   26000 CALL: IV=38.12% (conf=0.50)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   26050 CALL: IV=39.68% (conf=0.50)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   26100 CALL: IV=40.70% (conf=0.47)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   26150 CALL: IV=42.28% (conf=0.44)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   26200 CALL: IV=44.19% (conf=0.45)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   26250 CALL: IV=45.39% (conf=0.50)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   26300 CALL: IV=47.04% (conf=0.44)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   26350 CALL: IV=48.55% (conf=0.47)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   26400 CALL: IV=49.17% (conf=0.47)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   26450 CALL: IV=51.08% (conf=0.38)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   26500 CALL: IV=52.67% (conf=0.47)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   26550 CALL: IV=54.26% (conf=0.38)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   26600 CALL: IV=56.47% (conf=0.50)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   26650 CALL: IV=57.06% (conf=0.38)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   26700 CALL: IV=58.25% (conf=0.47)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   26750 CALL: IV=59.41% (conf=0.38)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   26800 CALL: IV=60.51% (conf=0.47)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   26850 CALL: IV=62.85% (conf=0.33)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   26900 CALL: IV=63.07% (conf=0.47)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   26950 CALL: IV=64.79% (conf=0.41)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   27000 CALL: IV=65.54% (conf=0.47)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   27050 CALL: IV=68.00% (conf=0.47)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   27150 CALL: IV=71.65% (conf=0.44)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   27200 CALL: IV=72.42% (conf=0.38)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   27250 CALL: IV=74.37% (conf=0.47)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   27300 CALL: IV=75.83% (conf=0.38)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   27350 CALL: IV=77.04% (conf=0.44)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   27400 CALL: IV=78.75% (conf=0.35)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   27450 CALL: IV=79.67% (conf=0.38)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   27500 CALL: IV=79.95% (conf=0.47)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   27550 CALL: IV=82.63% (conf=0.47)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   27600 CALL: IV=84.83% (conf=0.44)
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06 F:  25072.002227472614
+2026/02/03 00:43:06   27650 CALL: IV=86.25% (conf=0.44)
+2026/02/03 00:43:06 === Sample IVResults JSON ===
+2026/02/03 00:43:06 {
+  "iv_request_id": "iv_20260203_24350_PUT",
+  "status": "CONVERGED",
+  "result": {
+    "implied_vol": 0.3721219307892552,
+    "volatility_units": "DECIMAL",
+    "fit_error_abs": 0.0010074727509392645,
+    "fit_error_rel": 0.00024875870393562086,
+    "iterations": 6,
+    "method_used": "NEWTON"
+  },
+  "diagnostics": {
+    "price_at_solution": 4.051007472750939,
+    "vega_at_solution_per_vol_point": 0.6513954997366009,
+    "bracket": {
+      "low": 0.0001,
+      "high": 3
+    },
+    "notes": [
+      "Solved using MID mark"
+    ]
+  },
+  "quality": {
+    "confidence": 0.5957476707849887,
+    "flags": [],
+    "warnings": []
+  }
+}
+2026/02/03 00:43:06 {
+  "iv_request_id": "iv_20260203_24400_PUT",
+  "status": "CONVERGED",
+  "result": {
+    "implied_vol": 0.3576252750140353,
+    "volatility_units": "DECIMAL",
+    "fit_error_abs": 0.0005004891218503005,
+    "fit_error_rel": 0.00010939652936618589,
+    "iterations": 6,
+    "method_used": "NEWTON"
+  },
+  "diagnostics": {
+    "price_at_solution": 4.5755004891218505,
+    "vega_at_solution_per_vol_point": 0.7329011030940505,
+    "bracket": {
+      "low": 0.0001,
+      "high": 3
+    },
+    "notes": [
+      "Solved using MID mark"
+    ]
+  },
+  "quality": {
+    "confidence": 0.5957476707849887,
+    "flags": [],
+    "warnings": []
+  }
+}
+2026/02/03 00:43:06 {
+  "iv_request_id": "iv_20260203_24450_PUT",
+  "status": "CONVERGED",
+  "result": {
+    "implied_vol": 0.3418262351229532,
+    "volatility_units": "DECIMAL",
+    "fit_error_abs": 0.0002394227051585318,
+    "fit_error_rel": 0.000046945628462457224,
+    "iterations": 6,
+    "method_used": "NEWTON"
+  },
+  "diagnostics": {
+    "price_at_solution": 5.100239422705158,
+    "vega_at_solution_per_vol_point": 0.818730299108575,
+    "bracket": {
+      "low": 0.0001,
+      "high": 3
+    },
+    "notes": [
+      "Solved using MID mark"
+    ]
+  },
+  "quality": {
+    "confidence": 0.61,
+    "flags": [],
+    "warnings": []
+  }
+}
+2026/02/03 00:43:06 {
+  "iv_request_id": "iv_20260203_24500_PUT",
+  "status": "CONVERGED",
+  "result": {
+    "implied_vol": 0.32808600198192994,
+    "volatility_units": "DECIMAL",
+    "fit_error_abs": 0.0000789407926733432,
+    "fit_error_rel": 0.00001332334053558535,
+    "iterations": 6,
+    "method_used": "NEWTON"
+  },
+  "diagnostics": {
+    "price_at_solution": 5.925078940792673,
+    "vega_at_solution_per_vol_point": 0.937282832723596,
+    "bracket": {
+      "low": 0.0001,
+      "high": 3
+    },
+    "notes": [
+      "Solved using MID mark"
+    ]
+  },
+  "quality": {
+    "confidence": 0.5957476707849887,
+    "flags": [],
+    "warnings": []
+  }
+}
+2026/02/03 00:43:06 {
+  "iv_request_id": "iv_20260203_24550_PUT",
+  "status": "CONVERGED",
+  "result": {
+    "implied_vol": 0.3120611212918499,
+    "volatility_units": "DECIMAL",
+    "fit_error_abs": 0.000025606274494549552,
+    "fit_error_rel": 0.000003821832014111874,
+    "iterations": 6,
+    "method_used": "NEWTON"
+  },
+  "diagnostics": {
+    "price_at_solution": 6.700025606274494,
+    "vega_at_solution_per_vol_point": 1.0570560103168183,
+    "bracket": {
+      "low": 0.0001,
+      "high": 3
+    },
+    "notes": [
+      "Solved using MID mark"
+    ]
+  },
+  "quality": {
+    "confidence": 0.5957476707849887,
+    "flags": [],
+    "warnings": []
+  }
+}
+2026/02/03 00:43:06 {
+  "iv_request_id": "iv_20260203_24600_CALL",
+  "status": "CONVERGED",
+  "result": {
+    "implied_vol": 0.2985197935574037,
+    "volatility_units": "DECIMAL",
+    "fit_error_abs": 0.011889313880260488,
+    "fit_error_rel": 0.000024774565284977055,
+    "iterations": 5,
+    "method_used": "NEWTON"
+  },
+  "diagnostics": {
+    "price_at_solution": 479.91188931388024,
+    "vega_at_solution_per_vol_point": 1.2243972000606935,
+    "bracket": {
+      "low": 0.0001,
+      "high": 3
+    },
+    "notes": [
+      "Solved using MID mark"
+    ]
+  },
+  "quality": {
+    "confidence": 0.61,
+    "flags": [],
+    "warnings": []
+  }
+}
+2026/02/03 00:43:06 {
+  "iv_request_id": "iv_20260203_24600_PUT",
+  "status": "CONVERGED",
+  "result": {
+    "implied_vol": 0.29804976108493203,
+    "volatility_units": "DECIMAL",
+    "fit_error_abs": 0.000004862799050542321,
+    "fit_error_rel": 6.155441836129521e-7,
+    "iterations": 6,
+    "method_used": "NEWTON"
+  },
+  "diagnostics": {
+    "price_at_solution": 7.900004862799051,
+    "vega_at_solution_per_vol_point": 1.219764201521313,
+    "bracket": {
+      "low": 0.0001,
+      "high": 3
+    },
+    "notes": [
+      "Solved using MID mark"
+    ]
+  },
+  "quality": {
+    "confidence": 0.61,
+    "flags": [],
+    "warnings": []
+  }
+}
+2026/02/03 00:43:06 {
+  "iv_request_id": "iv_20260203_24650_CALL",
+  "status": "CONVERGED",
+  "result": {
+    "implied_vol": 0.283200647762673,
+    "volatility_units": "DECIMAL",
+    "fit_error_abs": 0.004981532401870936,
+    "fit_error_rel": 0.000011551379482599272,
+    "iterations": 5,
+    "method_used": "NEWTON"
+  },
+  "diagnostics": {
+    "price_at_solution": 431.25498153240187,
+    "vega_at_solution_per_vol_point": 1.4048464586436376,
+    "bracket": {
+      "low": 0.0001,
+      "high": 3
+    },
+    "notes": [
+      "Solved using MID mark"
+    ]
+  },
+  "quality": {
+    "confidence": 0.61,
+    "flags": [],
+    "warnings": []
+  }
+}
+2026/02/03 00:43:06 {
+  "iv_request_id": "iv_20260203_24650_PUT",
+  "status": "CONVERGED",
+  "result": {
+    "implied_vol": 0.2836226549670122,
+    "volatility_units": "DECIMAL",
+    "fit_error_abs": 0.004856473464450062,
+    "fit_error_rel": 0.0005194089266791509,
+    "iterations": 5,
+    "method_used": "NEWTON"
+  },
+  "diagnostics": {
+    "price_at_solution": 9.354856473464451,
+    "vega_at_solution_per_vol_point": 1.4093006967369393,
+    "bracket": {
+      "low": 0.0001,
+      "high": 3
+    },
+    "notes": [
+      "Solved using MID mark"
+    ]
+  },
+  "quality": {
+    "confidence": 0.61,
+    "flags": [],
+    "warnings": []
+  }
+}
+2026/02/03 00:43:06 {
+  "iv_request_id": "iv_20260203_24700_CALL",
+  "status": "CONVERGED",
+  "result": {
+    "implied_vol": 0.2681432235935793,
+    "volatility_units": "DECIMAL",
+    "fit_error_abs": 0.0015656620562367607,
+    "fit_error_rel": 0.00000408789048625786,
+    "iterations": 5,
+    "method_used": "NEWTON"
+  },
+  "diagnostics": {
+    "price_at_solution": 383.00156566205624,
+    "vega_at_solution_per_vol_point": 1.6235469158579878,
+    "bracket": {
+      "low": 0.0001,
+      "high": 3
+    },
+    "notes": [
+      "Solved using MID mark"
+    ]
+  },
+  "quality": {
+    "confidence": 0.565,
+    "flags": [],
+    "warnings": []
+  }
+}
+2026/02/03 00:43:06 Pipeline finished.

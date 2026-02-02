@@ -1,6 +1,7 @@
 package pricing
 
 import (
+	"log"
 	"math"
 
 	"volatility-engine/internal/domain/market"
@@ -77,11 +78,21 @@ func calculateD1D2(ctx PricingContext) (float64, float64) {
 	// If Spot Model, F = S * e^{(r-q)T}
 
 	var F float64
+
+	// log.Println("IsForwardModel: ", ctx.IsForwardModel)
+	// log.Println("S: ", ctx.S)
+	// log.Println("R: ", ctx.R)
+	// log.Println("Q: ", ctx.Q)
+	// log.Println("T: ", ctx.T)
+	// log.Println("K: ", ctx.K)
+	// log.Println("Sigma: ", ctx.Sigma)
 	if ctx.IsForwardModel {
 		F = ctx.S
 	} else {
 		F = ctx.S * math.Exp((ctx.R-ctx.Q)*ctx.T)
 	}
+
+	log.Println("F: ", F)
 
 	// d1 = (ln(F/K) + 0.5 * sigma^2 * T) / (sigma * sqrt(T))
 	// d2 = d1 - sigma * sqrt(T)

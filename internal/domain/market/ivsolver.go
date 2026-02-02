@@ -30,6 +30,9 @@ type IVMarket struct {
 	SpreadPct    float64 `json:"spread_pct"`
 	Volume       int     `json:"volume"`
 	OpenInterest int     `json:"open_interest"`
+	PairedMid    float64 `json:"paired_mid"`
+	PairedBid    float64 `json:"paired_bid"`
+	PairedAsk    float64 `json:"paired_ask"`
 }
 
 // IVContext has forward/spot info
