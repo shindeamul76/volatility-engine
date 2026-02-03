@@ -10,43 +10,54 @@ import (
 // BuildSkew creates a skew for a single expiry
 func (b *Builder) BuildSkew(expiry string, points []market.IVPoint, forward, tte float64) market.IVSkewSnapshot {
 	skew := market.IVSkewSnapshot{
-		// AsOf and Underlying are set by caller usually, but filling what we can
 		Expiry:   expiry,
 		Forward:  forward,
 		TTEYears: tte,
 		Points:   []market.IVPoint{},
 		Fit: market.SkewFit{
-			Type: "QUADRATIC_WLS",
+			Type: "QUADRATIC_VARIANCE",
 		},
 	}
 
-	// 1. Organize points by strike for OTM selection
-	byStrike := make(map[float64][]market.IVPoint)
+	if forward <= 0 || tte <= 0 {
+		return skew // Cannot build without F and TTE
+	}
+
+	// 1. Group by strike (Integer Key)
+	byStrike := make(map[int][]market.IVPoint)
 	for _, p := range points {
-		byStrike[p.Strike] = append(byStrike[p.Strike], p)
+		kInt := int(math.Round(p.Strike))
+		byStrike[kInt] = append(byStrike[kInt], p)
 	}
 
-	// 2. Select preferred points (Canonical "one IV per strike")
-	var selectedPoints []market.IVPoint
-	var strikes []float64
+	keys := make([]int, 0, len(byStrike))
 	for k := range byStrike {
-		strikes = append(strikes, k)
+		keys = append(keys, k)
 	}
-	sort.Float64s(strikes)
+	sort.Ints(keys)
 
-	for _, k := range strikes {
-		pts := byStrike[k]
+	var selectedPoints []market.IVPoint
+
+	// 2. Select Preferred Points
+	for _, kInt := range keys {
+		pts := byStrike[kInt]
 		if len(pts) == 0 {
 			continue
 		}
+		strike := float64(kInt)
 
 		var chosen market.IVPoint
 
-		// If only one point, take it
 		if len(pts) == 1 {
 			chosen = pts[0]
+			// Drop ITM-only if configured
+			if b.settings.OTMPreference && b.settings.DropITMOnly {
+				if !isATM(strike, forward, b.settings.ATMBandX) && !isOTM(chosen.Type, strike, forward) {
+					continue
+				}
+			}
 		} else {
-			// Find Call and Put
+			// Find Call/Put
 			var call, put *market.IVPoint
 			for i := range pts {
 				if pts[i].Type == market.Call {
@@ -57,36 +68,16 @@ func (b *Builder) BuildSkew(expiry string, points []market.IVPoint, forward, tte
 			}
 
 			if call != nil && put != nil && b.settings.OTMPreference {
-				// Apply OTM Rule
-				if k < forward {
-					// Put OTM, Call ITM -> Prefer PUT
-					chosen = *put
-				} else if k > forward {
-					// Call OTM, Put ITM -> Prefer CALL
-					chosen = *call
+				if isATM(strike, forward, b.settings.ATMBandX) {
+					// ATM Band: Blend
+					chosen = blendATM(*call, *put, b.settings.WeightPowerConf)
+				} else if strike < forward {
+					chosen = *put // OTM Put
 				} else {
-					// ATM: Weighted average
-					wCall := math.Pow(call.Confidence, b.settings.WeightPower)
-					wPut := math.Pow(put.Confidence, b.settings.WeightPower)
-
-					if wCall+wPut > 0 {
-						avgIV := (call.ImpliedVol*wCall + put.ImpliedVol*wPut) / (wCall + wPut)
-						// Create synthetic ATM point
-						chosen = *call // Copy meta from call
-						chosen.ImpliedVol = avgIV
-						chosen.Confidence = (call.Confidence + put.Confidence) / 2.0
-						chosen.Flags = append(chosen.Flags, "ATM_AVERAGE")
-					} else {
-						// Both low confidence? Pick one with higher conf
-						if call.Confidence > put.Confidence {
-							chosen = *call
-						} else {
-							chosen = *put
-						}
-					}
+					chosen = *call // OTM Call
 				}
 			} else {
-				// Fallback: pick highest confidence
+				// Fallback: Best confidence
 				best := pts[0]
 				for _, p := range pts[1:] {
 					if p.Confidence > best.Confidence {
@@ -97,96 +88,182 @@ func (b *Builder) BuildSkew(expiry string, points []market.IVPoint, forward, tte
 			}
 		}
 
-		// 3. Normalize: Calculate Log Moneyness x = ln(K/F)
-		// Assuming Forward > 0. If not, fallback to 0 log moneyness?
-		if forward > 0 {
-			chosen.LogMoneyness = math.Log(k / forward)
-		} else {
-			chosen.LogMoneyness = 0 // Should not happen with valid forward
+		// 3. Pre-Filter check (before weight calc, saves processing)
+		// Need LogMoneyness for filter
+		chosen.LogMoneyness = math.Log(strike / forward)
+
+		ok, _ := b.acceptPoint(chosen, forward)
+		if !ok {
+			// Maybe log valid but rejected points?
+			continue
 		}
 
-		// 4. Calculate Fitting Weight
-		// w = confidence^p
-		chosen.Weight = math.Pow(chosen.Confidence, b.settings.WeightPower)
+		// 4. Calculate Weight
+		chosen.Weight = b.computeWeight(chosen)
 
 		selectedPoints = append(selectedPoints, chosen)
 	}
 
 	skew.Points = selectedPoints
 
-	// 5. Fit the Curve (Quadratic WLS)
-	// Need at least 3 points for quadratic, 2 for linear
-	// Filter out very low weight/confidence points for fitting?
-	// The settings.ConfidenceMin is already applied in builder, but maybe double check.
-
-	var validPoints []market.IVPoint
-	for _, p := range selectedPoints {
-		if p.Confidence >= b.settings.ConfidenceMin {
-			validPoints = append(validPoints, p)
-		}
-	}
-
-	fitParams, fitQuality := b.fitQuadratic(validPoints)
+	// 5. Fit Variance Curve (Total Variance = IV^2 * T)
+	// We only fit on points that passed filters (ConfidenceMin is checked in acceptPoint)
+	fitParams, fitQuality := b.fitVarianceQuadratic(selectedPoints, tte)
 	skew.Fit.Params = fitParams
 	skew.Fit.Quality = fitQuality
 
-	// 6. Calculate Metrics
-	// ATM Vol: fit.a (if valid) or find nearest point
-	atmVol := fitParams.A
-	if fitQuality.PointsUsed < 2 {
-		// Fallback to nearest point
-		minAbsX := math.MaxFloat64
-		for _, p := range selectedPoints {
-			if math.Abs(p.LogMoneyness) < minAbsX {
-				minAbsX = math.Abs(p.LogMoneyness)
-				atmVol = p.ImpliedVol
-			}
+	// 6. Metrics
+	// ATM Vol from fit: sqrt(A / TTE)
+	atmVar := fitParams.A
+	atmVol := 0.0
+	if atmVar > 0 {
+		atmVol = math.Sqrt(atmVar / tte)
+	} else {
+		// Fallback if fit failed or negative variance
+		atmVol = fallbackNearestATMIV(selectedPoints)
+	}
+
+	// Check Relative RMSE
+	if atmVol > 0 {
+		relRMSE := fitQuality.WeightedRMSE / atmVol // RMSE is in Variance units? No, let's CHECK fitVarianceQuadratic
+		// If fitVarianceQuadratic returns RMSE in variance units, we should ideally convert or compare appropriately.
+		// Let's assume WeightedRMSE is in same units as Y (Variance).
+		// Relative Error in Variance ~ 2 * Relative Error in Vol?
+		// Let's flag if high.
+		if relRMSE > 0.15*atmVol { // Heuristic
+			skew.Fit.Quality.Flags = append(skew.Fit.Quality.Flags, "FIT_RMSE_HIGH")
 		}
 	}
 
 	skew.Metrics = market.SkewMetrics{
 		ATMVol:     atmVol,
-		SkewSlope:  fitParams.B,
-		Curvature:  fitParams.C,
-		Confidence: 0.0, // Aggregate confidence todo
+		SkewSlope:  fitParams.B,             // Variance Slope
+		Curvature:  fitParams.C,             // Variance Curvature
+		Confidence: fitQuality.WeightedRMSE, // Reuse field or calc average conf
 	}
 
-	// Aggregate confidence logic? Average of points near ATM?
-	// Simple prototype: avg confidence of used points
-	if len(validPoints) > 0 {
+	if len(selectedPoints) > 0 {
 		sumConf := 0.0
-		for _, p := range validPoints {
+		for _, p := range selectedPoints {
 			sumConf += p.Confidence
 		}
-		skew.Metrics.Confidence = sumConf / float64(len(validPoints))
+		skew.Metrics.Confidence = sumConf / float64(len(selectedPoints))
 	}
 
 	return skew
 }
 
-// fitQuadratic performs Weighted Least Squares for y = a + bx + cx^2
-func (b *Builder) fitQuadratic(points []market.IVPoint) (market.SkewFitParams, market.SkewFitQuality) {
-	n := len(points)
-	if n < 3 {
-		// Fallback to linear or mean?
-		// If n=2, fit linear. If n<2, fit simple mean or return 0.
-		return b.fitFallback(points)
+// Helpers
+
+func isOTM(optType market.OptionType, strike, forward float64) bool {
+	if optType == market.Put {
+		return strike < forward
+	}
+	return strike > forward
+}
+
+func isATM(strike, forward, atmBandX float64) bool {
+	x := math.Log(strike / forward)
+	return math.Abs(x) <= atmBandX
+}
+
+func blendATM(call, put market.IVPoint, pConf float64) market.IVPoint {
+	wC := math.Pow(call.Confidence, pConf)
+	wP := math.Pow(put.Confidence, pConf)
+	if wC+wP <= 0 {
+		if call.Confidence >= put.Confidence {
+			return call
+		}
+		return put
 	}
 
-	// Prepare matrices for Normal Equations: (X^T W X) beta = X^T W Y
-	// Matrix size 3x3 for Quadratic
+	out := call
+	out.ImpliedVol = (call.ImpliedVol*wC + put.ImpliedVol*wP) / (wC + wP)
+	out.Confidence = (call.Confidence + put.Confidence) / 2.0
+	out.Flags = append(out.Flags, "ATM_AVERAGE")
+	return out
+}
 
-	// Sums needed:
-	// sum(w), sum(w*x), sum(w*x^2), sum(w*x^3), sum(w*x^4)
-	// sum(w*y), sum(w*y*x), sum(w*y*x^2)
+func (b *Builder) acceptPoint(p market.IVPoint, forward float64) (bool, string) {
+	if forward <= 0 {
+		return false, "BAD_FORWARD"
+	}
+	if p.Confidence < b.settings.ConfidenceMin {
+		return false, "LOW_CONF"
+	}
+	if p.ImpliedVol < b.settings.IVMin || p.ImpliedVol > b.settings.IVMax {
+		return false, "IV_OUT_OF_RANGE"
+	}
+	if math.Abs(p.LogMoneyness) > b.settings.XMax {
+		return false, "OUTSIDE_X_WINDOW"
+	}
+	if b.settings.MinMarkPrice > 0 && p.MarkPrice > 0 && p.MarkPrice < b.settings.MinMarkPrice {
+		return false, "LOW_PREMIUM"
+	}
+	if b.settings.MaxFitErrorAbs > 0 && p.FitErrorAbs > b.settings.MaxFitErrorAbs {
+		return false, "HIGH_FIT_ERROR"
+	}
+	if b.settings.MinVegaPerVolPoint > 0 && p.VegaPerPoint > 0 && p.VegaPerPoint < b.settings.MinVegaPerVolPoint {
+		return false, "LOW_VEGA"
+	}
+	return true, ""
+}
+
+func (b *Builder) computeWeight(p market.IVPoint) float64 {
+	conf := math.Max(0.0, math.Min(1.0, p.Confidence))
+	wConf := math.Pow(conf, b.settings.WeightPowerConf)
+
+	v := p.VegaPerPoint
+	if v <= 0 {
+		v = 1.0 // fallback
+	}
+	wVega := math.Pow(v, b.settings.WeightPowerVega)
+
+	taper := 1.0
+	if b.settings.TaperX0 > 0 {
+		ax := math.Abs(p.LogMoneyness)
+		// Gaussian taper: exp(-(x/x0)^2)
+		taper = math.Exp(-math.Pow(ax/b.settings.TaperX0, 2))
+	}
+
+	w := wConf * wVega * taper
+	if w < 1e-9 {
+		w = 0
+	}
+	return w
+}
+
+func fallbackNearestATMIV(points []market.IVPoint) float64 {
+	if len(points) == 0 {
+		return 0
+	}
+	minAbsX := math.MaxFloat64
+	val := 0.0
+	for _, p := range points {
+		if math.Abs(p.LogMoneyness) < minAbsX {
+			minAbsX = math.Abs(p.LogMoneyness)
+			val = p.ImpliedVol
+		}
+	}
+	return val
+}
+
+// fitVarianceQuadratic fits w(x) = a + bx + cx^2 where y = TotalVariance = \sigma^2 * T
+func (b *Builder) fitVarianceQuadratic(points []market.IVPoint, tte float64) (market.SkewFitParams, market.SkewFitQuality) {
+	n := len(points)
+	if n < 3 {
+		return b.fitFallback(points, tte)
+	}
 
 	var sw, swx, swx2, swx3, swx4 float64
 	var swy, swyx, swyx2 float64
+	sse := 0.0
 
 	for _, p := range points {
 		w := p.Weight
 		x := p.LogMoneyness
-		y := p.ImpliedVol
+		// Y = Total Variance
+		y := p.ImpliedVol * p.ImpliedVol * tte
 
 		x2 := x * x
 		x3 := x2 * x
@@ -203,91 +280,110 @@ func (b *Builder) fitQuadratic(points []market.IVPoint) (market.SkewFitParams, m
 		swyx2 += w * y * x2
 	}
 
-	// Solve linear system 3x3
-	// [ sw    swx   swx2 ] [ a ]   [ swy   ]
-	// [ swx   swx2  swx3 ] [ b ] = [ swyx  ]
-	// [ swx2  swx3  swx4 ] [ c ]   [ swyx2 ]
+	// 3x3 Matrix
+	A := [3][3]float64{
+		{sw, swx, swx2},
+		{swx, swx2, swx3},
+		{swx2, swx3, swx4},
+	}
+	rhs := [3]float64{swy, swyx, swyx2}
 
-	// M = ...
-	m11, m12, m13 := sw, swx, swx2
-	m21, m22, m23 := swx, swx2, swx3
-	m31, m32, m33 := swx2, swx3, swx4
+	sol, ok := solve3x3(A, rhs)
 
-	r1, r2, r3 := swy, swyx, swyx2
-
-	// Cramers rule or Gaussian? 3x3 is small enough for direct inverse helper
-	det := m11*(m22*m33-m23*m32) - m12*(m21*m33-m23*m31) + m13*(m21*m32-m22*m31)
-
-	if math.Abs(det) < 1e-9 {
-		// Singular matrix (collinear points?), fallback
-		return b.fitFallback(points)
+	if !ok {
+		// Singular
+		return b.fitFallback(points, tte)
 	}
 
-	invDet := 1.0 / det
+	a, slope, c := sol[0], sol[1], sol[2]
 
-	// Solve for a (ATM)
-	// Replace col 1 with R
-	detA := r1*(m22*m33-m23*m32) - m12*(r2*m33-m23*r3) + m13*(r2*m32-m22*r3)
-	a := detA * invDet
+	// Clamp negative variance for a (ATM)
+	if a < 0 {
+		a = 0
+	}
 
-	// Solve for b (Slope)
-	// Replace col 2 with R
-	detB := m11*(r2*m33-m23*r3) - r1*(m21*m33-m23*m31) + m13*(m21*r3-r2*m31)
-	slope := detB * invDet
-
-	// Solve for c (Curvature)
-	// Replace col 3 with R
-	detC := m11*(m22*r3-r2*m32) - m12*(m21*r3-r2*m31) + r1*(m21*m32-m22*m31)
-	c := detC * invDet
-
-	// Calculate Weighted RMSE
-	sse := 0.0
+	// Calculate RMSE (in Variance units) and Count Meaningful Points
+	pointsUsed := 0
 	for _, p := range points {
 		x := p.LogMoneyness
+		y := p.ImpliedVol * p.ImpliedVol * tte
 		fitted := a + slope*x + c*x*x
-		err := p.ImpliedVol - fitted
+		err := y - fitted
 		sse += p.Weight * err * err
-	}
-	rmse := math.Sqrt(sse / sw) // Weighted RMSE
 
-	return market.SkewFitParams{A: a, B: slope, C: c}, market.SkewFitQuality{WeightedRMSE: rmse, PointsUsed: n}
+		if p.Weight > 0.05 {
+			pointsUsed++
+		}
+	}
+	rmse := 0.0
+	if sw > 0 {
+		rmse = math.Sqrt(sse / sw)
+	}
+
+	return market.SkewFitParams{A: a, B: slope, C: c}, market.SkewFitQuality{WeightedRMSE: rmse, PointsUsed: pointsUsed}
 }
 
-func (b *Builder) fitFallback(points []market.IVPoint) (market.SkewFitParams, market.SkewFitQuality) {
+func (b *Builder) fitFallback(points []market.IVPoint, tte float64) (market.SkewFitParams, market.SkewFitQuality) {
+	// Simple ATM average
 	n := len(points)
 	if n == 0 {
-		return market.SkewFitParams{}, market.SkewFitQuality{}
-	}
-	if n < 2 {
-		// Just return the point as constant line
-		return market.SkewFitParams{A: points[0].ImpliedVol}, market.SkewFitQuality{PointsUsed: n}
+		return market.SkewFitParams{}, market.SkewFitQuality{Flags: []string{"NO_POINTS"}}
 	}
 
-	// Linear fit WLS
-	// y = a + bx
-	var sw, swx, swx2 float64
-	var swy, swyx float64
-
+	// Just weighted mean of variance
+	sw := 0.0
+	swy := 0.0
 	for _, p := range points {
 		w := p.Weight
-		x := p.LogMoneyness
-		y := p.ImpliedVol
-
+		y := p.ImpliedVol * p.ImpliedVol * tte
 		sw += w
-		swx += w * x
-		swx2 += w * x * x
 		swy += w * y
-		swyx += w * y * x
 	}
 
-	det := sw*swx2 - swx*swx
-	if math.Abs(det) < 1e-9 {
-		// Average
-		return market.SkewFitParams{A: swy / sw}, market.SkewFitQuality{PointsUsed: n}
+	if sw <= 0 {
+		return market.SkewFitParams{A: points[0].ImpliedVol * points[0].ImpliedVol * tte}, market.SkewFitQuality{PointsUsed: n, Flags: []string{"ZERO_WEIGHT"}}
 	}
 
-	a := (swy*swx2 - swx*swyx) / det
-	slope := (sw*swyx - swx*swy) / det
+	a := swy / sw
+	return market.SkewFitParams{A: a, B: 0, C: 0}, market.SkewFitQuality{PointsUsed: n, Flags: []string{"FIT_FALLBACK_MEAN"}}
+}
 
-	return market.SkewFitParams{A: a, B: slope, C: 0}, market.SkewFitQuality{PointsUsed: n}
+// Gaussian elimination for 3x3
+func solve3x3(A [3][3]float64, b [3]float64) (x [3]float64, ok bool) {
+	M := [3][4]float64{
+		{A[0][0], A[0][1], A[0][2], b[0]},
+		{A[1][0], A[1][1], A[1][2], b[1]},
+		{A[2][0], A[2][1], A[2][2], b[2]},
+	}
+
+	// Forward elimination with pivoting
+	for i := 0; i < 3; i++ {
+		pivot := i
+		for r := i + 1; r < 3; r++ {
+			if math.Abs(M[r][i]) > math.Abs(M[pivot][i]) {
+				pivot = r
+			}
+		}
+		if math.Abs(M[pivot][i]) < 1e-12 {
+			return x, false
+		}
+		M[i], M[pivot] = M[pivot], M[i]
+
+		for r := i + 1; r < 3; r++ {
+			f := M[r][i] / M[i][i]
+			for c := i; c < 4; c++ {
+				M[r][c] -= f * M[i][c]
+			}
+		}
+	}
+
+	// Back substitution
+	for i := 2; i >= 0; i-- {
+		sum := M[i][3]
+		for c := i + 1; c < 3; c++ {
+			sum -= M[i][c] * x[c]
+		}
+		x[i] = sum / M[i][i]
+	}
+	return x, true
 }

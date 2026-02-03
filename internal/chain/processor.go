@@ -218,7 +218,7 @@ func (p *Processor) GenerateForwardState(snap *market.Snapshot, chainSnap *marke
 		sort.Float64s(forwards)
 		mid := len(forwards) / 2
 		var medianFwd float64
-		
+
 		if len(forwards)%2 == 1 {
 			medianFwd = forwards[mid]
 		} else {
@@ -282,10 +282,12 @@ func (p *Processor) GenerateChain(snap *market.Snapshot, expiry time.Time) (*mar
 		}
 
 		opt := &market.Option{
-			Mid:     q.Market.Mid,
-			Bid:     q.Market.Bid,
-			Ask:     q.Market.Ask,
-			Quality: q.Quality,
+			Mid:          q.Market.Mid,
+			Bid:          q.Market.Bid,
+			Ask:          q.Market.Ask,
+			Volume:       q.Market.Volume,
+			OpenInterest: q.Market.OpenInterest,
+			Quality:      q.Quality,
 		}
 
 		if q.Contract.Type == market.Call {

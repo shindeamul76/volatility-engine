@@ -9,9 +9,6 @@ import (
 	"math"
 	"os"
 
-	// "strconv"
-
-	// "strings"
 	"time"
 
 	"volatility-engine/internal/chain"
@@ -21,9 +18,10 @@ import (
 	// "volatility-engine/internal/quant/intel"
 	"volatility-engine/internal/quant/iv"
 	"volatility-engine/internal/quant/pricing"
+
 	// "volatility-engine/internal/quant/regime"
 	// "volatility-engine/internal/quant/strategy"
-	// "volatility-engine/internal/quant/surface"
+	"volatility-engine/internal/quant/surface"
 )
 
 func main() {
@@ -61,12 +59,12 @@ func runSnapshotPipeline() {
 	log.Println("Running snapshot pipeline (prototype)...")
 
 	// Hardcoded vars for prototype "walking skeleton"
-	filePath := "testdata/snapshots/option-chain-ED-NIFTY-03-Feb-2026.csv"
+	filePath := "testdata/snapshots/option-chain-ED-NIFTY-10-Feb-2026.csv"
 	underlying := "NIFTY"
-	spot := 25088.40 // NIFTY Spot Price
+	spot := 25727.55 // NIFTY Spot Price
 
 	ist, _ := time.LoadLocation("Asia/Kolkata")
-	expiryIST := time.Date(2026, 2, 3, 15, 30, 0, 0, ist)
+	expiryIST := time.Date(2026, 2, 10, 15, 30, 0, 0, ist)
 	expiry := expiryIST.UTC()
 
 	// 1. Ingest
@@ -155,7 +153,7 @@ func runSnapshotPipeline() {
 			T:              tte,
 			R:              0.06, // 7% Risk Free Rate
 			Q:              0.0,
-			Sigma:          0.1750, // 17.60% Vol
+			Sigma:          0.1310, // 17.60% Vol
 			IsForwardModel: isForward,
 		}
 
@@ -171,7 +169,7 @@ func runSnapshotPipeline() {
 				TTEYears:       tte,
 				RiskFreeRateCC: 0.06,
 				DiscountFactor: df,
-				Volatility:     0.1750,
+				Volatility:     0.1310,
 				Type:           "CALL",
 			},
 			Outputs: market.PricingOutputs{
@@ -289,10 +287,10 @@ func runSnapshotPipeline() {
 		ivRes := ivSolver.Solve(ivReq)
 		ivResults = append(ivResults, ivRes)
 
-		if ivRes.Status == market.IVStatusConverged {
-			log.Printf("  %.0f %s: IV=%.2f%% (conf=%.2f)",
-				ivInput.Strike, ivInput.Type, ivRes.Result.ImpliedVol*100, ivRes.Quality.Confidence)
-		}
+		// if ivRes.Status == market.IVStatusConverged {
+		// 	log.Printf("  %.0f %s: IV=%.2f%% (conf=%.2f)",
+		// 		ivInput.Strike, ivInput.Type, ivRes.Result.ImpliedVol*100, ivRes.Quality.Confidence)
+		// }
 
 	}
 
@@ -310,7 +308,7 @@ func runSnapshotPipeline() {
 	}
 
 	// // 5. Build Volatility Surface
-	// log.Println("=== Building IV Surface ===")
+	log.Println("=== Building IV Surface ===")
 
 	// // Convert solver results to surface inputs (IVPoint)
 	// // We need to map back to the request details.
@@ -319,7 +317,7 @@ func runSnapshotPipeline() {
 	// // Actually, best way in this "main" script is to just build the points list AS we solve.
 
 	// // Re-iterating to demonstrate clear separation:
-	// var surfacePoints []market.IVPoint
+	var surfacePoints []market.IVPoint
 
 	// // We need to re-loop or store the inputs.
 	// // Let's assume we can map the `ivResults` back.
@@ -342,105 +340,69 @@ func runSnapshotPipeline() {
 	// // `RequestID` format: `iv_20260205_23300_PUT`.
 	// // I can parse this string.
 
-	// surfacePoints = make([]market.IVPoint, 0, len(ivResults))
-	// for _, res := range ivResults {
-	// 	if res.Status != market.IVStatusConverged {
-	// 		continue
-	// 	}
+	surfacePoints = make([]market.IVPoint, 0, len(ivResults))
+	for _, res := range ivResults {
+		if res.Status != market.IVStatusConverged {
+			continue
+		}
 
-	// 	// Parse ID: "iv_DATE_STRIKE_TYPE"
-	// 	// Using Split since Sscanf %s consumes underscores
-	// 	parts := strings.Split(res.RequestID, "_")
-	// 	if len(parts) < 4 {
-	// 		continue
-	// 	}
-	// 	// parts[0] = "iv"
-	// 	// parts[1] = dateStr
-	// 	// parts[2] = strikeStr
-	// 	// parts[3] = typeStr
-
-	// 	typeStr := parts[3]
-	// 	strike, err := strconv.ParseFloat(parts[2], 64)
-	// 	if err != nil {
-	// 		continue
-	// 	}
-
-	// 	// We also need Forward and Expiry Date.
-	// 	// Expiry is `dateStr` (formatted YYYYMMDD).
-	// 	// Forward? usage in LogMoneyness requires F.
-	// 	// `IVResult` doesn't have it.
-	// 	// `IVPoint` needs to be passed to builder.
-	// 	// `Builder.BuildFromPoints` calculates LogMoneyness. It needs F.
-	// 	// `Builder` expects `BuildSkew` to calculate it using passed F.
-	// 	// `BuildFromPoints` calls `BuildSkew(expiry, points, 0, 0)` -> Passing 0 Forward!
-	// 	// My `Builder.BuildFromPoints` implementation had a TODO about Forward.
-	// 	// I recall stubbing it with 0.
-	// 	// I must fix `Builder.BuildFromPoints` to accept a map of Forwards, OR pass Forward in IVPoint.
-	// 	// `IVPoint` has `LogMoneyness`, but `Builder` re-calculates it.
-	// 	// Let's check `builder.go`:
-	// 	// `chosen.LogMoneyness = math.Log(k / forward)`
-	// 	// It uses the `forward` arg passed to `BuildSkew`.
-	// 	// And `BuildFromPoints` passes 0.
-	// 	// THIS IS A BUG in my previous step's Builder logic if I rely on `BuildFromPoints` without arguments.
-
-	// 	// Correction: I should update `BuildFromPoints` to take a `ForwardMap` or `ChainSnapshot`.
-	// 	// OR, since this is `main.go`, I can call `builder.BuildSkew` directly for each expiry since I know F.
-
-	// 	// Let's do that. Direct orchestration in main is safer for prototype.
-
-	// 	p := market.IVPoint{
-	// 		Expiry:     expiry.Format("2006-01-02"), // Derived from context knowing main loop is single expiry
-	// 		Strike:     strike,
-	// 		Type:       market.OptionType(typeStr),
-	// 		ImpliedVol: res.Result.ImpliedVol,
-	// 		Confidence: res.Quality.Confidence,
-	// 		MarkSource: "MID", // Hardcoded in main loop
-	// 		// MarkPrice? We don't have it in Result.
-	// 	}
-	// 	surfacePoints = append(surfacePoints, p)
-	// }
+		// Direct construction from Result, no string parsing
+		// We added Instrument and Market to IVResult, so use them.
+		p := market.IVPoint{
+			Expiry:       res.Instrument.Expiry,
+			Strike:       res.Instrument.Strike,
+			Type:         res.Instrument.Type,
+			ImpliedVol:   res.Result.ImpliedVol,
+			Confidence:   res.Quality.Confidence,
+			MarkSource:   res.Market.MarkSource,
+			MarkPrice:    res.Market.MarkPrice,
+			FitErrorAbs:  res.Result.FitErrorAbs,
+			VegaPerPoint: res.Diagnostics.VegaAtSolution,
+		}
+		surfacePoints = append(surfacePoints, p)
+	}
 
 	// // Direct BuildSkew call since we have single expiry context `chainSnap`
-	// surfaceBuilder := surface.NewBuilder(surface.DefaultSettings())
+	surfaceBuilder := surface.NewBuilder(surface.DefaultSettings())
 
 	// // Need Forward. `S_input` was used for pricing/solving.
 	// // `expiry` formatting same as used in loop.
 
-	// skewSnap := surfaceBuilder.BuildSkew(expiry.Format("2006-01-02"), surfacePoints, S_input, tte)
+	skewSnap := surfaceBuilder.BuildSkew(expiry.Format("2006-01-02"), surfacePoints, S_input, tte)
 
-	// log.Printf("Surface Built for %s:", skewSnap.Expiry)
-	// log.Printf("  ATM Vol: %.2f%%", skewSnap.Metrics.ATMVol*100)
-	// log.Printf("  Skew Slope: %.4f", skewSnap.Metrics.SkewSlope)
-	// log.Printf("  Curvature: %.4f", skewSnap.Metrics.Curvature)
-	// log.Printf("  Points Used: %d / %d", skewSnap.Fit.Quality.PointsUsed, len(skewSnap.Points))
+	log.Printf("Surface Built for %s:", skewSnap.Expiry)
+	log.Printf("  ATM Vol: %.2f%%", skewSnap.Metrics.ATMVol*100)
+	log.Printf("  Skew Slope: %.4f", skewSnap.Metrics.SkewSlope)
+	log.Printf("  Curvature: %.4f", skewSnap.Metrics.Curvature)
+	log.Printf("  Points Used: %d / %d", skewSnap.Fit.Quality.PointsUsed, len(skewSnap.Points))
 
-	// // Sanity Checks
-	// minX, maxX := 1000.0, -1000.0
-	// calls, puts := 0, 0
+	// Sanity Checks
+	minX, maxX := 1000.0, -1000.0
+	calls, puts := 0, 0
 
-	// log.Println("--- Sanity Check: X-Axis & OTM Selection ---")
-	// for i, p := range skewSnap.Points {
-	// 	if p.LogMoneyness < minX {
-	// 		minX = p.LogMoneyness
-	// 	}
-	// 	if p.LogMoneyness > maxX {
-	// 		maxX = p.LogMoneyness
-	// 	}
+	log.Println("--- Sanity Check: X-Axis & OTM Selection ---")
+	for i, p := range skewSnap.Points {
+		if p.LogMoneyness < minX {
+			minX = p.LogMoneyness
+		}
+		if p.LogMoneyness > maxX {
+			maxX = p.LogMoneyness
+		}
 
-	// 	if p.Type == market.Call {
-	// 		calls++
-	// 	} else {
-	// 		puts++
-	// 	}
+		if p.Type == market.Call {
+			calls++
+		} else {
+			puts++
+		}
 
-	// 	// Print a few samples across the range
-	// 	if i == 0 || i == len(skewSnap.Points)/2 || i == len(skewSnap.Points)-1 {
-	// 		log.Printf("  Sample [%d]: Strike=%.0f Type=%s IV=%.2f%% X=%.4f Conf=%.2f W=%.4f",
-	// 			i, p.Strike, p.Type, p.ImpliedVol*100, p.LogMoneyness, p.Confidence, p.Weight)
-	// 	}
-	// }
-	// log.Printf("  X-Axis Range: [%.4f, %.4f]", minX, maxX)
-	// log.Printf("  Composition: %d Calls, %d Puts", calls, puts)
+		// Print a few samples across the range
+		if i == 0 || i == len(skewSnap.Points)/2 || i == len(skewSnap.Points)-1 {
+			log.Printf("  Sample [%d]: Strike=%.0f Type=%s IV=%.2f%% X=%.4f Conf=%.2f W=%.4f",
+				i, p.Strike, p.Type, p.ImpliedVol*100, p.LogMoneyness, p.Confidence, p.Weight)
+		}
+	}
+	log.Printf("  X-Axis Range: [%.4f, %.4f]", minX, maxX)
+	log.Printf("  Composition: %d Calls, %d Puts", calls, puts)
 
 	// // 6. Regime Detection
 	// log.Println("=== Regime Detection ===")

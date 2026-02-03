@@ -32,7 +32,9 @@ func NewSolver(settings market.SolverSettings) *Solver {
 // Solve finds implied volatility for the given request
 func (s *Solver) Solve(req market.IVRequest) market.IVResult {
 	result := market.IVResult{
-		RequestID: req.ID,
+		RequestID:  req.ID,
+		Instrument: req.Instrument,
+		Market:     req.Market,
 		Quality: market.IVQuality{
 			Flags:    []string{},
 			Warnings: []string{},

@@ -12,6 +12,18 @@ const (
 	Put  OptionType = "PUT"
 )
 
+// ParseOptionType safely parses a string into OptionType
+func ParseOptionType(s string) (OptionType, bool) {
+	switch s {
+	case "CALL", "C", "call", "c":
+		return Call, true
+	case "PUT", "P", "put", "p":
+		return Put, true
+	default:
+		return "", false
+	}
+}
+
 // Contract identifies a specific option contract.
 type Contract struct {
 	Symbol string     `json:"symbol"`
@@ -119,11 +131,11 @@ type ChainState struct {
 }
 
 type EligibilityRules struct {
-	MaxSpreadPct    float64 `json:"max_spread_pct"`
-	MinVolume       int64   `json:"min_volume"`
-	MinOpenInterest int64   `json:"min_open_interest"`
+	MaxSpreadPct        float64 `json:"max_spread_pct"`
+	MinVolume           int64   `json:"min_volume"`
+	MinOpenInterest     int64   `json:"min_open_interest"`
 	NearATMStrikeWindow int     `json:"near_atm_strike_window"` // For forward parity calc
-	RequireBidAsk   bool    `json:"require_bid_ask"`
+	RequireBidAsk       bool    `json:"require_bid_ask"`
 }
 
 type StrikeChain struct {
@@ -161,9 +173,12 @@ type IVPoint struct {
 	Confidence   float64    `json:"confidence"`
 	LogMoneyness float64    `json:"log_moneyness"`
 	Weight       float64    `json:"weight"` // Calculated as confidence^p
-	MarkPrice    float64    `json:"mark_price"`
-	MarkSource   string     `json:"mark_source"`
-	Flags        []string   `json:"flags"`
+
+	MarkPrice    float64  `json:"mark_price"`     // ADDED
+	FitErrorAbs  float64  `json:"fit_error_abs"`  // ADDED
+	VegaPerPoint float64  `json:"vega_per_point"` // ADDED
+	MarkSource   string   `json:"mark_source"`
+	Flags        []string `json:"flags"`
 }
 
 type StrategyLegUniverse struct {
@@ -180,8 +195,9 @@ type SkewFitParams struct {
 }
 
 type SkewFitQuality struct {
-	WeightedRMSE float64 `json:"weighted_rmse"`
-	PointsUsed   int     `json:"points_used"`
+	WeightedRMSE float64  `json:"weighted_rmse"`
+	PointsUsed   int      `json:"points_used"`
+	Flags        []string `json:"flags"`
 }
 
 type SkewFit struct {

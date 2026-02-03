@@ -12,16 +12,43 @@ type Builder struct {
 }
 
 type BuilderSettings struct {
-	ConfidenceMin float64
-	WeightPower   float64
+	// Selection & Weights
+	ConfidenceMin   float64
+	WeightPowerConf float64 // Power for confidence weight (e.g. 2.0)
+	WeightPowerVega float64 // Power for vega weight (e.g. 1.0)
+	TaperX0         float64 // Moneyness taper width (e.g. 0.06)
+
+	// OTM Selection
 	OTMPreference bool
+	ATMBandX      float64 // Log-moneyness band for ATM blending (e.g. 0.003)
+	DropITMOnly   bool    // If true, drop single ITM points if not in ATM band
+
+	// Filtering
+	XMax               float64 // Max abs log-moneyness (e.g. 0.12)
+	IVMin              float64 // Min IV (e.g. 0.01)
+	IVMax              float64 // Max IV (e.g. 3.0)
+	MinMarkPrice       float64 // Min price to accept (e.g. 0.5)
+	MaxFitErrorAbs     float64 // Max solver fit error (e.g. 0.5)
+	MinVegaPerVolPoint float64 // Min vega to accept (e.g. 0.2)
 }
 
 func DefaultSettings() BuilderSettings {
 	return BuilderSettings{
-		ConfidenceMin: 0.4,
-		WeightPower:   2.0,
+		ConfidenceMin:   0.45,
+		WeightPowerConf: 2.0,
+		WeightPowerVega: 1.0,
+		TaperX0:         0.06,
+
 		OTMPreference: true,
+		ATMBandX:      0.003,
+		DropITMOnly:   true,
+
+		XMax:               0.12,
+		IVMin:              0.01,
+		IVMax:              3.0,
+		MinMarkPrice:       0.5,
+		MaxFitErrorAbs:     0.5,
+		MinVegaPerVolPoint: 0.2,
 	}
 }
 

@@ -56,6 +56,8 @@ type SolverSettings struct {
 // IVResult is the output from IV solving
 type IVResult struct {
 	RequestID   string        `json:"iv_request_id"`
+	Instrument  IVInstrument  `json:"instrument"` // ADDED
+	Market      IVMarket      `json:"market"`     // ADDED
 	Status      string        `json:"status"`
 	Result      IVResultData  `json:"result"`
 	Diagnostics IVDiagnostics `json:"diagnostics"`
