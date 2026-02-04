@@ -27,11 +27,17 @@ func DefaultSettings() Settings {
 }
 
 type Detector struct {
-	settings Settings
+	settings     Settings
+	ivHistory    IVHistoryProvider
+	priceHistory PriceHistoryProvider
 }
 
-func NewDetector(settings Settings) *Detector {
-	return &Detector{settings: settings}
+func NewDetector(settings Settings, ivHist IVHistoryProvider, priceHist PriceHistoryProvider) *Detector {
+	return &Detector{
+		settings:     settings,
+		ivHistory:    ivHist,
+		priceHistory: priceHist,
+	}
 }
 
 func (d *Detector) Detect(surface market.IVSurfaceSnapshot) market.RegimeState {
@@ -41,7 +47,7 @@ func (d *Detector) Detect(surface market.IVSurfaceSnapshot) market.RegimeState {
 	}
 
 	// 1. Calculate IV30
-	iv30, conf, err := InterpolateIV30(surface.Skews)
+	iv30, conf, method, err := InterpolateIV30(surface.Skews)
 	if err != nil {
 		state.Decision.Rationale = append(state.Decision.Rationale, "IV30 Calc Failed: "+err.Error())
 		state.Quality.Warnings = append(state.Quality.Warnings, "IV30_FAIL")
@@ -52,51 +58,85 @@ func (d *Detector) Detect(surface market.IVSurfaceSnapshot) market.RegimeState {
 			state.IVReference.Method = "NEAREST_FALLBACK"
 		}
 	} else {
-		state.IVReference.Method = "VARIANCE_INTERP"
+		state.IVReference.Method = method
 	}
 
 	state.IVReference.TenorDays = 30
 	state.IVReference.IV = iv30
 	state.IVReference.Confidence = conf
 
-	// 2. Fetch/Mock Historical Data
-	// User requested "constant values" for prototype
-	// Mocking N=200 days. Min=0.11, Max=0.28, HV=0.14
-	histMin := 0.11
-	histMax := 0.28
-	hv20 := 0.14
-	histLookback := 200
+	// 2. Fetch Historical IV Data
+	histLookback := 200 // Default lookback
+	ivHistory, err := d.ivHistory.GetIV30History(surface.Underlying, surface.AsOf, histLookback)
 
-	// Simulated History slice for Percentile (mocking distribution)
-	// We'll just infer percentile from rank roughly or hardcode for now
-	// User Example: Rank=0.33, Percentile=0.40.
-	// Let's implement a dynamic mock that is consistent with the current IV30
-	// If IV30 matches user example (0.1667), we should return 0.40 percentile.
-	// Let's create a synthetic history array: [Min...Max] uniform
-	histData := make([]float64, histLookback)
-	step := (histMax - histMin) / float64(histLookback-1)
-	for i := 0; i < histLookback; i++ {
-		histData[i] = histMin + float64(i)*step
+	histMin := 0.0
+	histMax := 0.0
+	ivRank := 0.5
+	ivPercentile := 0.5
+
+	if err != nil || len(ivHistory) == 0 {
+		state.Quality.Warnings = append(state.Quality.Warnings, "IV_HISTORY_MISSING")
+		state.Decision.Rationale = append(state.Decision.Rationale, "WARN: No IV History")
+		// Fallback defaults already set
+	} else {
+		// Compute Stats
+		minV, maxV := ivHistory[0], ivHistory[0]
+		for _, v := range ivHistory {
+			if v < minV {
+				minV = v
+			}
+			if v > maxV {
+				maxV = v
+			}
+		}
+		histMin = minV
+		histMax = maxV
+
+		ivRank = ComputeRankFromSeries(iv30, ivHistory)
+		ivPercentile = ComputePercentileFromSeries(iv30, ivHistory)
 	}
 
 	state.HistoricalContext = market.HistoricalContext{
 		LookbackDays: histLookback,
 		MinIV:        histMin,
 		MaxIV:        histMax,
-		IVRank:       ComputeRank(iv30, histMin, histMax),
-		IVPercentile: ComputePercentile(iv30, histData),
+		IVRank:       ivRank,
+		IVPercentile: ivPercentile,
 	}
 
-	// 3. Realized Vol
-	state.RealizedVol = market.RealizedVol{
-		WindowDays: 20,
-		HV:         hv20,
-		IVHVRatio:  iv30 / hv20,
-		IVHVSpread: iv30 - hv20,
-	}
-	if hv20 <= 0 {
+	// 3. Realized Vol (HV20)
+	hvWindow := 20
+	// We need lookback + 1 for N returns, but fetching a bit more is safe
+	closes, err := d.priceHistory.GetDailyCloses(surface.Underlying, surface.AsOf, hvWindow+5)
+
+	hv20 := 0.0
+	if err != nil || len(closes) < 2 {
 		state.Quality.Warnings = append(state.Quality.Warnings, "HV_UNAVAILABLE")
-		// Adjust calc if needed
+		// Leave hv20 as 0
+	} else {
+		// Use last hvWindow + 1 closes to get hvWindow returns?
+		// Actually ComputeHV takes slice of closes. N closes -> N-1 returns.
+		// If we want 20 day HV, we need 21 closes.
+		val, err := ComputeHV(closes, 252.0)
+		if err != nil {
+			state.Quality.Warnings = append(state.Quality.Warnings, "HV_CALC_FAIL")
+		} else {
+			hv20 = val
+		}
+	}
+
+	ivHvRatio := 0.0
+	ivHvSpread := 0.0
+	if hv20 > 0 {
+		ivHvRatio = iv30 / hv20
+		ivHvSpread = iv30 - hv20
+	}
+
+	state.RealizedVol = market.RealizedVol{
+		WindowDays: hvWindow,
+		HV:         hv20,
+		IVHVRatio:  ivHvRatio,
+		IVHVSpread: ivHvSpread,
 	}
 
 	// 4. Term Structure & Skew Context
@@ -113,14 +153,13 @@ func (d *Detector) Detect(surface market.IVSurfaceSnapshot) market.RegimeState {
 	}
 
 	// Skew from used expiry
-	// Finding skew for expiry closest to 30d or just nearest?
-	// User: "from near expiry or IV30"
-	// Let's pick Nearest >= 30d if possible, or just first valid.
-	skewSource := surface.Skews[0] // Default
-	state.Skew = market.RegimeSkew{
-		ExpiryUsed: skewSource.Expiry,
-		SkewSlope:  skewSource.Metrics.SkewSlope,
-		Curvature:  skewSource.Metrics.Curvature,
+	if len(surface.Skews) > 0 {
+		skewSource := surface.Skews[0] // Default
+		state.Skew = market.RegimeSkew{
+			ExpiryUsed: skewSource.Expiry,
+			SkewSlope:  skewSource.Metrics.SkewSlope,
+			Curvature:  skewSource.Metrics.Curvature,
+		}
 	}
 
 	// 5. Compute Score

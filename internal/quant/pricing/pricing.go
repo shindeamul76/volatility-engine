@@ -1,7 +1,6 @@
 package pricing
 
 import (
-	"log"
 	"math"
 
 	"volatility-engine/internal/domain/market"
@@ -92,7 +91,7 @@ func calculateD1D2(ctx PricingContext) (float64, float64) {
 		F = ctx.S * math.Exp((ctx.R-ctx.Q)*ctx.T)
 	}
 
-	log.Println("F: ", F)
+	// log.Println("F: ", F)
 
 	// d1 = (ln(F/K) + 0.5 * sigma^2 * T) / (sigma * sqrt(T))
 	// d2 = d1 - sigma * sqrt(T)

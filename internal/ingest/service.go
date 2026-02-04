@@ -251,11 +251,10 @@ func (s *IngestService) buildQuote(row RawRow, strike float64, optType market.Op
 	// Analytics: Lenient (Just need valid price structure)
 	q.Quality.IsUsableForAnalytics = !hasFlag("BAD_PRICE") && !hasFlag("CROSSED_MARKET") && !hasFlag("BAD_MID_PRICE")
 
-	// IV Surface: Valid mid from bid/ask, decent spread, not severely illiquid
-	// --- IMPROVEMENT #3: No LTP_FALLBACK for IV ---
+	// IV Surface: Valid mid from bid/ask, decent percentage spread, not severely illiquid
+	// Relaxed for far expiries: Ignore absolute spread check for IV solving
 	q.Quality.IsUsableForIV = q.Quality.IsUsableForAnalytics &&
 		!hasFlag("WIDE_SPREAD") &&
-		!hasFlag("WIDE_SPREAD_ABS") &&
 		!hasFlag("ILLIQUID") &&
 		!hasFlag("LTP_FALLBACK")
 

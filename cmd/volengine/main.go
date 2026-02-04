@@ -12,15 +12,18 @@ import (
 	"time"
 
 	"volatility-engine/internal/chain"
+	"volatility-engine/internal/config"
 	"volatility-engine/internal/domain/market"
 	"volatility-engine/internal/ingest"
 
 	// "volatility-engine/internal/quant/intel"
 	"volatility-engine/internal/quant/iv"
-	"volatility-engine/internal/quant/pricing"
 
-	// "volatility-engine/internal/quant/regime"
+	"volatility-engine/internal/quant/regime"
 	// "volatility-engine/internal/quant/strategy"
+
+	"sort"
+	"sync"
 	"volatility-engine/internal/quant/surface"
 )
 
@@ -56,31 +59,110 @@ func main() {
 }
 
 func runSnapshotPipeline() {
-	log.Println("Running snapshot pipeline (prototype)...")
+	log.Println("Running snapshot pipeline...")
 
-	// Hardcoded vars for prototype "walking skeleton"
-	filePath := "testdata/snapshots/option-chain-ED-NIFTY-10-Feb-2026.csv"
-	underlying := "NIFTY"
-	spot := 25727.55 // NIFTY Spot Price
-
-	ist, _ := time.LoadLocation("Asia/Kolkata")
-	expiryIST := time.Date(2026, 2, 10, 15, 30, 0, 0, ist)
-	expiry := expiryIST.UTC()
-
-	// 1. Ingest
-	ingestSvc := ingest.NewIngestService()
-
-	// Fake S3 Key for prototype
-	s3Key := fmt.Sprintf("s3://vol-engine/raw/prototypes/%s_%s.csv", underlying, time.Now().Format("20060102"))
-	snap, err := ingestSvc.IngestSnapshot(filePath, underlying, spot, expiry, s3Key)
-
+	// Load configuration from file
+	cfg, err := config.Load("config.yaml")
 	if err != nil {
-		log.Fatalf("Ingestion failed: %v", err)
+		log.Fatalf("Failed to load config: %v", err)
 	}
 
-	log.Printf("Snapshot Ingested: %s", snap.ID)
+	log.Printf("Loaded config: %s @ %.2f, Risk-Free Rate: %.2f%%",
+		cfg.Market.Underlying, cfg.Market.Spot, cfg.Pricing.RiskFreeRate*100)
+
+	// Use config values
+	underlying := cfg.Market.Underlying
+	spot := cfg.Market.Spot
+
+	// Parse file configurations from config
+	var fileConfigs []struct {
+		Path   string
+		Expiry time.Time
+	}
+
+	for _, f := range cfg.Files {
+		expiry, err := cfg.ParseFileExpiry(f.Expiry)
+		if err != nil {
+			log.Fatalf("Failed to parse expiry for %s: %v", f.Path, err)
+		}
+		fileConfigs = append(fileConfigs, struct {
+			Path   string
+			Expiry time.Time
+		}{
+			Path:   f.Path,
+			Expiry: expiry.UTC(),
+		})
+	}
+
+	// 1. Multi-File Ingest and Merge
+	ingestSvc := ingest.NewIngestService()
+
+	var allQuotes []market.Quote
+	expiryMap := make(map[string]market.ExpiryMetadata)
+
+	log.Printf("Ingesting %d CSV file(s)...", len(fileConfigs))
+
+	for i, config := range fileConfigs {
+		s3Key := fmt.Sprintf("s3://vol-engine/raw/prototypes/%s_%s_%d.csv",
+			underlying, time.Now().Format("20060102"), i)
+
+		snap, err := ingestSvc.IngestSnapshot(config.Path, underlying, spot, config.Expiry, s3Key)
+		if err != nil {
+			log.Printf("Warning: Failed to ingest %s: %v", config.Path, err)
+			continue
+		}
+
+		log.Printf("  [%d/%d] Ingested: %s (%d quotes, expiry: %s)",
+			i+1, len(fileConfigs), config.Path, len(snap.Quotes),
+			config.Expiry.Format("2006-01-02"))
+
+		// Merge quotes
+		allQuotes = append(allQuotes, snap.Quotes...)
+
+		// Merge expiries (deduplicate by expiry date)
+		for _, exp := range snap.Expiries {
+			key := exp.Expiry.Format("2006-01-02")
+			if _, exists := expiryMap[key]; !exists {
+				expiryMap[key] = exp
+			}
+		}
+	}
+
+	// Build merged expiries array
+	var mergedExpiries []market.ExpiryMetadata
+	for _, exp := range expiryMap {
+		mergedExpiries = append(mergedExpiries, exp)
+	}
+
+	// Create merged snapshot
+	snap := &market.Snapshot{
+		ID:         fmt.Sprintf("snap_%s_%s", time.Now().Format("20060102_150405"), underlying),
+		AsOf:       time.Now().UTC(),
+		Underlying: market.Underlying{Symbol: underlying, Spot: spot},
+		Quotes:     allQuotes,
+		Expiries:   mergedExpiries,
+	}
+
+	// Recalculate quality summary
+	tradable := 0
+	rejected := 0
+	for _, q := range allQuotes {
+		if len(q.Quality.Flags) == 0 {
+			tradable++
+		} else {
+			rejected++
+		}
+	}
+	snap.QualitySummary = market.QualitySummary{
+		TotalQuotes:    len(allQuotes),
+		TradableQuotes: tradable,
+		RejectedQuotes: rejected,
+	}
+
+	log.Printf("Merged Snapshot: %s", snap.ID)
 	log.Printf("Underlying: %s, Spot: %.2f", snap.Underlying.Symbol, snap.Underlying.Spot)
-	log.Printf("Total Quotes: %d", len(snap.Quotes))
+	log.Printf("Total Quotes: %d (from %d file(s))", len(snap.Quotes), len(fileConfigs))
+	log.Printf("Total Expiries: %d", len(snap.Expiries))
 	log.Printf("Tradable: %d, Rejected: %d", snap.QualitySummary.TradableQuotes, snap.QualitySummary.RejectedQuotes)
 
 	// Print a few sample quotes to prove it worked
@@ -97,345 +179,269 @@ func runSnapshotPipeline() {
 	// bytes, _ := json.MarshalIndent(snap, "", "  ")
 	// fmt.Println(string(bytes))
 
-	// 2. Chain Generation
-	log.Println("Generating Chain Snapshot...")
-	chainProc := chain.NewProcessor(0.06) // 7% Risk Free Rate
-	chainSnap, err := chainProc.GenerateChain(snap, expiry)
-	if err != nil {
-		log.Fatalf("Chain generation failed: %v", err)
-	}
+	// 2. Multi-Expiry Pipeline
+	log.Println("Starting Multi-Expiry Pipeline...")
 
-	log.Printf("Chain Generated: %s (ATM: %.2f)", chainSnap.ID, chainSnap.ChainState.ATMStrike)
-
-	// Dump Chain JSON
-	// chainBytes, _ := json.MarshalIndent(chainSnap, "", "  ")
-	// log.Println(string(chainBytes))
-
-	// // 3. Pricing Example (ATM Call)
-	log.Println("Calculating Pricing for ATM Strike...")
-
-	// // Use Implied Forward if available
-	S_input := chainSnap.Underlying.Spot
-	isForward := false
-
-	log.Println("ImpliedForward: ", chainSnap.ChainState.ImpliedForward)
-	if chainSnap.ChainState.ImpliedForward > 0 {
-		S_input = chainSnap.ChainState.ImpliedForward
-		isForward = true
-		log.Printf("Using Implied Forward: %.2f", S_input)
-	}
-
-	log.Println("IsForward: ", isForward)
-
-	atmStrike := chainSnap.ChainState.ATMStrike
-	kStr := fmt.Sprintf("%.0f", atmStrike)
-	atmChain := chainSnap.ByStrike[kStr]
-
-	// log.Println("ATMCHAIN.Call: ", atmChain.Call)
-	// log.Println("ATMCHAIN.Put: ", atmChain.Put)
-
-	// Calculate TTE and DF (needed for pricing and IV solving)
-	tte := chainSnap.Expiry.TTEYears
-	// fmt.Println("TTE: ", tte)
-	if tte == 0 {
-		tte = float64(chainSnap.Expiry.DaysToExpiry) / 365.0
-	}
-	df := math.Exp(-0.06 * tte)
-	// fmt.Println("Discount: ", df)
-
-	var fwdState *market.ForwardState
-
-	if atmChain != nil && atmChain.Call != nil {
-		pCtx := pricing.PricingContext{
-			Type:           market.Call,
-			S:              S_input,
-			K:              atmStrike,
-			T:              tte,
-			R:              0.06, // 7% Risk Free Rate
-			Q:              0.0,
-			Sigma:          0.1310, // 17.60% Vol
-			IsForwardModel: isForward,
-		}
-
-		res := pricing.Calculate(pCtx)
-
-		// 	// Build PricingResult JSON
-		pricingResult := market.PricingResult{
-			RequestID: fmt.Sprintf("prc_req_%s", time.Now().Format("150405")),
-			ModelUsed: "BLACK_SCHOLES_FORWARD",
-			InputsEcho: market.PricingInputs{
-				Forward:        S_input,
-				Strike:         atmStrike,
-				TTEYears:       tte,
-				RiskFreeRateCC: 0.06,
-				DiscountFactor: df,
-				Volatility:     0.1310,
-				Type:           "CALL",
-			},
-			Outputs: market.PricingOutputs{
-				TheoreticalPrice: res.Price,
-				Greeks: market.GreeksOutput{
-					Delta:           res.Greeks.Delta,
-					Gamma:           res.Greeks.Gamma,
-					ThetaPerDay:     res.Greeks.ThetaPerDay,
-					VegaPerVolPoint: res.Greeks.VegaPerVolPoint,
-				},
-				Intermediates: market.PricingIntermediates{
-					D1:  res.Intermediates.D1,
-					D2:  res.Intermediates.D2,
-					Nd1: res.Intermediates.Nd1,
-					Nd2: res.Intermediates.Nd2,
-				},
-			},
-			Quality: market.PricingQuality{
-				OK:       res.Quality.OK,
-				Flags:    res.Quality.Flags,
-				Warnings: res.Quality.Warnings,
-			},
-		}
-
-		// 	// Generate ForwardState
-		fwdState = chainProc.GenerateForwardState(snap, chainSnap, expiry)
-
-		// 	// Output JSON
-		log.Println("=== ForwardState JSON ===")
-		fwdBytes, _ := json.MarshalIndent(fwdState, "", "  ")
-		log.Println(string(fwdBytes))
-
-		log.Println("=== PricingResult JSON ===")
-		prcBytes, _ := json.MarshalIndent(pricingResult, "", "  ")
-		log.Println(string(prcBytes))
-	} else {
-		// Just creating empty fwdState for scope availability, ideally should always calculate
-		log.Println("Warning: ATM Chain not found, skipping specific Pricing calc but generating ForwardState anyway")
-		fwdState = chainProc.GenerateForwardState(snap, chainSnap, expiry)
-	}
-
-	// // // 4. IV Solving for all eligible quotes
-	// log.Println("=== IV Solving ===")
+	// Shared Generators/Solvers
+	chainProc := chain.NewProcessor(cfg.Pricing.RiskFreeRate)
 	ivSolver := iv.NewSolver(iv.DefaultSettings())
-	ivResults := []market.IVResult{}
-
-	for _, ivInput := range chainSnap.DownstreamReadySets.IVSurfaceInputs {
-		// Find the quote data
-		kStr := fmt.Sprintf("%.0f", ivInput.Strike)
-		sc := chainSnap.ByStrike[kStr]
-		if sc == nil {
-			continue
-		}
-
-		var opt *market.Option
-		if ivInput.Type == market.Call {
-			opt = sc.Call
-		} else {
-			opt = sc.Put
-		}
-		if opt == nil || opt.Mid <= 0 {
-			continue
-		}
-
-		// Find paired option for consistency check
-		var pairOpt *market.Option
-		if ivInput.Type == market.Call {
-			pairOpt = sc.Put
-		} else {
-			pairOpt = sc.Call
-		}
-
-		pmid, pbid, pask := 0.0, 0.0, 0.0
-		if pairOpt != nil {
-			pmid = pairOpt.Mid
-			pbid = pairOpt.Bid
-			pask = pairOpt.Ask
-		}
-
-		// 	// Build IVRequest
-		ivReq := market.IVRequest{
-			ID:   fmt.Sprintf("iv_%s_%.0f_%s", expiry.Format("20060102"), ivInput.Strike, ivInput.Type),
-			AsOf: snap.AsOf,
-			Instrument: market.IVInstrument{
-				Underlying: snap.Underlying.Symbol,
-				Expiry:     expiry.Format("2006-01-02"),
-				Strike:     ivInput.Strike,
-				Type:       ivInput.Type,
-			},
-			Market: market.IVMarket{
-				MarkPrice:    opt.Mid,
-				MarkSource:   "MID",
-				Bid:          opt.Bid,
-				Ask:          opt.Ask,
-				Volume:       int(opt.Volume),
-				OpenInterest: int(opt.OpenInterest),
-				SpreadPct:    (opt.Ask - opt.Bid) / opt.Mid,
-				PairedMid:    pmid,
-				PairedBid:    pbid,
-				PairedAsk:    pask,
-			},
-			Context: market.IVContext{
-				Spot:          snap.Underlying.Spot,
-				Forward:       S_input,
-				ForwardSource: "PUT_CALL_PARITY",
-				TTEYears:      tte,
-			},
-			Rates: market.Rates{
-				RiskFreeRateCC: 0.06,
-				DiscountFactor: df,
-			},
-			Settings: iv.DefaultSettings(),
-		}
-
-		ivRes := ivSolver.Solve(ivReq)
-		ivResults = append(ivResults, ivRes)
-
-		// if ivRes.Status == market.IVStatusConverged {
-		// 	log.Printf("  %.0f %s: IV=%.2f%% (conf=%.2f)",
-		// 		ivInput.Strike, ivInput.Type, ivRes.Result.ImpliedVol*100, ivRes.Quality.Confidence)
-		// }
-
-	}
-
-	// // Output first few IV results as JSON
-	log.Println("=== Sample IVResults JSON ===")
-	sampleCount := 10
-
-	fmt.Println("Total IV Results: ", len(ivResults))
-	if len(ivResults) < sampleCount {
-		sampleCount = len(ivResults)
-	}
-	for i := 0; i < sampleCount; i++ {
-		ivBytes, _ := json.MarshalIndent(ivResults[i], "", "  ")
-		log.Println(string(ivBytes))
-	}
-
-	// // 5. Build Volatility Surface
-	log.Println("=== Building IV Surface ===")
-
-	// // Convert solver results to surface inputs (IVPoint)
-	// // We need to map back to the request details.
-	// // For this prototype, we'll reconstruct the IVPoint from the IVResult + Context we used.
-	// // Ideally, IVResult should link back to Request, but we can do a localized loop since we have the inputs.
-	// // Actually, best way in this "main" script is to just build the points list AS we solve.
-
-	// // Re-iterating to demonstrate clear separation:
-	var surfacePoints []market.IVPoint
-
-	// // We need to re-loop or store the inputs.
-	// // Let's assume we can map the `ivResults` back.
-	// // IVResult has `RequestID`. We constructed IDs as `iv_YYYYMMDD_STRIKE_TYPE`.
-	// // Parsing is brittle.
-	// // BETTER approach for this script: Build `surfacePoints` inside the solving loop above.
-
-	// // Let's rebuild the loop above to collect points.
-	// // SINCE `replace_file_content` replaces a block, I will just recreate the points from the `chainSnap` + `ivResults` assuming order matches?
-	// // NO, order is not guaranteed if we were async (we are sync here).
-	// // To be safe, I'll modify the previous loop in a separate edit or just "hack" it here by re-traversing `chainSnap`
-	// // and looking up the successful results? No, `ivResults` is a list of results.
-
-	// // Okay, I will modify the loop structure in `main.go` to capture `surfacePoints` alongside `ivResults`.
-	// // But `replace_file_content` works on contiguous blocks.
-	// // I will act on the end of the file here, but I really need to modify the loop roughly lines 179-234.
-	// // I will abort this specific tool call and do a larger multi_replace or helper mechanism.
-	// // Wait, I can just iterate `ivResults`? IT DOES NOT HAVE STRIKE/TYPE info in `IVResultData`.
-	// // `IVResult` has `RequestID`.
-	// // `RequestID` format: `iv_20260205_23300_PUT`.
-	// // I can parse this string.
-
-	surfacePoints = make([]market.IVPoint, 0, len(ivResults))
-	for _, res := range ivResults {
-		if res.Status != market.IVStatusConverged {
-			continue
-		}
-
-		// Direct construction from Result, no string parsing
-		// We added Instrument and Market to IVResult, so use them.
-		p := market.IVPoint{
-			Expiry:       res.Instrument.Expiry,
-			Strike:       res.Instrument.Strike,
-			Type:         res.Instrument.Type,
-			ImpliedVol:   res.Result.ImpliedVol,
-			Confidence:   res.Quality.Confidence,
-			MarkSource:   res.Market.MarkSource,
-			MarkPrice:    res.Market.MarkPrice,
-			FitErrorAbs:  res.Result.FitErrorAbs,
-			VegaPerPoint: res.Diagnostics.VegaAtSolution,
-		}
-		surfacePoints = append(surfacePoints, p)
-	}
-
-	// // Direct BuildSkew call since we have single expiry context `chainSnap`
 	surfaceBuilder := surface.NewBuilder(surface.DefaultSettings())
 
-	// // Need Forward. `S_input` was used for pricing/solving.
-	// // `expiry` formatting same as used in loop.
+	var surfaceSkews []market.IVSkewSnapshot
+	var mu sync.Mutex
+	var wg sync.WaitGroup
 
-	skewSnap := surfaceBuilder.BuildSkew(expiry.Format("2006-01-02"), surfacePoints, S_input, tte)
+	log.Printf("Found %d expiries to process", len(snap.Expiries))
 
-	log.Printf("Surface Built for %s:", skewSnap.Expiry)
-	log.Printf("  ATM Vol: %.2f%%", skewSnap.Metrics.ATMVol*100)
-	log.Printf("  Skew Slope: %.4f", skewSnap.Metrics.SkewSlope)
-	log.Printf("  Curvature: %.4f", skewSnap.Metrics.Curvature)
-	log.Printf("  Points Used: %d / %d", skewSnap.Fit.Quality.PointsUsed, len(skewSnap.Points))
+	for _, expMeta := range snap.Expiries {
+		wg.Add(1)
+		go func(eMeta market.ExpiryMetadata) {
+			defer wg.Done()
 
-	// Sanity Checks
-	minX, maxX := 1000.0, -1000.0
-	calls, puts := 0, 0
+			loopExpiry := eMeta.Expiry
+			// Skip DTE < 2 (microstructure makes IV unreliable)
+			if eMeta.DaysToExpiry < 2 {
+				log.Printf(" > Skipping Expiry %s: DTE below 2 days threshold", loopExpiry.Format("2006-01-02"))
+				return
+			}
+			// log.Printf("Processing Expiry: %s (TTE: %.4f)", loopExpiry.Format("2006-01-02"), eMeta.TTEYears)
 
-	log.Println("--- Sanity Check: X-Axis & OTM Selection ---")
-	for i, p := range skewSnap.Points {
-		if p.LogMoneyness < minX {
-			minX = p.LogMoneyness
-		}
-		if p.LogMoneyness > maxX {
-			maxX = p.LogMoneyness
-		}
+			// A. Chain Generation
+			chainSnap, err := chainProc.GenerateChain(snap, loopExpiry)
+			if err != nil {
+				log.Printf("Error generating chain for %s: %v", loopExpiry, err)
+				return
+			}
 
-		if p.Type == market.Call {
-			calls++
-		} else {
-			puts++
-		}
+			// B. Forward Generation
+			fwdState := chainProc.GenerateForwardState(snap, chainSnap, loopExpiry)
 
-		// Print a few samples across the range
-		if i == 0 || i == len(skewSnap.Points)/2 || i == len(skewSnap.Points)-1 {
-			log.Printf("  Sample [%d]: Strike=%.0f Type=%s IV=%.2f%% X=%.4f Conf=%.2f W=%.4f",
-				i, p.Strike, p.Type, p.ImpliedVol*100, p.LogMoneyness, p.Confidence, p.Weight)
-		}
+			// C. Determine S_input
+			S_input := fwdState.Forward.Mid
+			if S_input <= 0 {
+				if chainSnap.ChainState.ImpliedForward > 0 {
+					S_input = chainSnap.ChainState.ImpliedForward
+				} else {
+					S_input = snap.Underlying.Spot
+				}
+			}
+
+			// TTE and DF
+			tte := eMeta.TTEYears
+			if tte <= 0 {
+				tte = chainSnap.Expiry.TTEYears
+			}
+			df := math.Exp(-cfg.Pricing.RiskFreeRate * tte)
+
+			// D. IV Solving
+			var surfacePoints []market.IVPoint
+
+			// 1. Adaptive heuristics based on TTE
+			window := cfg.Selection.LogMoneynessWindow
+			minPts := cfg.Selection.MinPointsPerExpiry
+			isFarTenor := eMeta.DaysToExpiry > 21
+
+			if isFarTenor {
+				// Widen window for far tenors to capture more liquid points
+				window = window * 1.5
+				// Relax min points slightly to help bracketing IV30
+				if minPts > 15 {
+					minPts = 15
+				}
+			}
+
+			// Pre-filter by log-moneyness window
+			var filteredInputs []market.IVPoint
+			for _, ivInput := range chainSnap.DownstreamReadySets.IVSurfaceInputs {
+				m := math.Log(ivInput.Strike / S_input)
+				if math.Abs(m) <= window {
+					filteredInputs = append(filteredInputs, ivInput)
+				}
+			}
+
+			// 2. Sort by distance from ATM (prioritize near-ATM strikes if capping is needed)
+			sort.Slice(filteredInputs, func(i, j int) bool {
+				distI := math.Abs(math.Log(filteredInputs[i].Strike / S_input))
+				distJ := math.Abs(math.Log(filteredInputs[j].Strike / S_input))
+				return distI < distJ
+			})
+
+			// 3. Cap the points to process
+			maxPts := cfg.Selection.MaxPointsPerExpiry
+			if len(filteredInputs) > maxPts {
+				filteredInputs = filteredInputs[:maxPts]
+			}
+
+			// 4. Solve IV for selected strikes
+			for _, ivInput := range filteredInputs {
+				kStr := fmt.Sprintf("%.0f", ivInput.Strike)
+				sc := chainSnap.ByStrike[kStr]
+				if sc == nil {
+					continue
+				}
+
+				var opt *market.Option
+				var pairOpt *market.Option
+
+				if ivInput.Type == market.Call {
+					opt = sc.Call
+					pairOpt = sc.Put
+				} else {
+					opt = sc.Put
+					pairOpt = sc.Call
+				}
+
+				if opt == nil || opt.Mid <= 0 {
+					continue
+				}
+
+				pmid, pbid, pask := 0.0, 0.0, 0.0
+				if pairOpt != nil {
+					pmid = pairOpt.Mid
+					pbid = pairOpt.Bid
+					pask = pairOpt.Ask
+				}
+
+				ivReq := market.IVRequest{
+					ID:   fmt.Sprintf("iv_%s_%.0f_%s", loopExpiry.Format("20060102"), ivInput.Strike, ivInput.Type),
+					AsOf: snap.AsOf,
+					Instrument: market.IVInstrument{
+						Underlying: snap.Underlying.Symbol,
+						Expiry:     loopExpiry.Format("2006-01-02"),
+						Strike:     ivInput.Strike,
+						Type:       ivInput.Type,
+					},
+					Market: market.IVMarket{
+						MarkPrice:    opt.Mid,
+						MarkSource:   "MID",
+						Bid:          opt.Bid,
+						Ask:          opt.Ask,
+						Volume:       int(opt.Volume),
+						OpenInterest: int(opt.OpenInterest),
+						SpreadPct:    (opt.Ask - opt.Bid) / opt.Mid,
+						PairedMid:    pmid,
+						PairedBid:    pbid,
+						PairedAsk:    pask,
+					},
+					Context: market.IVContext{
+						Spot:          snap.Underlying.Spot,
+						Forward:       S_input,
+						ForwardSource: "HYBRID",
+						TTEYears:      tte,
+					},
+					Rates: market.Rates{
+						RiskFreeRateCC: cfg.Pricing.RiskFreeRate,
+						DiscountFactor: df,
+					},
+					Settings: iv.DefaultSettings(),
+				}
+
+				ivRes := ivSolver.Solve(ivReq)
+
+				if ivRes.Status == market.IVStatusConverged {
+					p := market.IVPoint{
+						Expiry:       ivRes.Instrument.Expiry,
+						Strike:       ivRes.Instrument.Strike,
+						Type:         ivRes.Instrument.Type,
+						ImpliedVol:   ivRes.Result.ImpliedVol,
+						Confidence:   ivRes.Quality.Confidence,
+						MarkSource:   ivRes.Market.MarkSource,
+						MarkPrice:    ivRes.Market.MarkPrice,
+						FitErrorAbs:  ivRes.Result.FitErrorAbs,
+						VegaPerPoint: ivRes.Diagnostics.VegaAtSolution,
+						LogMoneyness: math.Log(ivInput.Strike / S_input),
+					}
+					surfacePoints = append(surfacePoints, p)
+				}
+			}
+
+			// E. Build Skew (with liquidity guard)
+			if len(surfacePoints) >= minPts {
+				skewSnap := surfaceBuilder.BuildSkew(loopExpiry.Format("2006-01-02"), surfacePoints, S_input, tte)
+
+				mu.Lock()
+				surfaceSkews = append(surfaceSkews, skewSnap)
+				mu.Unlock()
+
+				msg := "Valid"
+				if isFarTenor {
+					msg = "Valid (Far)"
+				}
+				log.Printf(" > %s: %s | ATM IV: %.2f%% | Pts: %d", msg, loopExpiry.Format("2006-01-02"), skewSnap.Metrics.ATMVol*100, len(surfacePoints))
+			} else {
+				log.Printf(" > Skipped: %s | Only %d valid points (min %d required)",
+					loopExpiry.Format("2006-01-02"), len(surfacePoints), minPts)
+			}
+
+		}(expMeta)
 	}
-	log.Printf("  X-Axis Range: [%.4f, %.4f]", minX, maxX)
-	log.Printf("  Composition: %d Calls, %d Puts", calls, puts)
 
-	// // 6. Regime Detection
+	wg.Wait()
+
+	// Sort Skews by TTE
+	sort.Slice(surfaceSkews, func(i, j int) bool {
+		return surfaceSkews[i].TTEYears < surfaceSkews[j].TTEYears
+	})
+
+	// 6. Regime Detection
+
 	// log.Println("=== Regime Detection ===")
 
-	// // Create a surface snapshot wrapper
-	// surfaceSnap := market.IVSurfaceSnapshot{
-	// 	AsOf:       snap.AsOf,
-	// 	Underlying: snap.Underlying.Symbol,
-	// 	Skews:      []market.IVSkewSnapshot{skewSnap},
-	// }
+	// Create a surface snapshot wrapper
+	surfaceSnap := market.IVSurfaceSnapshot{
+		AsOf:       snap.AsOf,
+		Underlying: snap.Underlying.Symbol,
+		Skews:      surfaceSkews,
+	}
 
-	// detector := regime.NewDetector(regime.DefaultSettings())
-	// regimeState := detector.Detect(surfaceSnap)
+	// Use concrete type for persistence
+	ivHistoryProvider := &regime.CSVIVHistoryProvider{BaseDir: "data/history"}
+	priceHistoryProvider := &regime.CSVPriceHistoryProvider{BaseDir: "data/history"}
 
-	// log.Printf("Regime: %s (Bias: %s)", regimeState.Decision.Regime, regimeState.Decision.Bias)
-	// log.Printf("Score: %.2f", regimeState.Decision.Score)
-	// log.Printf("Reference IV (30d): %.2f%% (Conf: %.2f)", regimeState.IVReference.IV*100, regimeState.IVReference.Confidence)
-	// log.Printf("Historical Context: Rank=%.2f, Pct=%.2f", regimeState.HistoricalContext.IVRank, regimeState.HistoricalContext.IVPercentile)
-	// log.Printf("Realized Vol (HV20): %.2f%% (Ratio: %.2f)", regimeState.RealizedVol.HV*100, regimeState.RealizedVol.IVHVRatio)
+	detector := regime.NewDetector(
+		regime.DefaultSettings(),
+		ivHistoryProvider,
+		priceHistoryProvider,
+	)
 
-	// // Output formatted JSON for user verification
-	// log.Println("=== RegimeState JSON Contract ===")
-	// rsBytes, _ := json.MarshalIndent(regimeState, "", "  ")
-	// fmt.Println(string(rsBytes))
+	regimeState := detector.Detect(surfaceSnap)
 
-	// if len(regimeState.Decision.Rationale) > 0 {
-	// 	log.Println("Rationale:")
-	// 	for _, r := range regimeState.Decision.Rationale {
-	// 		log.Printf(" - %s", r)
-	// 	}
-	// }
+	log.Printf("Regime: %s (Bias: %s)", regimeState.Decision.Regime, regimeState.Decision.Bias)
+	log.Printf("Score: %.2f", regimeState.Decision.Score)
+	log.Printf("Reference IV (30d): %.2f%% (Conf: %.2f, Method: %s)",
+		regimeState.IVReference.IV*100, regimeState.IVReference.Confidence, regimeState.IVReference.Method)
+	log.Printf("Historical Context: Rank=%.2f, Pct=%.2f", regimeState.HistoricalContext.IVRank, regimeState.HistoricalContext.IVPercentile)
+	log.Printf("Realized Vol (HV20): %.2f%% (Ratio: %.2f)", regimeState.RealizedVol.HV*100, regimeState.RealizedVol.IVHVRatio)
 
-	// // 7. Intelligence Engine
+	// Persist today's IV30
+	if regimeState.IVReference.IV > 0 {
+		err := ivHistoryProvider.RecordIV30(
+			snap.Underlying.Symbol,
+			snap.AsOf, // This is "Now" (or snapshot time)
+			regimeState.IVReference.IV,
+			regimeState.IVReference.Confidence,
+			regimeState.IVReference.Method,
+		)
+		if err != nil {
+			log.Printf("[WARN] Failed to persist IV30 history: %v", err)
+		} else {
+			log.Printf("[INFO] Persisted IV30 to history for %s", snap.AsOf.Format("2006-01-02"))
+		}
+	}
+
+	// Output formatted JSON for user verification
+	log.Println("=== RegimeState JSON Contract ===")
+	rsBytes, _ := json.MarshalIndent(regimeState, "", "  ")
+	fmt.Println(string(rsBytes))
+
+	if len(regimeState.Decision.Rationale) > 0 {
+		log.Println("Rationale:")
+		for _, r := range regimeState.Decision.Rationale {
+			log.Printf(" - %s", r)
+		}
+	}
+
+	// 7. Intelligence Engine
 	// log.Println("=== Option Chain Intelligence ===")
 	// intelEngine := intel.NewEngine()
 	// intelSnap := intelEngine.ComputeIntel(chainSnap, &surfaceSnap)

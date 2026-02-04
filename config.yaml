@@ -1,0 +1,31 @@
+# Volatility Engine Configuration
+
+market:
+  underlying: NIFTY
+  spot: 25776.00
+  timezone: Asia/Kolkata
+
+pricing:
+  risk_free_rate: 0.06  # 6% annualized (0.06)
+  dividend_yield: 0.00  # 0% for index options
+
+# Selection Heuristics for Stability & Performance
+selection:
+  log_moneyness_window: 0.10     # Only use strikes within |ln(K/F)| <= 0.10
+  min_points_per_expiry: 20      # Skip expiry if less than 20 valid IV points
+  target_points_per_expiry: 50   # Ideal point count for skew fitting
+  max_points_per_expiry: 60      # Recommended sweet spot cap for stability
+
+# CSV files to ingest (one per expiry)
+# Add more files as needed for multi-expiry IV30 calculation
+files:
+  - path: testdata/snapshots/option-chain-ED-NIFTY-4-Feb-10-Expiry.csv
+    expiry: "2026-02-10T15:30:00"
+  - path: testdata/snapshots/option-chain-ED-NIFTY-17-Feb-2026.csv
+    expiry: "2026-02-17T15:30:00"
+  - path: testdata/snapshots/option-chain-ED-NIFTY-24-Feb-2026.csv
+    expiry: "2026-02-24T15:30:00"
+  - path: testdata/snapshots/option-chain-ED-NIFTY-02-Mar-2026.csv
+    expiry: "2026-03-02T15:30:00"
+  - path: testdata/snapshots/option-chain-ED-NIFTY-10-Mar-2026.csv
+    expiry: "2026-03-10T15:30:00"

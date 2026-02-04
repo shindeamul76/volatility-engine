@@ -377,7 +377,6 @@ func (p *Processor) GenerateChain(snap *market.Snapshot, expiry time.Time) (*mar
 			if opt.Quality.IsUsableForIV {
 				hasIVUsable = true
 
-				// Fix #9: Separate Downstream Sets
 				logM := 0.0
 				if impliedFwd > 0 {
 					logM = math.Log(k / impliedFwd)
@@ -390,13 +389,7 @@ func (p *Processor) GenerateChain(snap *market.Snapshot, expiry time.Time) (*mar
 					LogMoneyness: logM,
 					Expiry:       cs.Expiry.Expiry.Format("2006-01-02"),
 				}
-
-				absLogM := math.Abs(logM)
-				if absLogM <= 0.03 {
-					ivSurfaceCore = append(ivSurfaceCore, pt)
-				} else if absLogM <= 0.10 {
-					ivSurfaceWings = append(ivSurfaceWings, pt)
-				}
+				ivSurfaceCore = append(ivSurfaceCore, pt)
 			}
 
 			if opt.Quality.IsTradable { // Strict strategy usage
