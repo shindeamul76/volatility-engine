@@ -1,9 +1,7 @@
-package strategy
+package market
 
 import (
 	"time"
-
-	"volatility-engine/internal/domain/market"
 )
 
 // StrategyType enum
@@ -33,14 +31,14 @@ type StrategyCandidate struct {
 }
 
 type StrategyLeg struct {
-	Side       string            `json:"side"` // BUY, SELL
-	Type       market.OptionType `json:"type"` // CALL, PUT
-	Strike     float64           `json:"strike"`
-	Qty        int               `json:"qty"`
-	Mark       float64           `json:"mark"`
-	IV         float64           `json:"iv"`
-	Confidence float64           `json:"confidence"`
-	Delta      float64           `json:"delta"` // Added for context
+	Side       string     `json:"side"` // BUY, SELL
+	Type       OptionType `json:"type"` // CALL, PUT
+	Strike     float64    `json:"strike"`
+	Qty        int        `json:"qty"`
+	Mark       float64    `json:"mark"`
+	IV         float64    `json:"iv"`
+	Confidence float64    `json:"confidence"`
+	Delta      float64    `json:"delta"` // Added for context
 }
 
 type EntryDetails struct {
@@ -67,10 +65,14 @@ type BreakEvens struct {
 	High float64 `json:"high"`
 }
 
+// Rationale explains why a strategy was selected.
 type Rationale struct {
-	Regime  string   `json:"regime"`
-	Reasons []string `json:"reasons"`
-	Score   float64  `json:"score"`
+	Regime         string   `json:"regime"`
+	SelectionBasis string   `json:"selection_basis"` // The technical trigger (e.g. "High Vol + Optimal DTE")
+	Thesis         string   `json:"thesis"`          // The "Mindset" or hypothesis (e.g. "Expect Mean Reversion")
+	LegSelection   string   `json:"leg_selection"`   // Why specific strikes? (e.g. "Sold 20 Delta for high prob")
+	Reasons        []string `json:"reasons"`         // Quick bullet summary
+	Score          float64  `json:"score"`
 }
 
 type ManagementRules struct {
@@ -88,11 +90,12 @@ type CandidateQuality struct {
 }
 
 // SelectorInputs bundles all necessary data for the engine.
+// Note: Since everything is in market/domain, we can use concrete types now.
 type SelectorInputs struct {
-	Regime       interface{} // Using interface to avoid circular deps if needed, but optimally concrete types
-	Surface      market.IVSurfaceSnapshot
-	Intel        interface{} // ChainIntelSnapshot
-	Chain        market.ChainSnapshot
-	Forward      market.ForwardState
+	Regime       RegimeState
+	Surface      IVSurfaceSnapshot
+	Intel        ChainIntelSnapshot
+	Chain        ChainSnapshot
+	Forward      ForwardState
 	RiskFreeRate float64
 }

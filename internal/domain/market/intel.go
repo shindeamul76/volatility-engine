@@ -1,4 +1,4 @@
-package intel
+package market
 
 // ChainIntelSnapshot represents high-level positioning intelligence for a single expiry.
 type ChainIntelSnapshot struct {

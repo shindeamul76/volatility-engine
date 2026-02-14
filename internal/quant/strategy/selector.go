@@ -6,7 +6,6 @@ import (
 	"sort"
 
 	"volatility-engine/internal/domain/market"
-	"volatility-engine/internal/quant/intel"
 	"volatility-engine/internal/quant/pricing"
 )
 
@@ -22,12 +21,12 @@ func NewSelector() *Selector {
 func (s *Selector) SelectStrategies(
 	reg *market.RegimeState,
 	surface *market.IVSurfaceSnapshot,
-	intelSnap *intel.ChainIntelSnapshot,
+	intelSnap *market.ChainIntelSnapshot,
 	chain *market.ChainSnapshot,
 	fwd *market.ForwardState,
-) ([]StrategyCandidate, error) {
+) ([]market.StrategyCandidate, error) {
 
-	candidates := []StrategyCandidate{}
+	candidates := []market.StrategyCandidate{}
 
 	// 1. Initial Guards
 	if reg == nil || surface == nil || chain == nil {
@@ -103,7 +102,7 @@ func (s *Selector) SelectStrategies(
 
 // Generators
 
-func (s *Selector) genIronCondor(chain *market.ChainSnapshot, fwd *market.ForwardState, intelSnap *intel.ChainIntelSnapshot, reg *market.RegimeState) []StrategyCandidate {
+func (s *Selector) genIronCondor(chain *market.ChainSnapshot, fwd *market.ForwardState, intelSnap *market.ChainIntelSnapshot, reg *market.RegimeState) []market.StrategyCandidate {
 	// Template: Short Iron Condor
 	// Goal: Sell OTM Put/Call, Buy wings.
 	// Target Delta: .15 to .20 (Shorts)
@@ -136,7 +135,7 @@ func (s *Selector) genIronCondor(chain *market.ChainSnapshot, fwd *market.Forwar
 	longCallK := s.findStrikeClosestTo(strikes, shortCallK+width)
 
 	// Construct Legs
-	legs := []StrategyLeg{
+	legs := []market.StrategyLeg{
 		s.buildLeg(chain, shortPutK, market.Put, "SELL", 1),
 		s.buildLeg(chain, longPutK, market.Put, "BUY", 1),
 		s.buildLeg(chain, shortCallK, market.Call, "SELL", 1),
@@ -149,25 +148,28 @@ func (s *Selector) genIronCondor(chain *market.ChainSnapshot, fwd *market.Forwar
 	}
 
 	// Layout
-	cand := StrategyCandidate{
+	cand := market.StrategyCandidate{
 		ID:           fmt.Sprintf("ic_%s_%s", chain.Underlying.Symbol, chain.Expiry.Expiry.Format("20060102")),
-		StrategyType: IronCondor,
+		StrategyType: market.IronCondor,
 		Intent:       "SHORT_VOL_DEFINED_RISK",
 		Legs:         legs,
 		Expiry:       chain.Expiry.Expiry.Format("2006-01-02"),
 		AsOf:         chain.AsOf,
 		Underlying:   chain.Underlying.Symbol,
-		Rationale: Rationale{
-			Regime:  reg.Decision.Regime,
-			Reasons: []string{"High Vol Regime", "Delta 20 Short Strangles with Protection"},
+		Rationale: market.Rationale{
+			Regime:         reg.Decision.Regime,
+			SelectionBasis: fmt.Sprintf("Regime is '%s' and DTE (%d) is within ideal 2-45 day window for premium selling.", reg.Decision.Regime, int(chain.Expiry.DaysToExpiry)),
+			Thesis:         "Mindset: Volatility is overrated. We expect the market to stay range-bound or at least not move beyond the wings. We collect premium upfront and profit from time decay (Theta) and volatility crush (Vega).",
+			LegSelection:   "Short strikes chosen at approx 20 Delta (High Probability OTM). Wings bought ~1.5% further out to define risk and cap margin requirement.",
+			Reasons:        []string{"High Vol Regime", "High Probability of Profit (POP)", "Defined Risk"},
 		},
 	}
 
 	s.calcMetrics(&cand)
-	return []StrategyCandidate{cand}
+	return []market.StrategyCandidate{cand}
 }
 
-func (s *Selector) genIronFly(chain *market.ChainSnapshot, fwd *market.ForwardState, intelSnap *intel.ChainIntelSnapshot, reg *market.RegimeState) []StrategyCandidate {
+func (s *Selector) genIronFly(chain *market.ChainSnapshot, fwd *market.ForwardState, intelSnap *market.ChainIntelSnapshot, reg *market.RegimeState) []market.StrategyCandidate {
 	f := fwd.Forward.Mid
 	if f == 0 {
 		f = chain.Underlying.Spot
@@ -183,7 +185,7 @@ func (s *Selector) genIronFly(chain *market.ChainSnapshot, fwd *market.ForwardSt
 	lowWing := s.findStrikeClosestTo(strikes, atmK-width)
 	highWing := s.findStrikeClosestTo(strikes, atmK+width)
 
-	legs := []StrategyLeg{
+	legs := []market.StrategyLeg{
 		s.buildLeg(chain, atmK, market.Call, "SELL", 1),
 		s.buildLeg(chain, atmK, market.Put, "SELL", 1),
 		s.buildLeg(chain, highWing, market.Call, "BUY", 1),
@@ -194,24 +196,27 @@ func (s *Selector) genIronFly(chain *market.ChainSnapshot, fwd *market.ForwardSt
 		return nil
 	}
 
-	cand := StrategyCandidate{
+	cand := market.StrategyCandidate{
 		ID:           fmt.Sprintf("if_%s_%s", chain.Underlying.Symbol, chain.Expiry.Expiry.Format("20060102")),
-		StrategyType: IronFly,
+		StrategyType: market.IronFly,
 		Intent:       "SHORT_VOL_PIN_TARGET",
 		Legs:         legs,
 		Expiry:       chain.Expiry.Expiry.Format("2006-01-02"),
 		AsOf:         chain.AsOf,
 		Underlying:   chain.Underlying.Symbol,
-		Rationale: Rationale{
-			Regime:  reg.Decision.Regime,
-			Reasons: []string{"Aggressive Short Vol", fmt.Sprintf("Pin Target near %.0f", atmK)},
+		Rationale: market.Rationale{
+			Regime:         reg.Decision.Regime,
+			SelectionBasis: fmt.Sprintf("Regime is '%s' with specific Pin Risk signals or very high vol.", reg.Decision.Regime),
+			Thesis:         "Mindset: Aggressive Mean Reversion. We believe the price is pinned or will revert to the ATM level. We sell the 'meat' of the curve (ATM) for maximum credit.",
+			LegSelection:   fmt.Sprintf("Sold ATM Straddle at %.0f. Bought protected wings ~2%% out. This creates a 'tent' profit zone centered on current price.", atmK),
+			Reasons:        []string{"Aggressive Short Vol", "PCR/OI signals suggest Pin Risk", "Max Theta Decay"},
 		},
 	}
 	s.calcMetrics(&cand)
-	return []StrategyCandidate{cand}
+	return []market.StrategyCandidate{cand}
 }
 
-func (s *Selector) genLongStraddle(chain *market.ChainSnapshot, fwd *market.ForwardState, intelSnap *intel.ChainIntelSnapshot, reg *market.RegimeState) []StrategyCandidate {
+func (s *Selector) genLongStraddle(chain *market.ChainSnapshot, fwd *market.ForwardState, intelSnap *market.ChainIntelSnapshot, reg *market.RegimeState) []market.StrategyCandidate {
 	f := fwd.Forward.Mid
 	if f == 0 {
 		f = chain.Underlying.Spot
@@ -220,7 +225,7 @@ func (s *Selector) genLongStraddle(chain *market.ChainSnapshot, fwd *market.Forw
 
 	atmK := s.findStrikeClosestTo(strikes, f)
 
-	legs := []StrategyLeg{
+	legs := []market.StrategyLeg{
 		s.buildLeg(chain, atmK, market.Call, "BUY", 1),
 		s.buildLeg(chain, atmK, market.Put, "BUY", 1),
 	}
@@ -228,24 +233,27 @@ func (s *Selector) genLongStraddle(chain *market.ChainSnapshot, fwd *market.Forw
 		return nil
 	}
 
-	cand := StrategyCandidate{
+	cand := market.StrategyCandidate{
 		ID:           fmt.Sprintf("straddle_%s_%s", chain.Underlying.Symbol, chain.Expiry.Expiry.Format("20060102")),
-		StrategyType: LongStraddle,
+		StrategyType: market.LongStraddle,
 		Intent:       "LONG_VOL_DIRECTION_NEUTRAL",
 		Legs:         legs,
 		Expiry:       chain.Expiry.Expiry.Format("2006-01-02"),
 		AsOf:         chain.AsOf,
 		Underlying:   chain.Underlying.Symbol,
-		Rationale: Rationale{
-			Regime:  reg.Decision.Regime,
-			Reasons: []string{"Low Vol / Event", "Expect Expansion"},
+		Rationale: market.Rationale{
+			Regime:         reg.Decision.Regime,
+			SelectionBasis: fmt.Sprintf("Regime is '%s' (or Event predicted). Expecting explosive move.", reg.Decision.Regime),
+			Thesis:         "Mindset: Volatility is cheap. We expect a large move in EITHER direction that exceeds the breakeven (Premium Paid). We are Long Gamma and Long Vega.",
+			LegSelection:   fmt.Sprintf("Bought ATM Call and Put at %.0f. This offers the highest Gamma (sensitivity to move) but also highest Theta decay.", atmK),
+			Reasons:        []string{"Low Vol (Cheap Entry)", "Expect Vol Expansion/Event", "Direction Neutral"},
 		},
 	}
 	s.calcMetrics(&cand)
-	return []StrategyCandidate{cand}
+	return []market.StrategyCandidate{cand}
 }
 
-func (s *Selector) genLongStrangle(chain *market.ChainSnapshot, fwd *market.ForwardState, intelSnap *intel.ChainIntelSnapshot, reg *market.RegimeState) []StrategyCandidate {
+func (s *Selector) genLongStrangle(chain *market.ChainSnapshot, fwd *market.ForwardState, intelSnap *market.ChainIntelSnapshot, reg *market.RegimeState) []market.StrategyCandidate {
 	f := fwd.Forward.Mid
 	if f == 0 {
 		f = chain.Underlying.Spot
@@ -256,7 +264,7 @@ func (s *Selector) genLongStrangle(chain *market.ChainSnapshot, fwd *market.Forw
 	callK := s.findStrikeByDelta(strikes, 0.25, "CALL")
 	putK := s.findStrikeByDelta(strikes, -0.25, "PUT")
 
-	legs := []StrategyLeg{
+	legs := []market.StrategyLeg{
 		s.buildLeg(chain, callK, market.Call, "BUY", 1),
 		s.buildLeg(chain, putK, market.Put, "BUY", 1),
 	}
@@ -264,21 +272,24 @@ func (s *Selector) genLongStrangle(chain *market.ChainSnapshot, fwd *market.Forw
 		return nil
 	}
 
-	cand := StrategyCandidate{
+	cand := market.StrategyCandidate{
 		ID:           fmt.Sprintf("strangle_%s_%s", chain.Underlying.Symbol, chain.Expiry.Expiry.Format("20060102")),
-		StrategyType: LongStrangle,
+		StrategyType: market.LongStrangle,
 		Intent:       "LONG_VOL_CHEAPER",
 		Legs:         legs,
 		Expiry:       chain.Expiry.Expiry.Format("2006-01-02"),
 		AsOf:         chain.AsOf,
 		Underlying:   chain.Underlying.Symbol,
-		Rationale: Rationale{
-			Regime:  reg.Decision.Regime,
-			Reasons: []string{"Low Vol", "Strangle for lower entry cost"},
+		Rationale: market.Rationale{
+			Regime:         reg.Decision.Regime,
+			SelectionBasis: "Low Volatility environment, seeking lower cost entry than Straddle.",
+			Thesis:         "Mindset: We expect a significant move, but want to reduce upfront debit. We sacrifice some probability (need larger move) for better leverage/ROI if it hits.",
+			LegSelection:   "Bought 25 Delta Call and Put (OTM). This reduces cost compared to ATM Straddle but requires a larger move to become profitable.",
+			Reasons:        []string{"Low Vol", "Cheaper than Straddle", "High Leverage on breakout"},
 		},
 	}
 	s.calcMetrics(&cand)
-	return []StrategyCandidate{cand}
+	return []market.StrategyCandidate{cand}
 }
 
 // Helpers & Calc
@@ -365,10 +376,10 @@ func (s *Selector) findStrikeClosestTo(list []strikeDelta, targetK float64) floa
 	return bestK
 }
 
-func (s *Selector) buildLeg(chain *market.ChainSnapshot, strike float64, optType market.OptionType, side string, qty int) StrategyLeg {
+func (s *Selector) buildLeg(chain *market.ChainSnapshot, strike float64, optType market.OptionType, side string, qty int) market.StrategyLeg {
 	kStr := fmt.Sprintf("%.0f", strike)
 	sc := chain.ByStrike[kStr]
-	leg := StrategyLeg{
+	leg := market.StrategyLeg{
 		Strike: strike,
 		Type:   optType,
 		Side:   side,
@@ -396,7 +407,7 @@ func (s *Selector) buildLeg(chain *market.ChainSnapshot, strike float64, optType
 	return leg
 }
 
-func (s *Selector) validateLegs(legs []StrategyLeg) bool {
+func (s *Selector) validateLegs(legs []market.StrategyLeg) bool {
 	for _, l := range legs {
 		if l.Mark <= 0 || l.Confidence < 0.1 {
 			return false
@@ -405,7 +416,7 @@ func (s *Selector) validateLegs(legs []StrategyLeg) bool {
 	return true
 }
 
-func (s *Selector) calcMetrics(c *StrategyCandidate) {
+func (s *Selector) calcMetrics(c *market.StrategyCandidate) {
 	premium := 0.0
 	for _, l := range c.Legs {
 		amount := l.Mark * float64(l.Qty)
@@ -438,20 +449,20 @@ func (s *Selector) calcMetrics(c *StrategyCandidate) {
 	}
 }
 
-func (s *Selector) scoreCandidate(c *StrategyCandidate, reg *market.RegimeState, intel *intel.ChainIntelSnapshot) {
+func (s *Selector) scoreCandidate(c *market.StrategyCandidate, reg *market.RegimeState, intel *market.ChainIntelSnapshot) {
 	// Simple scoring
 	score := 0.5
 
 	// Alignment
-	if c.StrategyType == IronCondor && reg.Decision.Regime == market.RegimeHighVol {
+	if c.StrategyType == market.IronCondor && reg.Decision.Regime == market.RegimeHighVol {
 		score += 0.2
 	}
-	if c.StrategyType == LongStraddle && reg.Decision.Regime == market.RegimeLowVol {
+	if c.StrategyType == market.LongStraddle && reg.Decision.Regime == market.RegimeLowVol {
 		score += 0.2
 	}
 
 	// Intel Bonus
-	if c.StrategyType == IronFly && intel.PinRisk.IsPinRisk {
+	if c.StrategyType == market.IronFly && intel.PinRisk.IsPinRisk {
 		score += 0.2
 	}
 

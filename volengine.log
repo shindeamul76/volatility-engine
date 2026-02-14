@@ -1,33 +1,82 @@
-2026/02/05 02:19:20 Starting Volatility Engine...
-2026/02/05 02:19:20 Running snapshot pipeline...
-2026/02/05 02:19:20 Loaded config: NIFTY @ 25776.00, Risk-Free Rate: 6.00%
-2026/02/05 02:19:20 Ingesting 5 CSV file(s)...
-2026/02/05 02:19:20   [1/5] Ingested: testdata/snapshots/option-chain-ED-NIFTY-4-Feb-10-Expiry.csv (196 quotes, expiry: 2026-02-10)
-2026/02/05 02:19:20   [2/5] Ingested: testdata/snapshots/option-chain-ED-NIFTY-17-Feb-2026.csv (180 quotes, expiry: 2026-02-17)
-2026/02/05 02:19:20   [3/5] Ingested: testdata/snapshots/option-chain-ED-NIFTY-24-Feb-2026.csv (202 quotes, expiry: 2026-02-24)
-2026/02/05 02:19:20   [4/5] Ingested: testdata/snapshots/option-chain-ED-NIFTY-02-Mar-2026.csv (180 quotes, expiry: 2026-03-02)
-2026/02/05 02:19:20   [5/5] Ingested: testdata/snapshots/option-chain-ED-NIFTY-10-Mar-2026.csv (142 quotes, expiry: 2026-03-10)
-2026/02/05 02:19:20 Merged Snapshot: snap_20260205_021920_NIFTY
-2026/02/05 02:19:20 Underlying: NIFTY, Spot: 25776.00
-2026/02/05 02:19:20 Total Quotes: 900 (from 5 file(s))
-2026/02/05 02:19:20 Total Expiries: 5
-2026/02/05 02:19:20 Tradable: 126, Rejected: 774
-2026/02/05 02:19:20 Sample Quote (first 200):
-2026/02/05 02:19:20  - NIFTY 23100.00 CALL: Mid=2653.97, Flags=[WIDE_SPREAD_ABS ILLIQUID_STRATEGY ILLIQUID]
-2026/02/05 02:19:20 Starting Multi-Expiry Pipeline...
-2026/02/05 02:19:20 Found 5 expiries to process
-2026/02/05 02:19:20  > Valid: 2026-02-17 | ATM IV: 11.76% | Pts: 42
-2026/02/05 02:19:20  > Valid: 2026-02-10 | ATM IV: 12.80% | Pts: 52
-2026/02/05 02:19:20  > Valid: 2026-02-24 | ATM IV: 11.29% | Pts: 32
-2026/02/05 02:19:20  > Valid (Far): 2026-03-02 | ATM IV: 11.22% | Pts: 26
-2026/02/05 02:19:20  > Skipped: 2026-03-10 | Only 1 valid points (min 15 required)
-2026/02/05 02:19:20 Regime: TRANSITION (Bias: NEUTRAL_OR_DEFINED_RISK)
-2026/02/05 02:19:20 Score: 0.65
-2026/02/05 02:19:20 Reference IV (30d): 11.22% (Conf: 0.63, Method: NEAREST_SHORT_FALLBACK)
-2026/02/05 02:19:20 Historical Context: Rank=0.50, Pct=1.00
-2026/02/05 02:19:20 Realized Vol (HV20): 21.12% (Ratio: 0.53)
-2026/02/05 02:19:20 [INFO] Persisted IV30 to history for 2026-02-04
-2026/02/05 02:19:20 === RegimeState JSON Contract ===
-2026/02/05 02:19:20 Rationale:
-2026/02/05 02:19:20  - High Historical Percentile
-2026/02/05 02:19:20 Pipeline finished.
+2026/02/12 22:40:47 Starting Volatility Engine...
+2026/02/12 22:40:48 Running snapshot pipeline...
+2026/02/12 22:40:48 Loaded config: NIFTY @ 25807.20, Risk-Free Rate: 6.00%
+2026/02/12 22:40:48 Ingesting 6 CSV file(s)...
+2026/02/12 22:40:48   [1/6] Ingested: testdata/snapshots/12-02-2026/option-chain-ED-NIFTY-17-Feb-2026.csv (186 quotes, expiry: 2026-02-17)
+2026/02/12 22:40:48   [2/6] Ingested: testdata/snapshots/12-02-2026/option-chain-ED-NIFTY-24-Feb-2026.csv (202 quotes, expiry: 2026-02-24)
+2026/02/12 22:40:48   [3/6] Ingested: testdata/snapshots/12-02-2026/option-chain-ED-NIFTY-02-Mar-2026.csv (186 quotes, expiry: 2026-03-02)
+2026/02/12 22:40:48   [4/6] Ingested: testdata/snapshots/12-02-2026/option-chain-ED-NIFTY-10-Mar-2026.csv (154 quotes, expiry: 2026-03-10)
+2026/02/12 22:40:48   [5/6] Ingested: testdata/snapshots/12-02-2026/option-chain-ED-NIFTY-30-Mar-2026.csv (218 quotes, expiry: 2026-03-30)
+2026/02/12 22:40:48   [6/6] Ingested: testdata/snapshots/12-02-2026/option-chain-ED-NIFTY-28-Apr-2026.csv (186 quotes, expiry: 2026-04-28)
+2026/02/12 22:40:48 Merged Snapshot: snap_20260212_224048_NIFTY
+2026/02/12 22:40:48 Underlying: NIFTY, Spot: 25807.20
+2026/02/12 22:40:48 Total Quotes: 1132 (from 6 file(s))
+2026/02/12 22:40:48 Total Expiries: 6
+2026/02/12 22:40:48 Tradable: 173, Rejected: 959
+2026/02/12 22:40:48 Sample Quote (first 200):
+2026/02/12 22:40:48  - NIFTY 23100.00 CALL: Mid=2744.20, Flags=[WIDE_SPREAD_ABS ILLIQUID_STRATEGY ILLIQUID]
+2026/02/12 22:40:48 Starting Multi-Expiry Pipeline...
+2026/02/12 22:40:48 === Pass 1: Per-Expiry Context Construction (Parallel) ===
+2026/02/12 22:40:48 Found 6 expiries to process
+2026/02/12 22:40:48  > [OK] 2026-02-17 | Pts: 52 | ATM: 9.22%
+2026/02/12 22:40:48  > [PARTIAL] 2026-04-28 | Pts: 8 (Skew Skipped)
+2026/02/12 22:40:48  > [PARTIAL] 2026-03-30 | Pts: 2 (Skew Skipped)
+2026/02/12 22:40:48  > [PARTIAL] 2026-03-10 | Pts: 9 (Skew Skipped)
+2026/02/12 22:40:48  > [OK] 2026-03-02 | Pts: 36 | ATM: 9.92%
+2026/02/12 22:40:48  > [OK] 2026-02-24 | Pts: 44 | ATM: 9.63%
+2026/02/12 22:40:48 === Pass 2: Cross-Expiry Regime Detection ===
+2026/02/12 22:40:48 Regime: LOW_VOL | Bias: BUY_PREMIUM | Score: 0.12
+2026/02/12 22:40:48 IV30: 9.92% (Rank: 0.06)
+2026/02/12 22:40:48 === Pass 3: Intel & Strategy Generation (Per-Expiry) ===
+2026/02/12 22:40:48  > [INTEL] 2026-02-17 Signals:
+2026/02/12 22:40:48     - [PIN_RISK_ZONE] (Score: 0.90) High OI Concentration near Spot at 25800
+2026/02/12 22:40:48     - [BOUNDED_BY_WALLS] (Score: 0.50) Spot 25807 inside Put Wall 24500 and Call Wall 26000
+2026/02/12 22:40:48     - [MAX_PAIN_MAGNET] (Score: 0.70) Spot 25807 is close to Max Pain 25850 near expiry
+2026/02/12 22:40:48  > Analyzed 2026-02-17: 3 Signals, 0 Candidates
+2026/02/12 22:40:48  > [INTEL] 2026-02-24 Signals:
+2026/02/12 22:40:48     - [BOUNDED_BY_WALLS] (Score: 0.80) Spot 25807 inside Put Wall 25500 and Call Wall 26000
+2026/02/12 22:40:48  > Analyzed 2026-02-24: 1 Signals, 2 Candidates
+2026/02/12 22:40:48  > [INTEL] 2026-03-02 Signals:
+2026/02/12 22:40:48     - [BOUNDED_BY_WALLS] (Score: 0.50) Spot 25807 inside Put Wall 25000 and Call Wall 26500
+2026/02/12 22:40:48  > Analyzed 2026-03-02: 1 Signals, 2 Candidates
+2026/02/12 22:40:48 === Final Selection ===
+2026/02/12 22:40:48 Generated Total 4 Candidates. Top Recommendations:
+2026/02/12 22:40:48  #1 [LONG_STRADDLE] straddle_NIFTY_20260224 (LONG_VOL_DIRECTION_NEUTRAL) Score=0.70 | Expiry: 2026-02-24
+2026/02/12 22:40:48     Entry: DEBIT 356.07
+2026/02/12 22:40:48     Rationale:
+2026/02/12 22:40:48      - Basis: Regime is 'LOW_VOL' (or Event predicted). Expecting explosive move.
+2026/02/12 22:40:48      - Thesis: Mindset: Volatility is cheap. We expect a large move in EITHER direction that exceeds the breakeven (Premium Paid). We are Long Gamma and Long Vega.
+2026/02/12 22:40:48      - Legs: Bought ATM Call and Put at 25850. This offers the highest Gamma (sensitivity to move) but also highest Theta decay.
+2026/02/12 22:40:48       -  BUY 1 CALL 25850 @ 180.10 | Fair: 179.63 (ModelIV: 9.64%) [Diff: -0.3%]
+2026/02/12 22:40:48       -  BUY 1 PUT 25850 @ 175.97 | Fair: 175.56 (ModelIV: 9.64%) [Diff: -0.2%]
+2026/02/12 22:40:48     ---------------------------------------------------
+2026/02/12 22:40:48  #2 [LONG_STRADDLE] straddle_NIFTY_20260302 (LONG_VOL_DIRECTION_NEUTRAL) Score=0.70 | Expiry: 2026-03-02
+2026/02/12 22:40:48     Entry: DEBIT 448.25
+2026/02/12 22:40:48     Rationale:
+2026/02/12 22:40:48      - Basis: Regime is 'LOW_VOL' (or Event predicted). Expecting explosive move.
+2026/02/12 22:40:48      - Thesis: Mindset: Volatility is cheap. We expect a large move in EITHER direction that exceeds the breakeven (Premium Paid). We are Long Gamma and Long Vega.
+2026/02/12 22:40:48      - Legs: Bought ATM Call and Put at 25900. This offers the highest Gamma (sensitivity to move) but also highest Theta decay.
+2026/02/12 22:40:48       -  BUY 1 CALL 25900 @ 221.70 | Fair: 221.86 (ModelIV: 9.91%) [Diff: +0.1%]
+2026/02/12 22:40:48       -  BUY 1 PUT 25900 @ 226.55 | Fair: 227.75 (ModelIV: 9.91%) [Diff: +0.5%]
+2026/02/12 22:40:48     ---------------------------------------------------
+2026/02/12 22:40:48  #3 [LONG_STRANGLE] strangle_NIFTY_20260224 (LONG_VOL_CHEAPER) Score=0.50 | Expiry: 2026-02-24
+2026/02/12 22:40:48     Entry: DEBIT 56.30
+2026/02/12 22:40:48     Rationale:
+2026/02/12 22:40:48      - Basis: Low Volatility environment, seeking lower cost entry than Straddle.
+2026/02/12 22:40:48      - Thesis: Mindset: We expect a significant move, but want to reduce upfront debit. We sacrifice some probability (need larger move) for better leverage/ROI if it hits.
+2026/02/12 22:40:48      - Legs: Bought 25 Delta Call and Put (OTM). This reduces cost compared to ATM Straddle but requires a larger move to become profitable.
+2026/02/12 22:40:48       -  BUY 1 CALL 26500 @ 21.30 | Fair: 21.20 (ModelIV: 10.43%) [Diff: -0.5%]
+2026/02/12 22:40:48       -  BUY 1 PUT 25250 @ 35.00 | Fair: 35.15 (ModelIV: 11.75%) [Diff: +0.4%]
+2026/02/12 22:40:48     ---------------------------------------------------
+2026/02/12 22:40:48  #4 [LONG_STRANGLE] strangle_NIFTY_20260302 (LONG_VOL_CHEAPER) Score=0.50 | Expiry: 2026-03-02
+2026/02/12 22:40:48     Entry: DEBIT 70.95
+2026/02/12 22:40:48     Rationale:
+2026/02/12 22:40:48      - Basis: Low Volatility environment, seeking lower cost entry than Straddle.
+2026/02/12 22:40:48      - Thesis: Mindset: We expect a significant move, but want to reduce upfront debit. We sacrifice some probability (need larger move) for better leverage/ROI if it hits.
+2026/02/12 22:40:48      - Legs: Bought 25 Delta Call and Put (OTM). This reduces cost compared to ATM Straddle but requires a larger move to become profitable.
+2026/02/12 22:40:48       -  BUY 1 CALL 26700 @ 25.02 | Fair: 25.28 (ModelIV: 10.41%) [Diff: +1.0%]
+2026/02/12 22:40:48       -  BUY 1 PUT 25150 @ 45.92 | Fair: 46.70 (ModelIV: 12.07%) [Diff: +1.7%]
+2026/02/12 22:40:48     ---------------------------------------------------
+2026/02/12 22:40:48 === Generating Risk Reports ===
+2026/02/12 22:40:48 Reports saved to reports/snap_20260212_224048_NIFTY/
+2026/02/12 22:40:48 Pipeline finished.

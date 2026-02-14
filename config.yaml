@@ -2,7 +2,7 @@
 
 market:
   underlying: NIFTY
-  spot: 25776.00
+  spot: 25807.20
   timezone: Asia/Kolkata
 
 pricing:
@@ -16,16 +16,37 @@ selection:
   target_points_per_expiry: 50   # Ideal point count for skew fitting
   max_points_per_expiry: 60      # Recommended sweet spot cap for stability
 
+risk:
+  contract_multiplier: 100
+  scenario:
+    spot_shocks: [-0.2, -0.1, -0.05, 0, 0.05, 0.1, 0.2]
+    vol_shocks_abs: [-0.10, -0.05, 0, 0.05, 0.10]
+    time_shifts_days: [0, 7, 14]
+  payoff:
+    grid_min_mult: 0.5
+    grid_max_mult: 1.5
+    grid_steps: 400
+
+report:
+  top_n: 3
+  formats: ["json", "markdown"]
+  out_dir: "reports"
+  workers: 4
+
 # CSV files to ingest (one per expiry)
 # Add more files as needed for multi-expiry IV30 calculation
 files:
-  - path: testdata/snapshots/option-chain-ED-NIFTY-4-Feb-10-Expiry.csv
-    expiry: "2026-02-10T15:30:00"
-  - path: testdata/snapshots/option-chain-ED-NIFTY-17-Feb-2026.csv
+  - path: testdata/snapshots/12-02-2026/option-chain-ED-NIFTY-17-Feb-2026.csv
     expiry: "2026-02-17T15:30:00"
-  - path: testdata/snapshots/option-chain-ED-NIFTY-24-Feb-2026.csv
+  - path: testdata/snapshots/12-02-2026/option-chain-ED-NIFTY-24-Feb-2026.csv
     expiry: "2026-02-24T15:30:00"
-  - path: testdata/snapshots/option-chain-ED-NIFTY-02-Mar-2026.csv
+  - path: testdata/snapshots/12-02-2026/option-chain-ED-NIFTY-02-Mar-2026.csv
     expiry: "2026-03-02T15:30:00"
-  - path: testdata/snapshots/option-chain-ED-NIFTY-10-Mar-2026.csv
+  - path: testdata/snapshots/12-02-2026/option-chain-ED-NIFTY-10-Mar-2026.csv
     expiry: "2026-03-10T15:30:00"
+  - path: testdata/snapshots/12-02-2026/option-chain-ED-NIFTY-30-Mar-2026.csv
+    expiry: "2026-03-30T15:30:00"
+  - path: testdata/snapshots/12-02-2026/option-chain-ED-NIFTY-28-Apr-2026.csv
+    expiry: "2026-04-28T15:30:00"
+
+

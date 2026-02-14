@@ -17,8 +17,8 @@ func NewEngine() *Engine {
 }
 
 // ComputeIntel generates intelligence for a specific expiry chain.
-func (e *Engine) ComputeIntel(chain *market.ChainSnapshot, surface *market.IVSurfaceSnapshot) *ChainIntelSnapshot {
-	out := &ChainIntelSnapshot{
+func (e *Engine) ComputeIntel(chain *market.ChainSnapshot, surface *market.IVSurfaceSnapshot) *market.ChainIntelSnapshot {
+	out := &market.ChainIntelSnapshot{
 		Expiry: chain.Expiry.Expiry.Format("2006-01-02"),
 	}
 
@@ -125,8 +125,8 @@ func filterNearATM(chain *market.ChainSnapshot, all []strikeData) []strikeData {
 	return res
 }
 
-func computePCR(all, near []strikeData) PCRMetrics {
-	pcr := PCRMetrics{IsValid: true}
+func computePCR(all, near []strikeData) market.PCRMetrics {
+	pcr := market.PCRMetrics{IsValid: true}
 
 	// Total
 	cOI, pOI := int64(0), int64(0)
@@ -162,9 +162,9 @@ func computePCR(all, near []strikeData) PCRMetrics {
 	return pcr
 }
 
-func computeMaxPain(strikes []strikeData) MaxPainMetrics {
+func computeMaxPain(strikes []strikeData) market.MaxPainMetrics {
 	if len(strikes) == 0 {
-		return MaxPainMetrics{}
+		return market.MaxPainMetrics{}
 	}
 
 	bestStrike := 0.0
@@ -202,16 +202,16 @@ func computeMaxPain(strikes []strikeData) MaxPainMetrics {
 		conf = 0.4
 	}
 
-	return MaxPainMetrics{
+	return market.MaxPainMetrics{
 		Strike:     bestStrike,
 		Confidence: conf,
 	}
 }
 
-func computeOIWalls(strikes []strikeData, spot float64) OIWalls {
-	w := OIWalls{
-		TopCalls: []StrikeOI{},
-		TopPuts:  []StrikeOI{},
+func computeOIWalls(strikes []strikeData, spot float64) market.OIWalls {
+	w := market.OIWalls{
+		TopCalls: []market.StrikeOI{},
+		TopPuts:  []market.StrikeOI{},
 	}
 
 	// Find max Call OI above spot? Or absolute max?
@@ -224,12 +224,12 @@ func computeOIWalls(strikes []strikeData, spot float64) OIWalls {
 	maxPutOI := int64(-1)
 
 	// Helpers for sorting
-	var calls []StrikeOI
-	var puts []StrikeOI
+	var calls []market.StrikeOI
+	var puts []market.StrikeOI
 
 	for _, s := range strikes {
-		calls = append(calls, StrikeOI{s.K, s.CallOI})
-		puts = append(puts, StrikeOI{s.K, s.PutOI})
+		calls = append(calls, market.StrikeOI{Strike: s.K, OI: s.CallOI})
+		puts = append(puts, market.StrikeOI{Strike: s.K, OI: s.PutOI})
 
 		// Call Wall (OTM preferred? Let's stick to definition: max OI usually acts as magnet/wall regardless, but OTM is resistance)
 		// Definition from Prompt: "strike above spot with max call OI"
@@ -268,12 +268,12 @@ func computeOIWalls(strikes []strikeData, spot float64) OIWalls {
 	return w
 }
 
-func computePinRisk(strikes []strikeData, spot float64, tte float64) PinRiskMetrics {
+func computePinRisk(strikes []strikeData, spot float64, tte float64) market.PinRiskMetrics {
 	// Only relevant if near expiry
 	// e.g. TTE < 5 days (5/365 = 0.013)
 	// Let's say TTE < 0.02
 
-	pm := PinRiskMetrics{}
+	pm := market.PinRiskMetrics{}
 
 	if tte > 0.02 {
 		return pm // Not near expiry enough
@@ -314,8 +314,8 @@ func computePinRisk(strikes []strikeData, spot float64, tte float64) PinRiskMetr
 	return pm
 }
 
-func computeSkewAnomalies(skew *market.IVSkewSnapshot) SkewAnomalyMetrics {
-	sam := SkewAnomalyMetrics{Flags: []string{}}
+func computeSkewAnomalies(skew *market.IVSkewSnapshot) market.SkewAnomalyMetrics {
+	sam := market.SkewAnomalyMetrics{Flags: []string{}}
 
 	if skew == nil {
 		return sam
@@ -336,13 +336,13 @@ func computeSkewAnomalies(skew *market.IVSkewSnapshot) SkewAnomalyMetrics {
 	return sam
 }
 
-func generateSignals(intel *ChainIntelSnapshot, chain *market.ChainSnapshot) []Signal {
-	var sigs []Signal
+func generateSignals(intel *market.ChainIntelSnapshot, chain *market.ChainSnapshot) []market.Signal {
+	var sigs []market.Signal
 	spot := chain.Underlying.Spot
 
 	// Signal: Pin Risk
 	if intel.PinRisk.IsPinRisk {
-		sigs = append(sigs, Signal{
+		sigs = append(sigs, market.Signal{
 			Name:        "PIN_RISK_ZONE",
 			Score:       0.9,
 			Explanation: fmt.Sprintf("High OI Concentration near Spot at %.0f", intel.PinRisk.PinStrike),
@@ -358,7 +358,7 @@ func generateSignals(intel *ChainIntelSnapshot, chain *market.ChainSnapshot) []S
 			score = 0.8
 		} // Tight range
 
-		sigs = append(sigs, Signal{
+		sigs = append(sigs, market.Signal{
 			Name:        "BOUNDED_BY_WALLS",
 			Score:       score,
 			Explanation: fmt.Sprintf("Spot %.0f inside Put Wall %.0f and Call Wall %.0f", spot, intel.OIWalls.PutWallStrike, intel.OIWalls.CallWallStrike),
@@ -368,7 +368,7 @@ func generateSignals(intel *ChainIntelSnapshot, chain *market.ChainSnapshot) []S
 	// Signal: Max Pain Pull
 	dist := (intel.MaxPain.Strike - spot) / spot
 	if math.Abs(dist) < 0.02 && chain.Expiry.TTEYears < 0.02 {
-		sigs = append(sigs, Signal{
+		sigs = append(sigs, market.Signal{
 			Name:        "MAX_PAIN_MAGNET",
 			Score:       0.7,
 			Explanation: fmt.Sprintf("Spot %.0f is close to Max Pain %.0f near expiry", spot, intel.MaxPain.Strike),
@@ -378,7 +378,7 @@ func generateSignals(intel *ChainIntelSnapshot, chain *market.ChainSnapshot) []S
 	return sigs
 }
 
-func generateExplanation(intel *ChainIntelSnapshot) []string {
+func generateExplanation(intel *market.ChainIntelSnapshot) []string {
 	var lines []string
 
 	lines = append(lines, fmt.Sprintf("PCR (OI Total): %.2f", intel.PCR.OIPCRTotal))

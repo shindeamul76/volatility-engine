@@ -320,3 +320,12 @@ const (
 	BiasBuyPremium  = "BUY_PREMIUM"
 	BiasNeutral     = "NEUTRAL_OR_DEFINED_RISK"
 )
+
+// Greeks holds risk sensitivities.
+type Greeks struct {
+	Delta           float64 `json:"delta"`
+	Gamma           float64 `json:"gamma"`
+	VegaPerVolPoint float64 `json:"vega_per_vol_point"` // Per 1 vol point (0.01 change in Sigma)
+	ThetaPerDay     float64 `json:"theta_per_day"`      // Per day (1/365 year)
+	Rho             float64 `json:"rho"`
+}

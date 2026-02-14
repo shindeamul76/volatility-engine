@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"io"
 	"log"
@@ -16,15 +15,18 @@ import (
 	"volatility-engine/internal/domain/market"
 	"volatility-engine/internal/ingest"
 
-	// "volatility-engine/internal/quant/intel"
+	"volatility-engine/internal/quant/intel"
+
 	"volatility-engine/internal/quant/iv"
 
 	"volatility-engine/internal/quant/regime"
-	// "volatility-engine/internal/quant/strategy"
+	"volatility-engine/internal/quant/strategy"
 
 	"sort"
 	"sync"
+	"volatility-engine/internal/quant/pricing"
 	"volatility-engine/internal/quant/surface"
+	"volatility-engine/internal/service/report"
 )
 
 func main() {
@@ -46,6 +48,7 @@ func main() {
 		cmd := os.Args[1]
 		switch cmd {
 		case "snapshot-run":
+
 			runSnapshotPipeline()
 		default:
 			log.Fatalf("Unknown command: %s", cmd)
@@ -113,6 +116,7 @@ func runSnapshotPipeline() {
 		}
 
 		log.Printf("  [%d/%d] Ingested: %s (%d quotes, expiry: %s)",
+
 			i+1, len(fileConfigs), config.Path, len(snap.Quotes),
 			config.Expiry.Format("2006-01-02"))
 
@@ -186,11 +190,15 @@ func runSnapshotPipeline() {
 	chainProc := chain.NewProcessor(cfg.Pricing.RiskFreeRate)
 	ivSolver := iv.NewSolver(iv.DefaultSettings())
 	surfaceBuilder := surface.NewBuilder(surface.DefaultSettings())
+	intelEngine := intel.NewEngine()
+	selector := strategy.NewSelector()
 
-	var surfaceSkews []market.IVSkewSnapshot
+	// Container for 3-Pass Architecture
+	var expiryContexts []*market.ExpiryContext
 	var mu sync.Mutex
 	var wg sync.WaitGroup
 
+	log.Println("=== Pass 1: Per-Expiry Context Construction (Parallel) ===")
 	log.Printf("Found %d expiries to process", len(snap.Expiries))
 
 	for _, expMeta := range snap.Expiries {
@@ -199,24 +207,43 @@ func runSnapshotPipeline() {
 			defer wg.Done()
 
 			loopExpiry := eMeta.Expiry
-			// Skip DTE < 2 (microstructure makes IV unreliable)
+			ctx := &market.ExpiryContext{
+				ID:     fmt.Sprintf("ctx_%s", loopExpiry.Format("20060102")),
+				Expiry: eMeta,
+				AsOf:   snap.AsOf,
+				Stage:  "Initialized",
+			}
+
+			// Capture result helper
+			finish := func(reason string) {
+				if reason != "" {
+					ctx.SkipReason = reason
+					log.Printf(" > [SKIP] %s: %s", loopExpiry.Format("2006-01-02"), reason)
+				}
+				mu.Lock()
+				expiryContexts = append(expiryContexts, ctx)
+				mu.Unlock()
+			}
+
+			// Level 1 Gating: DTE
 			if eMeta.DaysToExpiry < 2 {
-				log.Printf(" > Skipping Expiry %s: DTE below 2 days threshold", loopExpiry.Format("2006-01-02"))
+				finish("DTE < 2 (Microstructure Noise)")
 				return
 			}
-			// log.Printf("Processing Expiry: %s (TTE: %.4f)", loopExpiry.Format("2006-01-02"), eMeta.TTEYears)
 
 			// A. Chain Generation
 			chainSnap, err := chainProc.GenerateChain(snap, loopExpiry)
 			if err != nil {
-				log.Printf("Error generating chain for %s: %v", loopExpiry, err)
+				finish(fmt.Sprintf("Chain Gen Failed: %v", err))
 				return
 			}
+			ctx.ChainSnapshot = chainSnap
 
 			// B. Forward Generation
 			fwdState := chainProc.GenerateForwardState(snap, chainSnap, loopExpiry)
+			ctx.ForwardState = fwdState
 
-			// C. Determine S_input
+			// C. Determine S_input for IV
 			S_input := fwdState.Forward.Mid
 			if S_input <= 0 {
 				if chainSnap.ChainState.ImpliedForward > 0 {
@@ -236,21 +263,19 @@ func runSnapshotPipeline() {
 			// D. IV Solving
 			var surfacePoints []market.IVPoint
 
-			// 1. Adaptive heuristics based on TTE
+			// 1. Adaptive heuristics
 			window := cfg.Selection.LogMoneynessWindow
 			minPts := cfg.Selection.MinPointsPerExpiry
 			isFarTenor := eMeta.DaysToExpiry > 21
 
 			if isFarTenor {
-				// Widen window for far tenors to capture more liquid points
 				window = window * 1.5
-				// Relax min points slightly to help bracketing IV30
 				if minPts > 15 {
 					minPts = 15
 				}
 			}
 
-			// Pre-filter by log-moneyness window
+			// Pre-filter inputs
 			var filteredInputs []market.IVPoint
 			for _, ivInput := range chainSnap.DownstreamReadySets.IVSurfaceInputs {
 				m := math.Log(ivInput.Strike / S_input)
@@ -259,20 +284,20 @@ func runSnapshotPipeline() {
 				}
 			}
 
-			// 2. Sort by distance from ATM (prioritize near-ATM strikes if capping is needed)
+			// Sort by distance from ATM
 			sort.Slice(filteredInputs, func(i, j int) bool {
 				distI := math.Abs(math.Log(filteredInputs[i].Strike / S_input))
 				distJ := math.Abs(math.Log(filteredInputs[j].Strike / S_input))
 				return distI < distJ
 			})
 
-			// 3. Cap the points to process
+			// Cap inputs
 			maxPts := cfg.Selection.MaxPointsPerExpiry
 			if len(filteredInputs) > maxPts {
 				filteredInputs = filteredInputs[:maxPts]
 			}
 
-			// 4. Solve IV for selected strikes
+			// Solve
 			for _, ivInput := range filteredInputs {
 				kStr := fmt.Sprintf("%.0f", ivInput.Strike)
 				sc := chainSnap.ByStrike[kStr]
@@ -280,9 +305,9 @@ func runSnapshotPipeline() {
 					continue
 				}
 
+				// Find marks
 				var opt *market.Option
 				var pairOpt *market.Option
-
 				if ivInput.Type == market.Call {
 					opt = sc.Call
 					pairOpt = sc.Put
@@ -333,7 +358,7 @@ func runSnapshotPipeline() {
 						RiskFreeRateCC: cfg.Pricing.RiskFreeRate,
 						DiscountFactor: df,
 					},
-					Settings: iv.DefaultSettings(),
+					Settings: iv.DefaultSettings(), // Solver settings
 				}
 
 				ivRes := ivSolver.Solve(ivReq)
@@ -354,134 +379,217 @@ func runSnapshotPipeline() {
 					surfacePoints = append(surfacePoints, p)
 				}
 			}
+			ctx.IVPoints = surfacePoints
 
-			// E. Build Skew (with liquidity guard)
+			// Skew Gating (Level 2)
 			if len(surfacePoints) >= minPts {
 				skewSnap := surfaceBuilder.BuildSkew(loopExpiry.Format("2006-01-02"), surfacePoints, S_input, tte)
-
-				mu.Lock()
-				surfaceSkews = append(surfaceSkews, skewSnap)
-				mu.Unlock()
-
-				msg := "Valid"
-				if isFarTenor {
-					msg = "Valid (Far)"
-				}
-				log.Printf(" > %s: %s | ATM IV: %.2f%% | Pts: %d", msg, loopExpiry.Format("2006-01-02"), skewSnap.Metrics.ATMVol*100, len(surfacePoints))
+				ctx.SkewSnapshot = &skewSnap
+				ctx.Stage = "SkewReady"
+				log.Printf(" > [OK] %s | Pts: %d | ATM: %.2f%%", loopExpiry.Format("2006-01-02"), len(surfacePoints), skewSnap.Metrics.ATMVol*100)
 			} else {
-				log.Printf(" > Skipped: %s | Only %d valid points (min %d required)",
-					loopExpiry.Format("2006-01-02"), len(surfacePoints), minPts)
+				ctx.Stage = "NoSkew"
+				ctx.Warnings = append(ctx.Warnings, fmt.Sprintf("Not enough points: %d < %d", len(surfacePoints), minPts))
+				log.Printf(" > [PARTIAL] %s | Pts: %d (Skew Skipped)", loopExpiry.Format("2006-01-02"), len(surfacePoints))
 			}
+
+			finish("") // Success (or partial success)
 
 		}(expMeta)
 	}
 
 	wg.Wait()
 
-	// Sort Skews by TTE
-	sort.Slice(surfaceSkews, func(i, j int) bool {
-		return surfaceSkews[i].TTEYears < surfaceSkews[j].TTEYears
+	// === Pass 2: Surface Construction & Regime (Serial) ===
+	log.Println("=== Pass 2: Cross-Expiry Regime Detection ===")
+
+	// Sort contexts by TTE (Determinism)
+	sort.Slice(expiryContexts, func(i, j int) bool {
+		return expiryContexts[i].Expiry.DaysToExpiry < expiryContexts[j].Expiry.DaysToExpiry
 	})
 
-	// 6. Regime Detection
+	// Collect valid skews for surface
+	var surfaceSkews []market.IVSkewSnapshot
+	for _, ctx := range expiryContexts {
+		if ctx.SkewSnapshot != nil {
+			surfaceSkews = append(surfaceSkews, *ctx.SkewSnapshot)
+		}
+	}
 
-	// log.Println("=== Regime Detection ===")
+	if len(surfaceSkews) == 0 {
+		log.Fatal("Critical Error: No valid skews generated. Cannot build surface.")
+	}
 
-	// Create a surface snapshot wrapper
 	surfaceSnap := market.IVSurfaceSnapshot{
 		AsOf:       snap.AsOf,
 		Underlying: snap.Underlying.Symbol,
 		Skews:      surfaceSkews,
 	}
 
-	// Use concrete type for persistence
+	// Regime Detector
 	ivHistoryProvider := &regime.CSVIVHistoryProvider{BaseDir: "data/history"}
 	priceHistoryProvider := &regime.CSVPriceHistoryProvider{BaseDir: "data/history"}
 
-	detector := regime.NewDetector(
-		regime.DefaultSettings(),
-		ivHistoryProvider,
-		priceHistoryProvider,
-	)
-
+	detector := regime.NewDetector(regime.DefaultSettings(), ivHistoryProvider, priceHistoryProvider)
 	regimeState := detector.Detect(surfaceSnap)
 
-	log.Printf("Regime: %s (Bias: %s)", regimeState.Decision.Regime, regimeState.Decision.Bias)
-	log.Printf("Score: %.2f", regimeState.Decision.Score)
-	log.Printf("Reference IV (30d): %.2f%% (Conf: %.2f, Method: %s)",
-		regimeState.IVReference.IV*100, regimeState.IVReference.Confidence, regimeState.IVReference.Method)
-	log.Printf("Historical Context: Rank=%.2f, Pct=%.2f", regimeState.HistoricalContext.IVRank, regimeState.HistoricalContext.IVPercentile)
-	log.Printf("Realized Vol (HV20): %.2f%% (Ratio: %.2f)", regimeState.RealizedVol.HV*100, regimeState.RealizedVol.IVHVRatio)
+	log.Printf("Regime: %s | Bias: %s | Score: %.2f", regimeState.Decision.Regime, regimeState.Decision.Bias, regimeState.Decision.Score)
+	log.Printf("IV30: %.2f%% (Rank: %.2f)", regimeState.IVReference.IV*100, regimeState.HistoricalContext.IVRank)
 
-	// Persist today's IV30
+	// Persist IV30
 	if regimeState.IVReference.IV > 0 {
-		err := ivHistoryProvider.RecordIV30(
-			snap.Underlying.Symbol,
-			snap.AsOf, // This is "Now" (or snapshot time)
-			regimeState.IVReference.IV,
-			regimeState.IVReference.Confidence,
-			regimeState.IVReference.Method,
-		)
+		_ = ivHistoryProvider.RecordIV30(snap.Underlying.Symbol, snap.AsOf, regimeState.IVReference.IV, regimeState.IVReference.Confidence, regimeState.IVReference.Method)
+	}
+
+	// === Pass 3: Intel & Strategy (Per-Expiry) ===
+	log.Println("=== Pass 3: Intel & Strategy Generation (Per-Expiry) ===")
+
+	for _, ctx := range expiryContexts {
+		if ctx.SkipReason != "" || ctx.SkewSnapshot == nil {
+			continue // Need skew for deeper analysis usually
+		}
+
+		// A. Intel
+		intelSnap := intelEngine.ComputeIntel(ctx.ChainSnapshot, &surfaceSnap)
+		ctx.IntelSnapshot = intelSnap
+
+		// Log Intel Signals
+		if len(intelSnap.Signals) > 0 {
+			log.Printf(" > [INTEL] %s Signals:", ctx.Expiry.Expiry.Format("2006-01-02"))
+			for _, sig := range intelSnap.Signals {
+				log.Printf("    - [%s] (Score: %.2f) %s", sig.Name, sig.Score, sig.Explanation)
+			}
+		}
+
+		// Log Intel Explanation
+		// log.Printf(" > [INTEL] Explanation: %s", strings.Join(intelSnap.Explanation, " | "))
+
+		// B. Strategies
+		cands, err := selector.SelectStrategies(&regimeState, &surfaceSnap, intelSnap, ctx.ChainSnapshot, ctx.ForwardState)
 		if err != nil {
-			log.Printf("[WARN] Failed to persist IV30 history: %v", err)
+			ctx.Warnings = append(ctx.Warnings, fmt.Sprintf("Strategy Gen Failed: %v", err))
 		} else {
-			log.Printf("[INFO] Persisted IV30 to history for %s", snap.AsOf.Format("2006-01-02"))
+			ctx.StrategyCandidates = cands
+		}
+
+		ctx.Stage = "Analyzed"
+		log.Printf(" > Analyzed %s: %d Signals, %d Candidates", ctx.Expiry.Expiry.Format("2006-01-02"), len(intelSnap.Signals), len(cands))
+	}
+
+	// === Final: Aggregation & Ranking ===
+	log.Println("=== Final Selection ===")
+
+	var allCandidates []market.StrategyCandidate
+	for _, ctx := range expiryContexts {
+		if len(ctx.StrategyCandidates) > 0 {
+			allCandidates = append(allCandidates, ctx.StrategyCandidates...)
 		}
 	}
 
-	// Output formatted JSON for user verification
-	log.Println("=== RegimeState JSON Contract ===")
-	rsBytes, _ := json.MarshalIndent(regimeState, "", "  ")
-	fmt.Println(string(rsBytes))
+	// Global Rank
+	sort.Slice(allCandidates, func(i, j int) bool {
+		return allCandidates[i].Quality.Score > allCandidates[j].Quality.Score
+	})
 
-	if len(regimeState.Decision.Rationale) > 0 {
-		log.Println("Rationale:")
-		for _, r := range regimeState.Decision.Rationale {
-			log.Printf(" - %s", r)
+	log.Printf("Generated Total %d Candidates. Top Recommendations:", len(allCandidates))
+	topN := 5
+	for i := 0; i < len(allCandidates) && i < topN; i++ {
+		cand := allCandidates[i]
+		log.Printf(" #%d [%s] %s (%s) Score=%.2f | Expiry: %s",
+			i+1, cand.StrategyType, cand.ID, cand.Intent, cand.Quality.Score, cand.Expiry)
+		log.Printf("    Entry: %s %.2f", cand.Entry.PremiumType, cand.Entry.NetPremium)
+		log.Printf("    Rationale:")
+		log.Printf("     - Basis: %s", cand.Rationale.SelectionBasis)
+		log.Printf("     - Thesis: %s", cand.Rationale.Thesis)
+		log.Printf("     - Legs: %s", cand.Rationale.LegSelection)
+
+		// Find the Skew Snapshot for this candidate's expiry to calculate Fair Value
+		var candSkew *market.IVSkewSnapshot
+		for _, s := range surfaceSnap.Skews {
+			if s.Expiry == cand.Expiry {
+				candSkew = &s
+				break
+			}
 		}
+
+		for _, leg := range cand.Legs {
+			fairValue := 0.0
+			fvNote := ""
+
+			if candSkew != nil {
+				// 1. Get Model IV from Skew (Quadratic Fit)
+				// Params are for Total Variance (Vol^2 * T)
+				fwd := candSkew.Forward
+				if fwd > 0 {
+					lm := math.Log(leg.Strike / fwd)
+					p := candSkew.Fit.Params
+					modelVar := p.A + p.B*lm + p.C*lm*lm
+
+					modelVol := 0.0
+					if modelVar > 0 && candSkew.TTEYears > 0 {
+						modelVol = math.Sqrt(modelVar / candSkew.TTEYears)
+					}
+
+					// 2. Price with Black-Scholes using Model Vol
+					tte := candSkew.TTEYears
+					r := cfg.Pricing.RiskFreeRate
+
+					pCtx := pricing.PricingContext{
+						Type:           leg.Type,
+						S:              fwd,
+						K:              leg.Strike,
+						T:              tte,
+						R:              r,
+						IsForwardModel: true,
+						Sigma:          modelVol,
+					}
+					res := pricing.Calculate(pCtx)
+					fairValue = res.Price
+					fvNote = fmt.Sprintf("(ModelIV: %.2f%%)", modelVol*100)
+				}
+			}
+
+			diffPct := 0.0
+			if leg.Mark > 0 {
+				diffPct = (fairValue - leg.Mark) / leg.Mark * 100
+			}
+
+			log.Printf("      - %4s %d %s %.0f @ %.2f | Fair: %.2f %s [Diff: %+.1f%%]",
+				leg.Side, leg.Qty, leg.Type, leg.Strike, leg.Mark, fairValue, fvNote, diffPct)
+		}
+		log.Println("    ---------------------------------------------------")
 	}
 
-	// 7. Intelligence Engine
-	// log.Println("=== Option Chain Intelligence ===")
-	// intelEngine := intel.NewEngine()
-	// intelSnap := intelEngine.ComputeIntel(chainSnap, &surfaceSnap)
+	// === Risk Reporting ===
+	if len(allCandidates) > 0 {
+		log.Println("=== Generating Risk Reports ===")
 
-	// log.Println("--- Signals ---")
-	// for _, sig := range intelSnap.Signals {
-	// 	log.Printf(" SIGNAL [%s] (Score: %.2f) - %s", sig.Name, sig.Score, sig.Explanation)
-	// }
+		// Take top N config
+		limit := cfg.Report.TopN
+		if limit > len(allCandidates) {
+			limit = len(allCandidates)
+		}
+		topCandidates := allCandidates[:limit]
 
-	// log.Println("--- Key Metrics ---")
-	// for _, exp := range intelSnap.Explanation {
-	// 	log.Printf(" %s", exp)
-	// }
+		rptGen := report.NewGenerator(*cfg)
 
-	// // Output Intel JSON
-	// log.Println("=== ChainIntelSnapshot JSON ===")
-	// intelBytes, _ := json.MarshalIndent(intelSnap, "", "  ")
-	// fmt.Println(string(intelBytes))
+		meta := struct {
+			Regime string
+			IV30   float64
+			IVRank float64
+		}{
+			Regime: regimeState.Decision.Regime,
+			IV30:   regimeState.IVReference.IV,
+			IVRank: regimeState.HistoricalContext.IVRank,
+		}
 
-	// // 8. Strategy Selector
-	// log.Println("=== Strategy Selector ===")
-	// selector := strategy.NewSelector()
-	// candidates, err := selector.SelectStrategies(&regimeState, &surfaceSnap, intelSnap, chainSnap, fwdState)
-	// if err != nil {
-	// 	log.Printf("Strategy selection error: %v", err)
-	// } else {
-	// 	log.Printf("Generated %d Candidates", len(candidates))
-	// 	for _, cand := range candidates {
-	// 		log.Printf(" > [%s] %s (%s) Score=%.2f", cand.StrategyType, cand.ID, cand.Intent, cand.Quality.Score)
-	// 		log.Printf("   Entry: %s %.2f. Rationale: %v", cand.Entry.PremiumType, cand.Entry.NetPremium, cand.Rationale.Reasons)
-	// 		for _, leg := range cand.Legs {
-	// 			log.Printf("     - %4s %d %s %.0f @ %.2f", leg.Side, leg.Qty, leg.Type, leg.Strike, leg.Mark)
-	// 		}
-	// 	}
-
-	// 	// Dump Candidates JSON
-	// 	log.Println("=== StrategyCandidates JSON ===")
-	// 	stratBytes, _ := json.MarshalIndent(candidates, "", "  ")
-	// 	fmt.Println(string(stratBytes))
-	// }
+		err := rptGen.GenerateBatch(snap.ID, topCandidates, nil, meta, cfg.Pricing.RiskFreeRate)
+		if err != nil {
+			log.Printf("Error generating risk reports: %v", err)
+		} else {
+			log.Printf("Reports saved to %s/%s/", cfg.Report.OutDir, snap.ID)
+		}
+	}
 
 	log.Println("Pipeline finished.")
 }

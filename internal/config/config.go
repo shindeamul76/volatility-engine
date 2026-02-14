@@ -35,11 +35,38 @@ type SelectionConfig struct {
 	MaxPointsPerExpiry    int     `yaml:"max_points_per_expiry"`    // e.g., 60
 }
 
+type ScenarioConfig struct {
+	SpotShocks     []float64 `yaml:"spot_shocks"`
+	VolShocksAbs   []float64 `yaml:"vol_shocks_abs"`
+	TimeShiftsDays []int     `yaml:"time_shifts_days"`
+}
+
+type PayoffConfig struct {
+	GridMinMult float64 `yaml:"grid_min_mult"`
+	GridMaxMult float64 `yaml:"grid_max_mult"`
+	GridSteps   int     `yaml:"grid_steps"`
+}
+
+type RiskConfig struct {
+	ContractMultiplier float64        `yaml:"contract_multiplier"`
+	Scenario           ScenarioConfig `yaml:"scenario"`
+	Payoff             PayoffConfig   `yaml:"payoff"`
+}
+
+type ReportConfig struct {
+	TopN    int      `yaml:"top_n"`
+	Formats []string `yaml:"formats"`
+	OutDir  string   `yaml:"out_dir"`
+	Workers int      `yaml:"workers"`
+}
+
 // Config is the root configuration structure
 type Config struct {
 	Market    MarketConfig    `yaml:"market"`
 	Pricing   PricingConfig   `yaml:"pricing"`
 	Selection SelectionConfig `yaml:"selection"`
+	Risk      RiskConfig      `yaml:"risk"`
+	Report    ReportConfig    `yaml:"report"`
 	Files     []FileConfig    `yaml:"files"`
 }
 
@@ -97,6 +124,23 @@ func (c *Config) Validate() error {
 
 	if c.Selection.MinPointsPerExpiry > c.Selection.MaxPointsPerExpiry {
 		return fmt.Errorf("selection.min_points_per_expiry cannot be greater than max_points_per_expiry")
+	}
+
+	// Risk Defaults
+	if c.Risk.ContractMultiplier <= 0 {
+		c.Risk.ContractMultiplier = 1.0 // Default to 1 if not set
+	}
+	if c.Risk.Payoff.GridSteps <= 0 {
+		c.Risk.Payoff.GridSteps = 100
+	}
+	if c.Report.TopN <= 0 {
+		c.Report.TopN = 3
+	}
+	if c.Report.OutDir == "" {
+		c.Report.OutDir = "reports"
+	}
+	if c.Report.Workers <= 0 {
+		c.Report.Workers = 1
 	}
 
 	// Validate each file config

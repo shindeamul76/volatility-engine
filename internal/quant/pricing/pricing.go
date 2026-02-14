@@ -19,14 +19,7 @@ type PricingContext struct {
 	IsForwardModel bool    // If true, S is treated as Forward Price F, and drift is just discount.
 }
 
-// Greeks holds the calculated risk sensitivities.
-type Greeks struct {
-	Delta           float64
-	Gamma           float64
-	VegaPerVolPoint float64 // Per 1 vol point (0.01 change in Sigma)
-	ThetaPerDay     float64 // Per day (1/365 year)
-	Rho             float64 // Not strictly required but good to have
-}
+// Greeks definition moved to market package
 
 // Intermediates holds d1, d2, nd1, nd2 for diagnostics
 type Intermediates struct {
@@ -39,7 +32,7 @@ type Intermediates struct {
 // Result bundles price and greeks.
 type Result struct {
 	Price float64
-	Greeks
+	market.Greeks
 	Intermediates
 	Quality Quality
 }
@@ -192,7 +185,7 @@ func calculateBS(ctx PricingContext, d1, d2 float64) Result {
 
 	return Result{
 		Price: price,
-		Greeks: Greeks{
+		Greeks: market.Greeks{
 			Delta:           delta,
 			Gamma:           gamma,
 			VegaPerVolPoint: vega,
@@ -248,7 +241,7 @@ func priceNearExpiry(ctx PricingContext) Result {
 
 	return Result{
 		Price: intrinsic,
-		Greeks: Greeks{
+		Greeks: market.Greeks{
 			Delta:           delta,
 			Gamma:           0, // Unstable
 			VegaPerVolPoint: 0,
@@ -295,7 +288,7 @@ func priceLowVol(ctx PricingContext) Result {
 
 	return Result{
 		Price: price,
-		Greeks: Greeks{
+		Greeks: market.Greeks{
 			Delta:           delta,
 			Gamma:           0,
 			VegaPerVolPoint: 0,
