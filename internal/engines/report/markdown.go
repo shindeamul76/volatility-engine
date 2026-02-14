@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"strings"
 
-	"volatility-engine/internal/domain/risk"
+	"volatility-engine/internal/quant/risk"
 )
 
 type MarkdownRenderer struct{}
 
-func (r *MarkdownRenderer) Render(report risk.StrategyRiskReport) ([]byte, error) {
+func (r *MarkdownRenderer) Render(report risk.RiskReport) ([]byte, error) {
 	var sb strings.Builder
 
 	sb.WriteString(fmt.Sprintf("# Risk Report: %s (%s)\n\n", report.Candidate.ID, report.Candidate.StrategyType))
@@ -32,7 +32,7 @@ func (r *MarkdownRenderer) Render(report risk.StrategyRiskReport) ([]byte, error
 	} else {
 		sb.WriteString("| Risk Type | Defined Risk |\n")
 	}
-	sb.WriteString(fmt.Sprintf("| Risk/Reward | %.2f |\n", report.Payoff.RiskReward))
+	sb.WriteString(fmt.Sprintf("| Risk/Reward | %.2f |\n", report.Payoff.RiskRewardRatio))
 
 	beStr := ""
 	for _, b := range report.Payoff.Breakevens {
@@ -48,8 +48,8 @@ func (r *MarkdownRenderer) Render(report risk.StrategyRiskReport) ([]byte, error
 	sb.WriteString("## Net Greeks (Now)\n")
 	sb.WriteString(fmt.Sprintf("- **Delta**: %.2f\n", report.Greeks.Delta))
 	sb.WriteString(fmt.Sprintf("- **Gamma**: %.4f\n", report.Greeks.Gamma))
-	sb.WriteString(fmt.Sprintf("- **Theta**: %.2f\n", report.Greeks.Theta))
-	sb.WriteString(fmt.Sprintf("- **Vega**: %.2f\n", report.Greeks.Vega))
+	sb.WriteString(fmt.Sprintf("- **Theta**: %.2f\n", report.Greeks.ThetaPerDay))
+	sb.WriteString(fmt.Sprintf("- **Vega**: %.2f\n", report.Greeks.VegaPerVolPoint))
 	sb.WriteString("\n")
 
 	// Scenarios
@@ -66,7 +66,7 @@ func (r *MarkdownRenderer) Render(report risk.StrategyRiskReport) ([]byte, error
 
 	// Filter for T+0
 	count := 0
-	for _, res := range report.Scenarios.Surface {
+	for _, res := range report.Scenarios.Results {
 		if res.Scenario.DaysForward == 0 && count < 10 {
 			// Just sample some interesting ones? Or all T+0?
 			// Let's show all T+0

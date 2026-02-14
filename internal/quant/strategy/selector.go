@@ -7,6 +7,7 @@ import (
 
 	"volatility-engine/internal/domain/market"
 	"volatility-engine/internal/quant/pricing"
+	"volatility-engine/internal/quant/risk"
 )
 
 type Selector struct {
@@ -59,14 +60,14 @@ func (s *Selector) SelectStrategies(
 	if rType == market.RegimeHighVol || rType == market.RegimeTransition {
 		// Try Iron Condor
 		if dte >= 2 && dte <= 45 { // Broad window for prototype
-			cands := s.genIronCondor(chain, fwd, intelSnap, reg)
+			cands := s.genIronCondor(chain, fwd, intelSnap, reg, surface)
 			candidates = append(candidates, cands...)
 		}
 
 		// Try Iron Fly (if Very High Vol or Pin Risk)
 		// For prototype, if score > 0.7 or specific flag
 		if reg.Decision.Score > 0.7 || intelSnap.PinRisk.IsPinRisk {
-			cands := s.genIronFly(chain, fwd, intelSnap, reg)
+			cands := s.genIronFly(chain, fwd, intelSnap, reg, surface)
 			candidates = append(candidates, cands...)
 		}
 	}
@@ -74,16 +75,18 @@ func (s *Selector) SelectStrategies(
 	if rType == market.RegimeLowVol || isEvent {
 		// Try Straddle / Strangle
 		if dte >= 7 { // Avoid super near expiry for long vol unless gamma scalp (advanced)
-			cands := s.genLongStraddle(chain, fwd, intelSnap, reg)
+			cands := s.genLongStraddle(chain, fwd, intelSnap, reg, surface)
 			candidates = append(candidates, cands...)
 
-			cands2 := s.genLongStrangle(chain, fwd, intelSnap, reg)
+			cands2 := s.genLongStrangle(chain, fwd, intelSnap, reg, surface)
 			candidates = append(candidates, cands2...)
 		}
 	}
 
 	// 4. Scoring & Ranking
 	for i := range candidates {
+		// Update Rationale with precise DTE
+		candidates[i].Rationale.SelectionBasis = fmt.Sprintf("Regime is '%s' and DTE (%.1f) is within ideal window.", reg.Decision.Regime, dte)
 		s.scoreCandidate(&candidates[i], reg, intelSnap)
 	}
 
@@ -102,7 +105,7 @@ func (s *Selector) SelectStrategies(
 
 // Generators
 
-func (s *Selector) genIronCondor(chain *market.ChainSnapshot, fwd *market.ForwardState, intelSnap *market.ChainIntelSnapshot, reg *market.RegimeState) []market.StrategyCandidate {
+func (s *Selector) genIronCondor(chain *market.ChainSnapshot, fwd *market.ForwardState, intelSnap *market.ChainIntelSnapshot, reg *market.RegimeState, surface *market.IVSurfaceSnapshot) []market.StrategyCandidate {
 	// Template: Short Iron Condor
 	// Goal: Sell OTM Put/Call, Buy wings.
 	// Target Delta: .15 to .20 (Shorts)
@@ -136,10 +139,10 @@ func (s *Selector) genIronCondor(chain *market.ChainSnapshot, fwd *market.Forwar
 
 	// Construct Legs
 	legs := []market.StrategyLeg{
-		s.buildLeg(chain, shortPutK, market.Put, "SELL", 1),
-		s.buildLeg(chain, longPutK, market.Put, "BUY", 1),
-		s.buildLeg(chain, shortCallK, market.Call, "SELL", 1),
-		s.buildLeg(chain, longCallK, market.Call, "BUY", 1),
+		s.buildLeg(chain, shortPutK, market.Put, "SELL", 1, surface),
+		s.buildLeg(chain, longPutK, market.Put, "BUY", 1, surface),
+		s.buildLeg(chain, shortCallK, market.Call, "SELL", 1, surface),
+		s.buildLeg(chain, longCallK, market.Call, "BUY", 1, surface),
 	}
 
 	// Validate (check nil legs or confidence)
@@ -169,7 +172,7 @@ func (s *Selector) genIronCondor(chain *market.ChainSnapshot, fwd *market.Forwar
 	return []market.StrategyCandidate{cand}
 }
 
-func (s *Selector) genIronFly(chain *market.ChainSnapshot, fwd *market.ForwardState, intelSnap *market.ChainIntelSnapshot, reg *market.RegimeState) []market.StrategyCandidate {
+func (s *Selector) genIronFly(chain *market.ChainSnapshot, fwd *market.ForwardState, intelSnap *market.ChainIntelSnapshot, reg *market.RegimeState, surface *market.IVSurfaceSnapshot) []market.StrategyCandidate {
 	f := fwd.Forward.Mid
 	if f == 0 {
 		f = chain.Underlying.Spot
@@ -186,10 +189,10 @@ func (s *Selector) genIronFly(chain *market.ChainSnapshot, fwd *market.ForwardSt
 	highWing := s.findStrikeClosestTo(strikes, atmK+width)
 
 	legs := []market.StrategyLeg{
-		s.buildLeg(chain, atmK, market.Call, "SELL", 1),
-		s.buildLeg(chain, atmK, market.Put, "SELL", 1),
-		s.buildLeg(chain, highWing, market.Call, "BUY", 1),
-		s.buildLeg(chain, lowWing, market.Put, "BUY", 1),
+		s.buildLeg(chain, atmK, market.Call, "SELL", 1, surface),
+		s.buildLeg(chain, atmK, market.Put, "SELL", 1, surface),
+		s.buildLeg(chain, highWing, market.Call, "BUY", 1, surface),
+		s.buildLeg(chain, lowWing, market.Put, "BUY", 1, surface),
 	}
 
 	if !s.validateLegs(legs) {
@@ -216,7 +219,7 @@ func (s *Selector) genIronFly(chain *market.ChainSnapshot, fwd *market.ForwardSt
 	return []market.StrategyCandidate{cand}
 }
 
-func (s *Selector) genLongStraddle(chain *market.ChainSnapshot, fwd *market.ForwardState, intelSnap *market.ChainIntelSnapshot, reg *market.RegimeState) []market.StrategyCandidate {
+func (s *Selector) genLongStraddle(chain *market.ChainSnapshot, fwd *market.ForwardState, intelSnap *market.ChainIntelSnapshot, reg *market.RegimeState, surface *market.IVSurfaceSnapshot) []market.StrategyCandidate {
 	f := fwd.Forward.Mid
 	if f == 0 {
 		f = chain.Underlying.Spot
@@ -226,8 +229,8 @@ func (s *Selector) genLongStraddle(chain *market.ChainSnapshot, fwd *market.Forw
 	atmK := s.findStrikeClosestTo(strikes, f)
 
 	legs := []market.StrategyLeg{
-		s.buildLeg(chain, atmK, market.Call, "BUY", 1),
-		s.buildLeg(chain, atmK, market.Put, "BUY", 1),
+		s.buildLeg(chain, atmK, market.Call, "BUY", 1, surface),
+		s.buildLeg(chain, atmK, market.Put, "BUY", 1, surface),
 	}
 	if !s.validateLegs(legs) {
 		return nil
@@ -253,7 +256,7 @@ func (s *Selector) genLongStraddle(chain *market.ChainSnapshot, fwd *market.Forw
 	return []market.StrategyCandidate{cand}
 }
 
-func (s *Selector) genLongStrangle(chain *market.ChainSnapshot, fwd *market.ForwardState, intelSnap *market.ChainIntelSnapshot, reg *market.RegimeState) []market.StrategyCandidate {
+func (s *Selector) genLongStrangle(chain *market.ChainSnapshot, fwd *market.ForwardState, intelSnap *market.ChainIntelSnapshot, reg *market.RegimeState, surface *market.IVSurfaceSnapshot) []market.StrategyCandidate {
 	f := fwd.Forward.Mid
 	if f == 0 {
 		f = chain.Underlying.Spot
@@ -265,8 +268,8 @@ func (s *Selector) genLongStrangle(chain *market.ChainSnapshot, fwd *market.Forw
 	putK := s.findStrikeByDelta(strikes, -0.25, "PUT")
 
 	legs := []market.StrategyLeg{
-		s.buildLeg(chain, callK, market.Call, "BUY", 1),
-		s.buildLeg(chain, putK, market.Put, "BUY", 1),
+		s.buildLeg(chain, callK, market.Call, "BUY", 1, surface),
+		s.buildLeg(chain, putK, market.Put, "BUY", 1, surface),
 	}
 	if !s.validateLegs(legs) {
 		return nil
@@ -376,7 +379,7 @@ func (s *Selector) findStrikeClosestTo(list []strikeDelta, targetK float64) floa
 	return bestK
 }
 
-func (s *Selector) buildLeg(chain *market.ChainSnapshot, strike float64, optType market.OptionType, side string, qty int) market.StrategyLeg {
+func (s *Selector) buildLeg(chain *market.ChainSnapshot, strike float64, optType market.OptionType, side string, qty int, surface *market.IVSurfaceSnapshot) market.StrategyLeg {
 	kStr := fmt.Sprintf("%.0f", strike)
 	sc := chain.ByStrike[kStr]
 	leg := market.StrategyLeg{
@@ -404,6 +407,44 @@ func (s *Selector) buildLeg(chain *market.ChainSnapshot, strike float64, optType
 			leg.Confidence = 0.0
 		}
 	}
+
+	// Populate IV from Surface if available
+	if surface != nil {
+		// Find skew for this expiry
+		expiryKey := chain.Expiry.Expiry.Format("2006-01-02")
+		var skew *market.IVSkewSnapshot
+		for _, sk := range surface.Skews {
+			if sk.Expiry == expiryKey {
+				skew = &sk
+				break
+			}
+		}
+
+		if skew != nil {
+			// Calculate Model IV
+			paramsSlice := []float64{skew.Fit.Params.A, skew.Fit.Params.B, skew.Fit.Params.C}
+			leg.IV = risk.VolFromSkew(paramsSlice, strike, skew.Forward, skew.TTEYears)
+
+			// Calculate Delta for this leg
+			if leg.IV > 0 && skew.TTEYears > 0 {
+				// Use BSM to get delta
+				// Need to convert forward to spot-equivalent for BSM input
+				// BSM expects spot, but we can use forward pricing trick
+				rate := 0.05 // Default, should ideally come from fwd.Rates
+				if chain != nil && chain.Underlying.Spot > 0 {
+					// Calculate implied rate from forward
+					if skew.Forward > 0 && chain.Underlying.Spot > 0 && skew.TTEYears > 0.001 {
+						rate = math.Log(skew.Forward/chain.Underlying.Spot) / skew.TTEYears
+					}
+				}
+
+				isCall := (optType == market.Call)
+				bsmResult := risk.BSM(isCall, chain.Underlying.Spot, strike, skew.TTEYears, rate, leg.IV)
+				leg.Delta = bsmResult.Delta
+			}
+		}
+	}
+
 	return leg
 }
 
@@ -427,8 +468,7 @@ func (s *Selector) calcMetrics(c *market.StrategyCandidate) {
 		}
 	}
 
-	// Convention: NetPremium positive = Debit, Negative = Credit?
-	// User prompt: "Credit = (Sell) - (Buy)".
+	// Convention: NetPremium positive = Debit, Negative = Credit
 	// My loop: +Buy -Sell = Net Debit.
 	// If result is negative, it's a credit.
 
@@ -436,17 +476,126 @@ func (s *Selector) calcMetrics(c *market.StrategyCandidate) {
 		c.Entry.PremiumType = "CREDIT"
 		c.Entry.NetPremium = -premium
 		c.Metrics.MaxProfit = -premium
-		// Max Loss for Iron Condor?
-		// Width - Credit approximately.
-		// Need logic to know widths.
-		// Placeholder.
-		c.Metrics.MaxLossApprox = 500.0 // Todo
+
+		// Max Loss for Iron Condor / Iron Fly
+		// Logic: Find the spread width.
+		// For IC: Max Loss = Width - Credit.
+		// We need to identify the wings.
+		// Assuming symmetric wings for simplicity or taking the wider side.
+
+		if len(c.Legs) == 4 {
+			// Find Short and Long Puts (or Calls)
+			var shortK, longK float64
+			found := false
+
+			// Try to find a Put Spread or Call Spread
+			for _, l := range c.Legs {
+				if l.Side == "SELL" && l.Type == market.Put {
+					shortK = l.Strike
+				}
+				if l.Side == "BUY" && l.Type == market.Put {
+					longK = l.Strike
+				}
+			}
+			if shortK > 0 && longK > 0 {
+				width := math.Abs(shortK - longK)
+				c.Metrics.MaxLossApprox = width - (-premium)
+				found = true
+			}
+
+			if !found {
+				// Try Call side
+				for _, l := range c.Legs {
+					if l.Side == "SELL" && l.Type == market.Call {
+						shortK = l.Strike
+					}
+					if l.Side == "BUY" && l.Type == market.Call {
+						longK = l.Strike
+					}
+				}
+				if shortK > 0 && longK > 0 {
+					width := math.Abs(shortK - longK)
+					c.Metrics.MaxLossApprox = width - (-premium)
+				}
+			}
+		}
+
+		// Breakevens for Credit (Short Iron / Vertical Spread / Naked Short)
+		// Low BE = Short Put Strike - Credit
+		// High BE = Short Call Strike + Credit
+
+		netCred := c.Entry.NetPremium
+		qty := 1
+		if len(c.Legs) > 0 {
+			qty = c.Legs[0].Qty
+		}
+		credPerUnit := netCred / float64(qty)
+
+		var shortPutK, shortCallK float64
+		for _, l := range c.Legs {
+			if l.Side == "SELL" && l.Type == market.Put {
+				shortPutK = l.Strike
+			}
+			if l.Side == "SELL" && l.Type == market.Call {
+				shortCallK = l.Strike
+			}
+		}
+
+		if shortPutK > 0 {
+			c.Metrics.Breakevens.Low = shortPutK - credPerUnit
+		}
+		if shortCallK > 0 {
+			c.Metrics.Breakevens.High = shortCallK + credPerUnit
+		}
+
 	} else {
+		// Debit Strategies
 		c.Entry.PremiumType = "DEBIT"
 		c.Entry.NetPremium = premium
-		c.Metrics.MaxLossApprox = premium
-		c.Metrics.MaxProfit = -1 // Infinite usually
+		c.Metrics.MaxLossApprox = premium // For Debit spreads/long options, max loss is premium
+		c.Metrics.MaxProfit = -1          // Zero usually means "Calculated elsewhere" or Infinite
+
+		// Breakevens for Debit
+		// Straddle/Strangle:
+		// Low BE = Put Strike - Debit
+		// High BE = Call Strike + Debit
+
+		netDeb := c.Entry.NetPremium
+		qty := 1
+		if len(c.Legs) > 0 {
+			qty = c.Legs[0].Qty
+		}
+		debPerUnit := netDeb / float64(qty)
+
+		var putK, callK float64
+		for _, l := range c.Legs {
+			if l.Side == "BUY" && l.Type == market.Put {
+				putK = l.Strike
+			}
+			if l.Side == "BUY" && l.Type == market.Call {
+				callK = l.Strike
+			}
+		}
+
+		if putK > 0 {
+			c.Metrics.Breakevens.Low = putK - debPerUnit
+		}
+		if callK > 0 {
+			c.Metrics.Breakevens.High = callK + debPerUnit
+		}
 	}
+
+	// Min Confidence
+	minConf := 1.0
+	if len(c.Legs) > 0 {
+		minConf = c.Legs[0].Confidence
+		for _, l := range c.Legs {
+			if l.Confidence < minConf {
+				minConf = l.Confidence
+			}
+		}
+	}
+	c.Metrics.MinLegConfidence = minConf
 }
 
 func (s *Selector) scoreCandidate(c *market.StrategyCandidate, reg *market.RegimeState, intel *market.ChainIntelSnapshot) {
