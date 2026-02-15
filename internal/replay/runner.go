@@ -18,6 +18,7 @@ type Runner struct {
 	Engine    *app.Engine
 	Source    SnapshotSource
 	Decider   *Decider
+	RiskGate  *RiskGate
 	Exec      *ExecSim
 	Audit     *Auditor
 	Pf        *Portfolio
@@ -47,8 +48,8 @@ func (r *Runner) Run(baseDir string) error {
 	eqWriter := csv.NewWriter(eqFile)
 	defer eqWriter.Flush()
 
-	// Header: t, cash, equity, unrealized_pnl, realized_pnl, open_positions
-	_ = eqWriter.Write([]string{"t", "cash", "equity", "unrealized_pnl", "realized_pnl", "open_positions"})
+	// Header: t, cash, equity, equity_mid, unrealized_pnl, realized_pnl, open_positions, peak, drawdown
+	_ = eqWriter.Write([]string{"t", "cash", "equity", "equity_mid", "unrealized_pnl", "realized_pnl", "open_positions", "peak", "drawdown"})
 
 	var lastSnap *market.Snapshot
 	for _, desc := range descs {
@@ -118,6 +119,12 @@ func (r *Runner) Run(baseDir string) error {
 
 		// 1. MTM Logging
 		mtmResults, totalEquity, totalMidEquity := r.Pf.MarkToMarket(out.Snapshot)
+
+		// Record start-of-day equity for daily PnL circuit breaker
+		if r.Pf.DayStartEquity == 0 {
+			r.Pf.StartOfDay(totalEquity)
+		}
+
 		totalUnrealized := 0.0
 		for _, m := range mtmResults {
 			totalUnrealized += m.UnrealizedPnL
@@ -188,10 +195,9 @@ func (r *Runner) Run(baseDir string) error {
 			}
 		}
 
-		// 3. Entries
+		// 3. Entries — with RiskGate evaluation
 		entryOrders, entryLogs := r.Decider.DecideEntries(out, r.Pf)
 		for _, log := range entryLogs {
-			// Optional: Filter out spammy "max positions" logs if desired, but user asked for it.
 			_ = r.Audit.Append(map[string]any{
 				"t":      man.AsOf.UTC().Format(time.RFC3339),
 				"type":   log.Type,
@@ -202,11 +208,78 @@ func (r *Runner) Run(baseDir string) error {
 		}
 
 		for _, ord := range entryOrders {
+			if ord.Action != ActionOpen {
+				// Non-entry orders (e.g. roll-close) skip RiskGate
+				fill, err := r.Exec.FillOrder(out.Snapshot.AsOf, out.Snapshot, ord, r.Pf.ContractMultiplier)
+				if err != nil {
+					continue
+				}
+				r.Pf.ApplyFill(fill)
+				legs := buildLegsLog(fill.LegFills)
+				_ = r.Audit.Append(map[string]any{
+					"t":          man.AsOf.UTC().Format(time.RFC3339),
+					"type":       "FILL",
+					"action":     string(fill.Action),
+					"pos":        fill.PositionID,
+					"net_points": fill.NetPremium,
+					"net_inr":    fill.NetPremium * r.Pf.ContractMultiplier,
+					"fee_inr":    fill.FeeINR,
+					"legs":       legs,
+					"pnl_units":  "INR",
+				})
+				continue
+			}
+
+			// ──── RiskGate evaluation for OPEN orders ────
+			// Find the matching candidate for this order
+			var candidate market.StrategyCandidate
+			for _, c := range out.Candidates {
+				if c.ID == ord.StrategyID {
+					candidate = c
+					break
+				}
+			}
+
+			// Recalculate equity after any exit fills this snapshot
+			_, currentEquity, _ := r.Pf.MarkToMarket(out.Snapshot)
+
+			verdict := r.RiskGate.Evaluate(candidate, r.Pf, currentEquity, r.PeakEquity, r.Pf.ContractMultiplier)
+
+			// Log the RiskGate verdict
+			_ = r.Audit.Append(map[string]any{
+				"t":            man.AsOf.UTC().Format(time.RFC3339),
+				"type":         "RISK_GATE",
+				"pos":          ord.PositionID,
+				"action":       verdict.Action,
+				"qty":          verdict.Qty,
+				"original_qty": verdict.OriginalQty,
+				"budget_inr":   verdict.BudgetINR,
+				"risk_per_lot": verdict.RiskPerLot,
+				"entry_cost":   verdict.EntryCostINR,
+				"max_loss":     verdict.MaxLossINR,
+				"reason":       fmt.Sprintf("%v", verdict.Reasons),
+			})
+
+			if verdict.Action == "REJECTED" {
+				continue // Skip this order entirely
+			}
+
+			// Apply resized qty to legs if needed
+			if verdict.Qty != verdict.OriginalQty {
+				ord.Legs = ApplyQtyToLegs(ord.Legs, verdict.Qty)
+			}
+
+			// Proceed to fill
 			fill, err := r.Exec.FillOrder(out.Snapshot.AsOf, out.Snapshot, ord, r.Pf.ContractMultiplier)
 			if err != nil {
 				continue
 			}
 			r.Pf.ApplyFill(fill)
+
+			// Store max loss estimate on position for total risk tracking
+			if pos := r.Pf.Positions[fill.PositionID]; pos != nil {
+				pos.MaxLossEstimate = verdict.MaxLossINR
+			}
 
 			legs := buildLegsLog(fill.LegFills)
 
@@ -219,7 +292,7 @@ func (r *Runner) Run(baseDir string) error {
 				"net_inr":    fill.NetPremium * r.Pf.ContractMultiplier,
 				"fee_inr":    fill.FeeINR,
 				"strategy":   fill.StrategyID,
-				"legs":       legs, // Added
+				"legs":       legs,
 				"pnl_units":  "INR",
 			})
 
@@ -230,8 +303,8 @@ func (r *Runner) Run(baseDir string) error {
 				"type":      "POSITION_OPENED",
 				"pos_id":    fill.PositionID,
 				"strategy":  fill.StrategyID,
-				"entry_inr": pos.EntryPremium, // Already converted to INR
-				"entry_fee": pos.EntryFee,     // Log Entry Fee
+				"entry_inr": pos.EntryPremium,
+				"entry_fee": pos.EntryFee,
 				"legs":      legs,
 			})
 		}
@@ -264,17 +337,16 @@ func (r *Runner) Run(baseDir string) error {
 			man.AsOf.UTC().Format(time.RFC3339),
 			fmt.Sprintf("%.2f", r.Pf.Cash),
 			fmt.Sprintf("%.2f", finalEquity),
+			fmt.Sprintf("%.2f", totalMidEquity),
 			fmt.Sprintf("%.2f", freshUnrealized),
 			fmt.Sprintf("%.2f", realizedSoFar),
 			strconv.Itoa(len(r.Pf.OpenPositions())),
+			fmt.Sprintf("%.2f", r.PeakEquity),
+			fmt.Sprintf("%.2f", drawdown),
 		})
 		eqWriter.Flush()
 
 		// PORTFOLIO_DAILY event (track peak for drawdown)
-		if finalEquity > r.PeakEquity {
-			r.PeakEquity = finalEquity
-		}
-		drawdown := finalEquity - r.PeakEquity
 		_ = r.Audit.Append(map[string]any{
 			"t":          man.AsOf.UTC().Format(time.RFC3339),
 			"type":       "PORTFOLIO_DAILY",
@@ -287,9 +359,15 @@ func (r *Runner) Run(baseDir string) error {
 
 		// Track equity curve for metrics
 		r.EquityCurve = append(r.EquityCurve, EquityPoint{
-			Time:     man.AsOf,
-			Equity:   finalEquity,
-			Realized: realizedSoFar,
+			Time:          man.AsOf,
+			Equity:        finalEquity,
+			MidEquity:     totalMidEquity,
+			Realized:      realizedSoFar,
+			Unrealized:    freshUnrealized,
+			Cash:          r.Pf.Cash,
+			OpenPositions: len(r.Pf.OpenPositions()),
+			Drawdown:      drawdown,
+			Peak:          r.PeakEquity,
 		})
 	}
 
@@ -400,12 +478,37 @@ func (r *Runner) Run(baseDir string) error {
 	// End of Replay Summary
 	r.logSummary(lastSnap, forceClosedOK, forceClosedIntrinsic, forceCloseFail)
 
-	// Generate Metrics
+	// Generate Metrics + Stats
 	metrics := ComputeMetrics(r.Pf, r.EquityCurve)
-	if err := WriteMetricsJSON(r.OutputDir, metrics); err != nil {
-		// Log error but don't fail the run
+
+	// Write stats.json (comprehensive — replaces metrics.json)
+	if err := WriteStatsJSON(r.OutputDir, metrics); err != nil {
+		_ = r.Audit.Append(map[string]any{
+			"type":  "STATS_ERROR",
+			"error": err.Error(),
+		})
+	}
+
+	// Write legacy metrics.json (backward compat)
+	if err := WriteStatsJSON(r.OutputDir, metrics); err != nil {
 		_ = r.Audit.Append(map[string]any{
 			"type":  "METRICS_ERROR",
+			"error": err.Error(),
+		})
+	}
+
+	// Write stats.md (human readable)
+	if err := WriteStatsMarkdown(r.OutputDir, metrics); err != nil {
+		_ = r.Audit.Append(map[string]any{
+			"type":  "STATS_ERROR",
+			"error": err.Error(),
+		})
+	}
+
+	// Write daily.csv
+	if err := WriteDailyCSV(r.OutputDir, r.EquityCurve); err != nil {
+		_ = r.Audit.Append(map[string]any{
+			"type":  "STATS_ERROR",
 			"error": err.Error(),
 		})
 	}
@@ -420,8 +523,11 @@ func (r *Runner) Run(baseDir string) error {
 	trWriter := csv.NewWriter(trFile)
 	defer trWriter.Flush()
 
-	// Header: pos_id, strategy_id, entry_time, exit_time, entry_cost, exit_credit, pnl_inr, status
-	_ = trWriter.Write([]string{"pos_id", "strategy_id", "entry_time", "exit_time", "entry_cost", "exit_credit", "pnl_inr", "status"})
+	_ = trWriter.Write([]string{
+		"pos_id", "strategy_id", "entry_time", "exit_time",
+		"entry_cost", "exit_credit", "pnl_inr", "status",
+		"hold_days", "entry_fee", "exit_fee", "total_fees",
+	})
 
 	for _, pos := range r.Pf.Positions {
 		entryCost := pos.EntryPremium // already INR
@@ -429,13 +535,17 @@ func (r *Runner) Run(baseDir string) error {
 		pnl := 0.0
 		status := "OPEN"
 		exitTime := ""
+		holdDays := 0.0
 
 		if pos.ClosedAt != nil {
 			status = "CLOSED"
 			exitTime = pos.ClosedAt.UTC().Format(time.RFC3339)
 			exitCredit = pos.ExitPremium // already INR
 			pnl = pos.RealizedPnL        // already INR
+			holdDays = pos.ClosedAt.Sub(pos.OpenedAt).Hours() / 24.0
 		}
+
+		totalFees := pos.EntryFee + pos.ExitFee
 
 		_ = trWriter.Write([]string{
 			pos.ID,
@@ -446,6 +556,10 @@ func (r *Runner) Run(baseDir string) error {
 			fmt.Sprintf("%.2f", exitCredit),
 			fmt.Sprintf("%.2f", pnl),
 			status,
+			fmt.Sprintf("%.1f", holdDays),
+			fmt.Sprintf("%.2f", pos.EntryFee),
+			fmt.Sprintf("%.2f", pos.ExitFee),
+			fmt.Sprintf("%.2f", totalFees),
 		})
 	}
 

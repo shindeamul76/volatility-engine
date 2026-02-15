@@ -143,12 +143,14 @@ func runReplay() {
 		},
 	)
 	dec := replay.NewDecider(cfg.Replay)
+	rg := replay.NewRiskGate(cfg.RiskGate)
 
 	r := &replay.Runner{
 		Cfg:        cfg,
 		Engine:     engine,
 		Source:     src,
 		Decider:    dec,
+		RiskGate:   rg,
 		Exec:       exec,
 		Audit:      audit,
 		Pf:         pf,

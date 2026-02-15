@@ -19,6 +19,9 @@ type Portfolio struct {
 	Wins        int
 	Losses      int
 	TotalTrades int
+
+	// Day tracking (for RiskGate circuit breakers)
+	DayStartEquity float64
 }
 
 type Position struct {
@@ -32,8 +35,9 @@ type Position struct {
 	ExitPremium  float64 // INR (credit +, debit -)
 	ExitFee      float64 // INR
 
-	RealizedPnL float64 // (Entry + Exit) - (EntryFee + ExitFee)
-	LegFills    []LegFill
+	RealizedPnL     float64 // (Entry + Exit) - (EntryFee + ExitFee)
+	MaxLossEstimate float64 // Set by RiskGate at entry for risk tracking (INR, always positive)
+	LegFills        []LegFill
 }
 
 func NewPortfolio(initialCash float64, multiplier float64) *Portfolio {
@@ -111,6 +115,20 @@ func (p *Portfolio) OpenPositions() []*Position {
 		}
 	}
 	return out
+}
+
+// StartOfDay records the equity at the start of each snapshot day for daily PnL tracking.
+func (p *Portfolio) StartOfDay(equity float64) {
+	p.DayStartEquity = equity
+}
+
+// TotalOpenRisk returns the sum of MaxLossEstimate for all open positions (INR).
+func (p *Portfolio) TotalOpenRisk() float64 {
+	total := 0.0
+	for _, pos := range p.OpenPositions() {
+		total += pos.MaxLossEstimate
+	}
+	return total
 }
 
 type MTMResult struct {
