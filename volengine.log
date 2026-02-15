@@ -1,104 +1,327 @@
-2026/02/14 17:34:08 Starting Volatility Engine...
-2026/02/14 17:34:08 Running snapshot pipeline...
-2026/02/14 17:34:08 Loaded config: NIFTY @ 25471.10, Risk-Free Rate: 6.00%
-2026/02/14 17:34:08 Ingesting 6 CSV file(s)...
-2026/02/14 17:34:08   [1/6] Ingested: testdata/snapshots/13-02-2026/option-chain-ED-NIFTY-17-Feb-2026.csv (186 quotes, expiry: 2026-02-17)
-2026/02/14 17:34:08   [2/6] Ingested: testdata/snapshots/13-02-2026/option-chain-ED-NIFTY-24-Feb-2026.csv (202 quotes, expiry: 2026-02-24)
-2026/02/14 17:34:08   [3/6] Ingested: testdata/snapshots/13-02-2026/option-chain-ED-NIFTY-02-Mar-2026.csv (186 quotes, expiry: 2026-03-02)
-2026/02/14 17:34:08   [4/6] Ingested: testdata/snapshots/13-02-2026/option-chain-ED-NIFTY-10-Mar-2026.csv (154 quotes, expiry: 2026-03-10)
-2026/02/14 17:34:08   [5/6] Ingested: testdata/snapshots/13-02-2026/option-chain-ED-NIFTY-30-Mar-2026.csv (218 quotes, expiry: 2026-03-30)
-2026/02/14 17:34:08   [6/6] Ingested: testdata/snapshots/13-02-2026/option-chain-ED-NIFTY-28-Apr-2026.csv (186 quotes, expiry: 2026-04-28)
-2026/02/14 17:34:08 Merged Snapshot: snap_20260214_173408_NIFTY
-2026/02/14 17:34:08 Underlying: NIFTY, Spot: 25471.10
-2026/02/14 17:34:08 Total Quotes: 1132 (from 6 file(s))
-2026/02/14 17:34:08 Total Expiries: 6
-2026/02/14 17:34:08 Tradable: 168, Rejected: 964
-2026/02/14 17:34:08 Sample Quote (first 200):
-2026/02/14 17:34:08  - NIFTY 23100.00 CALL: Mid=2384.75, Flags=[WIDE_SPREAD WIDE_SPREAD_ABS ILLIQUID_STRATEGY ILLIQUID]
-2026/02/14 17:34:08 Starting Multi-Expiry Pipeline...
-2026/02/14 17:34:08 === Pass 1: Per-Expiry Context Construction (Parallel) ===
-2026/02/14 17:34:08 Found 6 expiries to process
-2026/02/14 17:34:08  > [OK] 2026-02-24 | Pts: 44 | ATM: 12.28%
-2026/02/14 17:34:08  > [OK] 2026-03-10 | Pts: 24 | ATM: 11.61%
-2026/02/14 17:34:08  > [PARTIAL] 2026-04-28 | Pts: 0 (Skew Skipped)
-2026/02/14 17:34:08  > [OK] 2026-03-02 | Pts: 37 | ATM: 12.04%
-2026/02/14 17:34:08  > [PARTIAL] 2026-03-30 | Pts: 0 (Skew Skipped)
-2026/02/14 17:34:08  > [OK] 2026-02-17 | Pts: 53 | ATM: 13.24%
-2026/02/14 17:34:08 === Pass 2: Cross-Expiry Regime Detection ===
-2026/02/14 17:34:08 Regime: TRANSITION | Bias: NEUTRAL_OR_DEFINED_RISK | Score: 0.80
-2026/02/14 17:34:08 IV30: 11.61% (Rank: 1.00)
-2026/02/14 17:34:08 === Pass 3: Intel & Strategy Generation (Per-Expiry) ===
-2026/02/14 17:34:08  > [INTEL] 2026-02-17 Signals:
-2026/02/14 17:34:08     - [PIN_RISK_ZONE] (Score: 0.90) High OI Concentration near Spot at 25500
-2026/02/14 17:34:08     - [BOUNDED_BY_WALLS] (Score: 0.80) Spot 25471 inside Put Wall 25000 and Call Wall 26000
-2026/02/14 17:34:08     - [MAX_PAIN_MAGNET] (Score: 0.70) Spot 25471 is close to Max Pain 25550 near expiry
-2026/02/14 17:34:08  > Analyzed 2026-02-17: 3 Signals, 2 Candidates
-2026/02/14 17:34:08  > [INTEL] 2026-02-24 Signals:
-2026/02/14 17:34:08     - [BOUNDED_BY_WALLS] (Score: 0.80) Spot 25471 inside Put Wall 25000 and Call Wall 26000
-2026/02/14 17:34:08  > Analyzed 2026-02-24: 1 Signals, 2 Candidates
-2026/02/14 17:34:08  > [INTEL] 2026-03-02 Signals:
-2026/02/14 17:34:08     - [BOUNDED_BY_WALLS] (Score: 0.80) Spot 25471 inside Put Wall 25000 and Call Wall 26000
-2026/02/14 17:34:08  > Analyzed 2026-03-02: 1 Signals, 1 Candidates
-2026/02/14 17:34:08  > [INTEL] 2026-03-10 Signals:
-2026/02/14 17:34:08     - [BOUNDED_BY_WALLS] (Score: 0.80) Spot 25471 inside Put Wall 25000 and Call Wall 26000
-2026/02/14 17:34:08  > Analyzed 2026-03-10: 1 Signals, 0 Candidates
-2026/02/14 17:34:08 === Final Selection ===
-2026/02/14 17:34:08 Generated Total 5 Candidates. Top Recommendations:
-2026/02/14 17:34:08  #1 [IRON_FLY] if_NIFTY_20260217 (SHORT_VOL_PIN_TARGET) Score=0.70 | Expiry: 2026-02-17
-2026/02/14 17:34:08     Entry: CREDIT 203.48
-2026/02/14 17:34:08     Rationale:
-2026/02/14 17:34:08      - Basis: Regime is 'TRANSITION' and DTE (2.9) is within ideal window.
-2026/02/14 17:34:08      - Thesis: Mindset: Aggressive Mean Reversion. We believe the price is pinned or will revert to the ATM level. We sell the 'meat' of the curve (ATM) for maximum credit.
-2026/02/14 17:34:08      - Legs: Sold ATM Straddle at 25450. Bought protected wings ~2% out. This creates a 'tent' profit zone centered on current price.
-2026/02/14 17:34:08       - SELL 1 CALL 25450 @ 122.33 | Fair: 123.00 (ModelIV: 13.25%) [Diff: +0.6%]
-2026/02/14 17:34:08       - SELL 1 PUT 25450 @ 116.60 | Fair: 117.27 (ModelIV: 13.25%) [Diff: +0.6%]
-2026/02/14 17:34:08       -  BUY 1 CALL 25950 @ 18.57 | Fair: 17.70 (ModelIV: 16.66%) [Diff: -4.7%]
-2026/02/14 17:34:08       -  BUY 1 PUT 24950 @ 16.88 | Fair: 16.63 (ModelIV: 17.00%) [Diff: -1.4%]
-2026/02/14 17:34:08     ---------------------------------------------------
-2026/02/14 17:34:08  #2 [IRON_CONDOR] ic_NIFTY_20260217 (SHORT_VOL_DEFINED_RISK) Score=0.50 | Expiry: 2026-02-17
-2026/02/14 17:34:08     Entry: CREDIT 33.98
-2026/02/14 17:34:08     Rationale:
-2026/02/14 17:34:08      - Basis: Regime is 'TRANSITION' and DTE (2.9) is within ideal window.
-2026/02/14 17:34:08      - Thesis: Mindset: Volatility is overrated. We expect the market to stay range-bound or at least not move beyond the wings. We collect premium upfront and profit from time decay (Theta) and volatility crush (Vega).
-2026/02/14 17:34:08      - Legs: Short strikes chosen at approx 20 Delta (High Probability OTM). Wings bought ~1.5% further out to define risk and cap margin requirement.
-2026/02/14 17:34:08       - SELL 1 PUT 25100 @ 27.98 | Fair: 26.74 (ModelIV: 15.21%) [Diff: -4.4%]
-2026/02/14 17:34:08       -  BUY 1 PUT 24700 @ 8.43 | Fair: 10.15 (ModelIV: 20.75%) [Diff: +20.5%]
-2026/02/14 17:34:08       - SELL 1 CALL 25850 @ 23.93 | Fair: 23.93 (ModelIV: 15.51%) [Diff: +0.0%]
-2026/02/14 17:34:08       -  BUY 1 CALL 26250 @ 9.50 | Fair: 10.08 (ModelIV: 20.90%) [Diff: +6.1%]
-2026/02/14 17:34:08     ---------------------------------------------------
-2026/02/14 17:34:08  #3 [IRON_CONDOR] ic_NIFTY_20260224 (SHORT_VOL_DEFINED_RISK) Score=0.50 | Expiry: 2026-02-24
-2026/02/14 17:34:08     Entry: CREDIT 36.20
-2026/02/14 17:34:08     Rationale:
-2026/02/14 17:34:08      - Basis: Regime is 'TRANSITION' and DTE (9.9) is within ideal window.
-2026/02/14 17:34:08      - Thesis: Mindset: Volatility is overrated. We expect the market to stay range-bound or at least not move beyond the wings. We collect premium upfront and profit from time decay (Theta) and volatility crush (Vega).
-2026/02/14 17:34:08      - Legs: Short strikes chosen at approx 20 Delta (High Probability OTM). Wings bought ~1.5% further out to define risk and cap margin requirement.
-2026/02/14 17:34:08       - SELL 1 PUT 24800 @ 44.55 | Fair: 45.13 (ModelIV: 15.31%) [Diff: +1.3%]
-2026/02/14 17:34:08       -  BUY 1 PUT 24400 @ 23.18 | Fair: 25.00 (ModelIV: 18.30%) [Diff: +7.9%]
-2026/02/14 17:34:08       - SELL 1 CALL 26200 @ 28.10 | Fair: 27.39 (ModelIV: 13.23%) [Diff: -2.5%]
-2026/02/14 17:34:08       -  BUY 1 CALL 26600 @ 13.28 | Fair: 12.13 (ModelIV: 15.32%) [Diff: -8.6%]
-2026/02/14 17:34:08     ---------------------------------------------------
-2026/02/14 17:34:08  #4 [IRON_FLY] if_NIFTY_20260224 (SHORT_VOL_PIN_TARGET) Score=0.50 | Expiry: 2026-02-24
-2026/02/14 17:34:08     Entry: CREDIT 293.40
-2026/02/14 17:34:08     Rationale:
-2026/02/14 17:34:08      - Basis: Regime is 'TRANSITION' and DTE (9.9) is within ideal window.
-2026/02/14 17:34:08      - Thesis: Mindset: Aggressive Mean Reversion. We believe the price is pinned or will revert to the ATM level. We sell the 'meat' of the curve (ATM) for maximum credit.
-2026/02/14 17:34:08      - Legs: Sold ATM Straddle at 25500. Bought protected wings ~2% out. This creates a 'tent' profit zone centered on current price.
-2026/02/14 17:34:08       - SELL 1 CALL 25500 @ 196.93 | Fair: 198.04 (ModelIV: 12.26%) [Diff: +0.6%]
-2026/02/14 17:34:08       - SELL 1 PUT 25500 @ 211.68 | Fair: 212.42 (ModelIV: 12.26%) [Diff: +0.4%]
-2026/02/14 17:34:08       -  BUY 1 CALL 26000 @ 47.48 | Fair: 47.15 (ModelIV: 12.54%) [Diff: -0.7%]
-2026/02/14 17:34:08       -  BUY 1 PUT 25000 @ 67.72 | Fair: 66.97 (ModelIV: 14.10%) [Diff: -1.1%]
-2026/02/14 17:34:08     ---------------------------------------------------
-2026/02/14 17:34:08  #5 [IRON_FLY] if_NIFTY_20260302 (SHORT_VOL_PIN_TARGET) Score=0.50 | Expiry: 2026-03-02
-2026/02/14 17:34:08     Entry: CREDIT 329.48
-2026/02/14 17:34:08     Rationale:
-2026/02/14 17:34:08      - Basis: Regime is 'TRANSITION' and DTE (15.9) is within ideal window.
-2026/02/14 17:34:08      - Thesis: Mindset: Aggressive Mean Reversion. We believe the price is pinned or will revert to the ATM level. We sell the 'meat' of the curve (ATM) for maximum credit.
-2026/02/14 17:34:08      - Legs: Sold ATM Straddle at 25550. Bought protected wings ~2% out. This creates a 'tent' profit zone centered on current price.
-2026/02/14 17:34:08       - SELL 1 CALL 25550 @ 244.32 | Fair: 245.13 (ModelIV: 12.01%) [Diff: +0.3%]
-2026/02/14 17:34:08       - SELL 1 PUT 25550 @ 264.00 | Fair: 264.87 (ModelIV: 12.01%) [Diff: +0.3%]
-2026/02/14 17:34:08       -  BUY 1 CALL 26050 @ 74.35 | Fair: 75.14 (ModelIV: 11.89%) [Diff: +1.1%]
-2026/02/14 17:34:08       -  BUY 1 PUT 25050 @ 104.50 | Fair: 104.55 (ModelIV: 13.40%) [Diff: +0.0%]
-2026/02/14 17:34:08     ---------------------------------------------------
-2026/02/14 17:34:08 === Generating Risk Reports ===
-2026/02/14 17:34:08 Reports saved to reports/snap_20260214_173408_NIFTY/
-2026/02/14 17:34:08 Pipeline finished.
+2026/02/15 23:31:51 Starting Volatility Engine...
+2026/02/15 23:31:51 Running replay loop...
+2026/02/15 23:31:51 Reading snapshots from: testdata/snapshots
+2026/02/15 23:31:51 Output run ID: 20260215_233151
+2026/02/15 23:31:51 Ingesting 6 CSV file(s)...
+2026/02/15 23:31:51 === Pass 1: Per-Expiry Context Construction (Parallel) ===
+2026/02/15 23:31:51  > [SKIP] 2026-02-10: DTE < 2 (Microstructure Noise)
+2026/02/15 23:31:51  > [SKIP] 2026-02-17: DTE < 2 (Microstructure Noise)
+2026/02/15 23:31:51 Merged Snapshot: snap_20260205_153000_NIFTY
+2026/02/15 23:31:51 Underlying: NIFTY, Spot: 25642.80
+2026/02/15 23:31:51 Total Quotes: 1120
+2026/02/15 23:31:51 Total Expiries: 6
+2026/02/15 23:31:51 Tradable: 200, Rejected: 920
+2026/02/15 23:31:51 Sample Quote: NIFTY 23100 CALL | Mid: 0.00 | Flags: [BAD_PRICE BAD_MID_PRICE LOW_PREMIUM ILLIQUID_STRATEGY ILLIQUID]
+2026/02/15 23:31:51 === Top Recommendations ===
+2026/02/15 23:31:51  #1 [LONG_STRADDLE] straddle_NIFTY_20260224 (LONG_VOL_DIRECTION_NEUTRAL) Score=0.70 | Expiry: 2026-02-24
+2026/02/15 23:31:51     Entry: DEBIT 501.38
+2026/02/15 23:31:51     Rationale:
+2026/02/15 23:31:51      - Basis: Regime is 'LOW_VOL' and DTE (19.0) is within ideal window.
+2026/02/15 23:31:51      - Thesis: Mindset: Volatility is cheap. We expect a large move in EITHER direction that exceeds the breakeven (Premium Paid). We are Long Gamma and Long Vega.
+2026/02/15 23:31:51      - Legs: Bought ATM Call and Put at 25700. This offers the highest Gamma (sensitivity to move) but also highest Theta decay.
+2026/02/15 23:31:51       -  BUY 1 CALL 25700 @ 258.95 | Fair: 258.80 (ModelIV: 10.75%) [Diff: -0.1%]
+2026/02/15 23:31:51       -  BUY 1 PUT 25700 @ 242.43 | Fair: 242.82 (ModelIV: 10.75%) [Diff: +0.2%]
+2026/02/15 23:31:51     ---------------------------------------------------
+2026/02/15 23:31:51  #2 [LONG_STRADDLE] straddle_NIFTY_20260302 (LONG_VOL_DIRECTION_NEUTRAL) Score=0.70 | Expiry: 2026-03-02
+2026/02/15 23:31:51     Entry: DEBIT 570.20
+2026/02/15 23:31:51     Rationale:
+2026/02/15 23:31:51      - Basis: Regime is 'LOW_VOL' and DTE (25.0) is within ideal window.
+2026/02/15 23:31:51      - Thesis: Mindset: Volatility is cheap. We expect a large move in EITHER direction that exceeds the breakeven (Premium Paid). We are Long Gamma and Long Vega.
+2026/02/15 23:31:51      - Legs: Bought ATM Call and Put at 25750. This offers the highest Gamma (sensitivity to move) but also highest Theta decay.
+2026/02/15 23:31:51       -  BUY 1 CALL 25750 @ 290.50 | Fair: 289.55 (ModelIV: 10.77%) [Diff: -0.3%]
+2026/02/15 23:31:51       -  BUY 1 PUT 25750 @ 279.70 | Fair: 287.36 (ModelIV: 10.77%) [Diff: +2.7%]
+2026/02/15 23:31:51     ---------------------------------------------------
+2026/02/15 23:31:51  #3 [LONG_STRADDLE] straddle_NIFTY_20260330 (LONG_VOL_DIRECTION_NEUTRAL) Score=0.70 | Expiry: 2026-03-30
+2026/02/15 23:31:51     Entry: DEBIT 842.60
+2026/02/15 23:31:51     Rationale:
+2026/02/15 23:31:51      - Basis: Regime is 'LOW_VOL' and DTE (53.0) is within ideal window.
+2026/02/15 23:31:51      - Thesis: Mindset: Volatility is cheap. We expect a large move in EITHER direction that exceeds the breakeven (Premium Paid). We are Long Gamma and Long Vega.
+2026/02/15 23:31:51      - Legs: Bought ATM Call and Put at 25900. This offers the highest Gamma (sensitivity to move) but also highest Theta decay.
+2026/02/15 23:31:51       -  BUY 1 CALL 25900 @ 412.15 | Fair: 413.37 (ModelIV: 10.82%) [Diff: +0.3%]
+2026/02/15 23:31:51       -  BUY 1 PUT 25900 @ 430.45 | Fair: 430.75 (ModelIV: 10.82%) [Diff: +0.1%]
+2026/02/15 23:31:51     ---------------------------------------------------
+2026/02/15 23:31:51  #4 [LONG_STRANGLE] strangle_NIFTY_20260224 (LONG_VOL_CHEAPER) Score=0.50 | Expiry: 2026-02-24
+2026/02/15 23:31:51     Entry: DEBIT 86.22
+2026/02/15 23:31:51     Rationale:
+2026/02/15 23:31:51      - Basis: Regime is 'LOW_VOL' and DTE (19.0) is within ideal window.
+2026/02/15 23:31:51      - Thesis: Mindset: We expect a significant move, but want to reduce upfront debit. We sacrifice some probability (need larger move) for better leverage/ROI if it hits.
+2026/02/15 23:31:51      - Legs: Bought 25 Delta Call and Put (OTM). This reduces cost compared to ATM Straddle but requires a larger move to become profitable.
+2026/02/15 23:31:51       -  BUY 1 CALL 26550 @ 32.20 | Fair: 30.97 (ModelIV: 10.94%) [Diff: -3.8%]
+2026/02/15 23:31:51       -  BUY 1 PUT 24950 @ 54.02 | Fair: 54.12 (ModelIV: 12.55%) [Diff: +0.2%]
+2026/02/15 23:31:51     ---------------------------------------------------
+2026/02/15 23:31:51  #5 [LONG_STRANGLE] strangle_NIFTY_20260302 (LONG_VOL_CHEAPER) Score=0.50 | Expiry: 2026-03-02
+2026/02/15 23:31:51     Entry: DEBIT 103.00
+2026/02/15 23:31:51     Rationale:
+2026/02/15 23:31:51      - Basis: Regime is 'LOW_VOL' and DTE (25.0) is within ideal window.
+2026/02/15 23:31:51      - Thesis: Mindset: We expect a significant move, but want to reduce upfront debit. We sacrifice some probability (need larger move) for better leverage/ROI if it hits.
+2026/02/15 23:31:51      - Legs: Bought 25 Delta Call and Put (OTM). This reduces cost compared to ATM Straddle but requires a larger move to become profitable.
+2026/02/15 23:31:51       -  BUY 1 CALL 26700 @ 37.15 | Fair: 37.73 (ModelIV: 11.01%) [Diff: +1.6%]
+2026/02/15 23:31:51       -  BUY 1 PUT 24900 @ 65.85 | Fair: 66.62 (ModelIV: 12.60%) [Diff: +1.2%]
+2026/02/15 23:31:51     ---------------------------------------------------
+2026/02/15 23:31:51 Ingesting 6 CSV file(s)...
+2026/02/15 23:31:51 === Pass 1: Per-Expiry Context Construction (Parallel) ===
+2026/02/15 23:31:51  > [SKIP] 2026-02-10: DTE < 2 (Microstructure Noise)
+2026/02/15 23:31:51  > [SKIP] 2026-02-17: DTE < 2 (Microstructure Noise)
+2026/02/15 23:31:51 Merged Snapshot: snap_20260206_153000_NIFTY
+2026/02/15 23:31:51 Underlying: NIFTY, Spot: 25693.70
+2026/02/15 23:31:51 Total Quotes: 1124
+2026/02/15 23:31:51 Total Expiries: 6
+2026/02/15 23:31:51 Tradable: 189, Rejected: 935
+2026/02/15 23:31:51 Sample Quote: NIFTY 23100 CALL | Mid: 0.00 | Flags: [BAD_PRICE BAD_MID_PRICE LOW_PREMIUM ILLIQUID_STRATEGY ILLIQUID]
+2026/02/15 23:31:51 === Top Recommendations ===
+2026/02/15 23:31:51  #1 [LONG_STRADDLE] straddle_NIFTY_20260224 (LONG_VOL_DIRECTION_NEUTRAL) Score=0.70 | Expiry: 2026-02-24
+2026/02/15 23:31:51     Entry: DEBIT 468.43
+2026/02/15 23:31:51     Rationale:
+2026/02/15 23:31:51      - Basis: Regime is 'LOW_VOL' and DTE (18.0) is within ideal window.
+2026/02/15 23:31:51      - Thesis: Mindset: Volatility is cheap. We expect a large move in EITHER direction that exceeds the breakeven (Premium Paid). We are Long Gamma and Long Vega.
+2026/02/15 23:31:51      - Legs: Bought ATM Call and Put at 25750. This offers the highest Gamma (sensitivity to move) but also highest Theta decay.
+2026/02/15 23:31:51       -  BUY 1 CALL 25750 @ 224.78 | Fair: 223.19 (ModelIV: 10.27%) [Diff: -0.7%]
+2026/02/15 23:31:51       -  BUY 1 PUT 25750 @ 243.65 | Fair: 244.25 (ModelIV: 10.27%) [Diff: +0.2%]
+2026/02/15 23:31:51     ---------------------------------------------------
+2026/02/15 23:31:51  #2 [LONG_STRADDLE] straddle_NIFTY_20260302 (LONG_VOL_DIRECTION_NEUTRAL) Score=0.70 | Expiry: 2026-03-02
+2026/02/15 23:31:51     Entry: DEBIT 549.90
+2026/02/15 23:31:51     Rationale:
+2026/02/15 23:31:51      - Basis: Regime is 'LOW_VOL' and DTE (24.0) is within ideal window.
+2026/02/15 23:31:51      - Thesis: Mindset: Volatility is cheap. We expect a large move in EITHER direction that exceeds the breakeven (Premium Paid). We are Long Gamma and Long Vega.
+2026/02/15 23:31:51      - Legs: Bought ATM Call and Put at 25750. This offers the highest Gamma (sensitivity to move) but also highest Theta decay.
+2026/02/15 23:31:51       -  BUY 1 CALL 25750 @ 283.15 | Fair: 281.99 (ModelIV: 10.47%) [Diff: -0.4%]
+2026/02/15 23:31:51       -  BUY 1 PUT 25750 @ 266.75 | Fair: 267.77 (ModelIV: 10.47%) [Diff: +0.4%]
+2026/02/15 23:31:51     ---------------------------------------------------
+2026/02/15 23:31:51  #3 [LONG_STRADDLE] straddle_NIFTY_20260330 (LONG_VOL_DIRECTION_NEUTRAL) Score=0.70 | Expiry: 2026-03-30
+2026/02/15 23:31:51     Entry: DEBIT 812.98
+2026/02/15 23:31:51     Rationale:
+2026/02/15 23:31:51      - Basis: Regime is 'LOW_VOL' and DTE (52.0) is within ideal window.
+2026/02/15 23:31:51      - Thesis: Mindset: Volatility is cheap. We expect a large move in EITHER direction that exceeds the breakeven (Premium Paid). We are Long Gamma and Long Vega.
+2026/02/15 23:31:51      - Legs: Bought ATM Call and Put at 25900. This offers the highest Gamma (sensitivity to move) but also highest Theta decay.
+2026/02/15 23:31:51       -  BUY 1 CALL 25900 @ 402.35 | Fair: 402.51 (ModelIV: 10.56%) [Diff: +0.0%]
+2026/02/15 23:31:51       -  BUY 1 PUT 25900 @ 410.62 | Fair: 413.80 (ModelIV: 10.56%) [Diff: +0.8%]
+2026/02/15 23:31:51     ---------------------------------------------------
+2026/02/15 23:31:51  #4 [LONG_STRANGLE] strangle_NIFTY_20260224 (LONG_VOL_CHEAPER) Score=0.50 | Expiry: 2026-02-24
+2026/02/15 23:31:51     Entry: DEBIT 81.15
+2026/02/15 23:31:51     Rationale:
+2026/02/15 23:31:51      - Basis: Regime is 'LOW_VOL' and DTE (18.0) is within ideal window.
+2026/02/15 23:31:51      - Thesis: Mindset: We expect a significant move, but want to reduce upfront debit. We sacrifice some probability (need larger move) for better leverage/ROI if it hits.
+2026/02/15 23:31:51      - Legs: Bought 25 Delta Call and Put (OTM). This reduces cost compared to ATM Straddle but requires a larger move to become profitable.
+2026/02/15 23:31:51       -  BUY 1 CALL 26550 @ 27.30 | Fair: 27.90 (ModelIV: 10.80%) [Diff: +2.2%]
+2026/02/15 23:31:51       -  BUY 1 PUT 25000 @ 53.85 | Fair: 52.95 (ModelIV: 12.37%) [Diff: -1.7%]
+2026/02/15 23:31:51     ---------------------------------------------------
+2026/02/15 23:31:51  #5 [LONG_STRANGLE] strangle_NIFTY_20260302 (LONG_VOL_CHEAPER) Score=0.50 | Expiry: 2026-03-02
+2026/02/15 23:31:51     Entry: DEBIT 92.75
+2026/02/15 23:31:51     Rationale:
+2026/02/15 23:31:51      - Basis: Regime is 'LOW_VOL' and DTE (24.0) is within ideal window.
+2026/02/15 23:31:51      - Thesis: Mindset: We expect a significant move, but want to reduce upfront debit. We sacrifice some probability (need larger move) for better leverage/ROI if it hits.
+2026/02/15 23:31:51      - Legs: Bought 25 Delta Call and Put (OTM). This reduces cost compared to ATM Straddle but requires a larger move to become profitable.
+2026/02/15 23:31:51       -  BUY 1 CALL 26700 @ 33.23 | Fair: 33.48 (ModelIV: 10.77%) [Diff: +0.8%]
+2026/02/15 23:31:51       -  BUY 1 PUT 24900 @ 59.53 | Fair: 60.49 (ModelIV: 12.57%) [Diff: +1.6%]
+2026/02/15 23:31:51     ---------------------------------------------------
+2026/02/15 23:31:51 Ingesting 5 CSV file(s)...
+2026/02/15 23:31:51 === Pass 1: Per-Expiry Context Construction (Parallel) ===
+2026/02/15 23:31:51  > [SKIP] 2026-02-17: DTE < 2 (Microstructure Noise)
+2026/02/15 23:31:51 Merged Snapshot: snap_20260210_153000_NIFTY
+2026/02/15 23:31:51 Underlying: NIFTY, Spot: 25935.15
+2026/02/15 23:31:51 Total Quotes: 934
+2026/02/15 23:31:51 Total Expiries: 5
+2026/02/15 23:31:51 Tradable: 169, Rejected: 765
+2026/02/15 23:31:51 Sample Quote: NIFTY 23100 CALL | Mid: 0.00 | Flags: [BAD_PRICE BAD_MID_PRICE LOW_PREMIUM ILLIQUID_STRATEGY ILLIQUID]
+2026/02/15 23:31:51 === Top Recommendations ===
+2026/02/15 23:31:51  #1 [LONG_STRADDLE] straddle_NIFTY_20260224 (LONG_VOL_DIRECTION_NEUTRAL) Score=0.70 | Expiry: 2026-02-24
+2026/02/15 23:31:51     Entry: DEBIT 397.68
+2026/02/15 23:31:51     Rationale:
+2026/02/15 23:31:51      - Basis: Regime is 'LOW_VOL' and DTE (14.0) is within ideal window.
+2026/02/15 23:31:51      - Thesis: Mindset: Volatility is cheap. We expect a large move in EITHER direction that exceeds the breakeven (Premium Paid). We are Long Gamma and Long Vega.
+2026/02/15 23:31:51      - Legs: Bought ATM Call and Put at 25950. This offers the highest Gamma (sensitivity to move) but also highest Theta decay.
+2026/02/15 23:31:51       -  BUY 1 CALL 25950 @ 209.62 | Fair: 208.25 (ModelIV: 9.75%) [Diff: -0.7%]
+2026/02/15 23:31:51       -  BUY 1 PUT 25950 @ 188.05 | Fair: 186.68 (ModelIV: 9.75%) [Diff: -0.7%]
+2026/02/15 23:31:51     ---------------------------------------------------
+2026/02/15 23:31:51  #2 [LONG_STRADDLE] straddle_NIFTY_20260302 (LONG_VOL_DIRECTION_NEUTRAL) Score=0.70 | Expiry: 2026-03-02
+2026/02/15 23:31:51     Entry: DEBIT 482.08
+2026/02/15 23:31:51     Rationale:
+2026/02/15 23:31:51      - Basis: Regime is 'LOW_VOL' and DTE (20.0) is within ideal window.
+2026/02/15 23:31:51      - Thesis: Mindset: Volatility is cheap. We expect a large move in EITHER direction that exceeds the breakeven (Premium Paid). We are Long Gamma and Long Vega.
+2026/02/15 23:31:51      - Legs: Bought ATM Call and Put at 26000. This offers the highest Gamma (sensitivity to move) but also highest Theta decay.
+2026/02/15 23:31:51       -  BUY 1 CALL 26000 @ 247.55 | Fair: 246.10 (ModelIV: 9.93%) [Diff: -0.6%]
+2026/02/15 23:31:51       -  BUY 1 PUT 26000 @ 234.53 | Fair: 234.63 (ModelIV: 9.93%) [Diff: +0.0%]
+2026/02/15 23:31:51     ---------------------------------------------------
+2026/02/15 23:31:51  #3 [LONG_STRADDLE] straddle_NIFTY_20260330 (LONG_VOL_DIRECTION_NEUTRAL) Score=0.70 | Expiry: 2026-03-30
+2026/02/15 23:31:51     Entry: DEBIT 759.70
+2026/02/15 23:31:51     Rationale:
+2026/02/15 23:31:51      - Basis: Regime is 'LOW_VOL' and DTE (48.0) is within ideal window.
+2026/02/15 23:31:51      - Thesis: Mindset: Volatility is cheap. We expect a large move in EITHER direction that exceeds the breakeven (Premium Paid). We are Long Gamma and Long Vega.
+2026/02/15 23:31:51      - Legs: Bought ATM Call and Put at 26150. This offers the highest Gamma (sensitivity to move) but also highest Theta decay.
+2026/02/15 23:31:51       -  BUY 1 CALL 26150 @ 374.50 | Fair: 374.08 (ModelIV: 10.17%) [Diff: -0.1%]
+2026/02/15 23:31:51       -  BUY 1 PUT 26150 @ 385.20 | Fair: 389.54 (ModelIV: 10.17%) [Diff: +1.1%]
+2026/02/15 23:31:51     ---------------------------------------------------
+2026/02/15 23:31:51  #4 [LONG_STRANGLE] strangle_NIFTY_20260224 (LONG_VOL_CHEAPER) Score=0.50 | Expiry: 2026-02-24
+2026/02/15 23:31:51     Entry: DEBIT 57.25
+2026/02/15 23:31:51     Rationale:
+2026/02/15 23:31:51      - Basis: Regime is 'LOW_VOL' and DTE (14.0) is within ideal window.
+2026/02/15 23:31:51      - Thesis: Mindset: We expect a significant move, but want to reduce upfront debit. We sacrifice some probability (need larger move) for better leverage/ROI if it hits.
+2026/02/15 23:31:51      - Legs: Bought 25 Delta Call and Put (OTM). This reduces cost compared to ATM Straddle but requires a larger move to become profitable.
+2026/02/15 23:31:51       -  BUY 1 CALL 26700 @ 18.38 | Fair: 17.97 (ModelIV: 9.95%) [Diff: -2.2%]
+2026/02/15 23:31:51       -  BUY 1 PUT 25300 @ 38.88 | Fair: 38.35 (ModelIV: 11.84%) [Diff: -1.4%]
+2026/02/15 23:31:51     ---------------------------------------------------
+2026/02/15 23:31:51  #5 [LONG_STRANGLE] strangle_NIFTY_20260330 (LONG_VOL_CHEAPER) Score=0.50 | Expiry: 2026-03-30
+2026/02/15 23:31:51     Entry: DEBIT 122.55
+2026/02/15 23:31:51     Rationale:
+2026/02/15 23:31:51      - Basis: Regime is 'LOW_VOL' and DTE (48.0) is within ideal window.
+2026/02/15 23:31:51      - Thesis: Mindset: We expect a significant move, but want to reduce upfront debit. We sacrifice some probability (need larger move) for better leverage/ROI if it hits.
+2026/02/15 23:31:51      - Legs: Bought 25 Delta Call and Put (OTM). This reduces cost compared to ATM Straddle but requires a larger move to become profitable.
+2026/02/15 23:31:51       -  BUY 1 CALL 27500 @ 35.58 | Fair: 31.95 (ModelIV: 9.78%) [Diff: -10.2%]
+2026/02/15 23:31:51       -  BUY 1 PUT 24950 @ 86.97 | Fair: 88.70 (ModelIV: 12.37%) [Diff: +2.0%]
+2026/02/15 23:31:51     ---------------------------------------------------
+2026/02/15 23:31:51 Ingesting 6 CSV file(s)...
+2026/02/15 23:31:51 === Pass 1: Per-Expiry Context Construction (Parallel) ===
+2026/02/15 23:31:51  > [SKIP] 2026-02-17: DTE < 2 (Microstructure Noise)
+2026/02/15 23:31:51 Merged Snapshot: snap_20260211_153000_NIFTY
+2026/02/15 23:31:51 Underlying: NIFTY, Spot: 25471.10
+2026/02/15 23:31:51 Total Quotes: 1088
+2026/02/15 23:31:51 Total Expiries: 6
+2026/02/15 23:31:51 Tradable: 163, Rejected: 925
+2026/02/15 23:31:51 Sample Quote: NIFTY 23100 CALL | Mid: 2922.80 | Flags: [WIDE_SPREAD WIDE_SPREAD_ABS ILLIQUID_STRATEGY ILLIQUID]
+2026/02/15 23:31:51 === Top Recommendations ===
+2026/02/15 23:31:51  #1 [LONG_STRADDLE] straddle_NIFTY_20260224 (LONG_VOL_DIRECTION_NEUTRAL) Score=0.70 | Expiry: 2026-02-24
+2026/02/15 23:31:51     Entry: DEBIT 371.50
+2026/02/15 23:31:51     Rationale:
+2026/02/15 23:31:51      - Basis: Regime is 'LOW_VOL' and DTE (13.0) is within ideal window.
+2026/02/15 23:31:51      - Thesis: Mindset: Volatility is cheap. We expect a large move in EITHER direction that exceeds the breakeven (Premium Paid). We are Long Gamma and Long Vega.
+2026/02/15 23:31:51      - Legs: Bought ATM Call and Put at 26000. This offers the highest Gamma (sensitivity to move) but also highest Theta decay.
+2026/02/15 23:31:51       -  BUY 1 CALL 26000 @ 181.85 | Fair: 180.16 (ModelIV: 9.44%) [Diff: -0.9%]
+2026/02/15 23:31:51       -  BUY 1 PUT 26000 @ 189.65 | Fair: 188.79 (ModelIV: 9.44%) [Diff: -0.5%]
+2026/02/15 23:31:51     ---------------------------------------------------
+2026/02/15 23:31:51  #2 [LONG_STRADDLE] straddle_NIFTY_20260302 (LONG_VOL_DIRECTION_NEUTRAL) Score=0.70 | Expiry: 2026-03-02
+2026/02/15 23:31:51     Entry: DEBIT 461.12
+2026/02/15 23:31:51     Rationale:
+2026/02/15 23:31:51      - Basis: Regime is 'LOW_VOL' and DTE (19.0) is within ideal window.
+2026/02/15 23:31:51      - Thesis: Mindset: Volatility is cheap. We expect a large move in EITHER direction that exceeds the breakeven (Premium Paid). We are Long Gamma and Long Vega.
+2026/02/15 23:31:51      - Legs: Bought ATM Call and Put at 26050. This offers the highest Gamma (sensitivity to move) but also highest Theta decay.
+2026/02/15 23:31:51       -  BUY 1 CALL 26050 @ 218.73 | Fair: 219.35 (ModelIV: 9.71%) [Diff: +0.3%]
+2026/02/15 23:31:51       -  BUY 1 PUT 26050 @ 242.40 | Fair: 239.91 (ModelIV: 9.71%) [Diff: -1.0%]
+2026/02/15 23:31:51     ---------------------------------------------------
+2026/02/15 23:31:51  #3 [LONG_STRADDLE] straddle_NIFTY_20260330 (LONG_VOL_DIRECTION_NEUTRAL) Score=0.70 | Expiry: 2026-03-30
+2026/02/15 23:31:51     Entry: DEBIT 748.40
+2026/02/15 23:31:51     Rationale:
+2026/02/15 23:31:51      - Basis: Regime is 'LOW_VOL' and DTE (47.0) is within ideal window.
+2026/02/15 23:31:51      - Thesis: Mindset: Volatility is cheap. We expect a large move in EITHER direction that exceeds the breakeven (Premium Paid). We are Long Gamma and Long Vega.
+2026/02/15 23:31:51      - Legs: Bought ATM Call and Put at 26150. This offers the highest Gamma (sensitivity to move) but also highest Theta decay.
+2026/02/15 23:31:51       -  BUY 1 CALL 26150 @ 380.90 | Fair: 377.21 (ModelIV: 10.04%) [Diff: -1.0%]
+2026/02/15 23:31:51       -  BUY 1 PUT 26150 @ 367.50 | Fair: 369.01 (ModelIV: 10.04%) [Diff: +0.4%]
+2026/02/15 23:31:51     ---------------------------------------------------
+2026/02/15 23:31:51  #4 [LONG_STRANGLE] strangle_NIFTY_20260224 (LONG_VOL_CHEAPER) Score=0.50 | Expiry: 2026-02-24
+2026/02/15 23:31:51     Entry: DEBIT 56.17
+2026/02/15 23:31:51     Rationale:
+2026/02/15 23:31:51      - Basis: Regime is 'LOW_VOL' and DTE (13.0) is within ideal window.
+2026/02/15 23:31:51      - Thesis: Mindset: We expect a significant move, but want to reduce upfront debit. We sacrifice some probability (need larger move) for better leverage/ROI if it hits.
+2026/02/15 23:31:51      - Legs: Bought 25 Delta Call and Put (OTM). This reduces cost compared to ATM Straddle but requires a larger move to become profitable.
+2026/02/15 23:31:51       -  BUY 1 CALL 26700 @ 18.05 | Fair: 17.73 (ModelIV: 10.07%) [Diff: -1.7%]
+2026/02/15 23:31:51       -  BUY 1 PUT 25350 @ 38.12 | Fair: 37.18 (ModelIV: 11.77%) [Diff: -2.5%]
+2026/02/15 23:31:51     ---------------------------------------------------
+2026/02/15 23:31:51 Ingesting 7 CSV file(s)...
+2026/02/15 23:31:51 === Pass 1: Per-Expiry Context Construction (Parallel) ===
+2026/02/15 23:31:51  > [SKIP] 2026-02-17: DTE < 2 (Microstructure Noise)
+2026/02/15 23:31:51 Merged Snapshot: snap_20260212_153000_NIFTY
+2026/02/15 23:31:51 Underlying: NIFTY, Spot: 25807.20
+2026/02/15 23:31:51 Total Quotes: 1274
+2026/02/15 23:31:51 Total Expiries: 7
+2026/02/15 23:31:51 Tradable: 173, Rejected: 1101
+2026/02/15 23:31:51 Sample Quote: NIFTY 23100 CALL | Mid: 2731.95 | Flags: [WIDE_SPREAD WIDE_SPREAD_ABS ILLIQUID_STRATEGY ILLIQUID]
+2026/02/15 23:31:51 === Top Recommendations ===
+2026/02/15 23:31:51  #1 [LONG_STRADDLE] straddle_NIFTY_20260224 (LONG_VOL_DIRECTION_NEUTRAL) Score=0.70 | Expiry: 2026-02-24
+2026/02/15 23:31:51     Entry: DEBIT 356.07
+2026/02/15 23:31:51     Rationale:
+2026/02/15 23:31:51      - Basis: Regime is 'LOW_VOL' and DTE (12.0) is within ideal window.
+2026/02/15 23:31:51      - Thesis: Mindset: Volatility is cheap. We expect a large move in EITHER direction that exceeds the breakeven (Premium Paid). We are Long Gamma and Long Vega.
+2026/02/15 23:31:51      - Legs: Bought ATM Call and Put at 25850. This offers the highest Gamma (sensitivity to move) but also highest Theta decay.
+2026/02/15 23:31:51       -  BUY 1 CALL 25850 @ 180.10 | Fair: 180.09 (ModelIV: 9.54%) [Diff: -0.0%]
+2026/02/15 23:31:51       -  BUY 1 PUT 25850 @ 175.97 | Fair: 176.02 (ModelIV: 9.54%) [Diff: +0.0%]
+2026/02/15 23:31:51     ---------------------------------------------------
+2026/02/15 23:31:51  #2 [LONG_STRADDLE] straddle_NIFTY_20260302 (LONG_VOL_DIRECTION_NEUTRAL) Score=0.70 | Expiry: 2026-03-02
+2026/02/15 23:31:51     Entry: DEBIT 448.25
+2026/02/15 23:31:51     Rationale:
+2026/02/15 23:31:51      - Basis: Regime is 'LOW_VOL' and DTE (18.0) is within ideal window.
+2026/02/15 23:31:51      - Thesis: Mindset: Volatility is cheap. We expect a large move in EITHER direction that exceeds the breakeven (Premium Paid). We are Long Gamma and Long Vega.
+2026/02/15 23:31:51      - Legs: Bought ATM Call and Put at 25900. This offers the highest Gamma (sensitivity to move) but also highest Theta decay.
+2026/02/15 23:31:51       -  BUY 1 CALL 25900 @ 221.70 | Fair: 221.68 (ModelIV: 9.82%) [Diff: -0.0%]
+2026/02/15 23:31:51       -  BUY 1 PUT 25900 @ 226.55 | Fair: 227.56 (ModelIV: 9.82%) [Diff: +0.4%]
+2026/02/15 23:31:51     ---------------------------------------------------
+2026/02/15 23:31:51  #3 [LONG_STRADDLE] straddle_NIFTY_20260330 (LONG_VOL_DIRECTION_NEUTRAL) Score=0.70 | Expiry: 2026-03-30
+2026/02/15 23:31:51     Entry: DEBIT 752.35
+2026/02/15 23:31:51     Rationale:
+2026/02/15 23:31:51      - Basis: Regime is 'LOW_VOL' and DTE (46.0) is within ideal window.
+2026/02/15 23:31:51      - Thesis: Mindset: Volatility is cheap. We expect a large move in EITHER direction that exceeds the breakeven (Premium Paid). We are Long Gamma and Long Vega.
+2026/02/15 23:31:51      - Legs: Bought ATM Call and Put at 26000. This offers the highest Gamma (sensitivity to move) but also highest Theta decay.
+2026/02/15 23:31:51       -  BUY 1 CALL 26000 @ 386.40 | Fair: 384.77 (ModelIV: 10.26%) [Diff: -0.4%]
+2026/02/15 23:31:51       -  BUY 1 PUT 26000 @ 365.95 | Fair: 365.47 (ModelIV: 10.26%) [Diff: -0.1%]
+2026/02/15 23:31:51     ---------------------------------------------------
+2026/02/15 23:31:51  #4 [LONG_STRANGLE] strangle_NIFTY_20260224 (LONG_VOL_CHEAPER) Score=0.50 | Expiry: 2026-02-24
+2026/02/15 23:31:51     Entry: DEBIT 56.30
+2026/02/15 23:31:51     Rationale:
+2026/02/15 23:31:51      - Basis: Regime is 'LOW_VOL' and DTE (12.0) is within ideal window.
+2026/02/15 23:31:51      - Thesis: Mindset: We expect a significant move, but want to reduce upfront debit. We sacrifice some probability (need larger move) for better leverage/ROI if it hits.
+2026/02/15 23:31:51      - Legs: Bought 25 Delta Call and Put (OTM). This reduces cost compared to ATM Straddle but requires a larger move to become profitable.
+2026/02/15 23:31:51       -  BUY 1 CALL 26500 @ 21.30 | Fair: 21.18 (ModelIV: 10.29%) [Diff: -0.6%]
+2026/02/15 23:31:51       -  BUY 1 PUT 25250 @ 35.00 | Fair: 35.07 (ModelIV: 11.60%) [Diff: +0.2%]
+2026/02/15 23:31:51     ---------------------------------------------------
+2026/02/15 23:31:51  #5 [LONG_STRANGLE] strangle_NIFTY_20260302 (LONG_VOL_CHEAPER) Score=0.50 | Expiry: 2026-03-02
+2026/02/15 23:31:51     Entry: DEBIT 70.95
+2026/02/15 23:31:51     Rationale:
+2026/02/15 23:31:51      - Basis: Regime is 'LOW_VOL' and DTE (18.0) is within ideal window.
+2026/02/15 23:31:51      - Thesis: Mindset: We expect a significant move, but want to reduce upfront debit. We sacrifice some probability (need larger move) for better leverage/ROI if it hits.
+2026/02/15 23:31:51      - Legs: Bought 25 Delta Call and Put (OTM). This reduces cost compared to ATM Straddle but requires a larger move to become profitable.
+2026/02/15 23:31:51       -  BUY 1 CALL 26700 @ 25.02 | Fair: 25.22 (ModelIV: 10.32%) [Diff: +0.8%]
+2026/02/15 23:31:51       -  BUY 1 PUT 25150 @ 45.92 | Fair: 46.72 (ModelIV: 11.97%) [Diff: +1.7%]
+2026/02/15 23:31:51     ---------------------------------------------------
+2026/02/15 23:31:51 Ingesting 7 CSV file(s)...
+2026/02/15 23:31:51 === Pass 1: Per-Expiry Context Construction (Parallel) ===
+2026/02/15 23:31:51  > [SKIP] 2026-02-17: DTE < 2 (Microstructure Noise)
+2026/02/15 23:31:51 Merged Snapshot: snap_20260213_153000_NIFTY
+2026/02/15 23:31:51 Underlying: NIFTY, Spot: 25471.10
+2026/02/15 23:31:51 Total Quotes: 1280
+2026/02/15 23:31:51 Total Expiries: 7
+2026/02/15 23:31:51 Tradable: 168, Rejected: 1112
+2026/02/15 23:31:51 Sample Quote: NIFTY 23100 CALL | Mid: 2447.85 | Flags: [WIDE_SPREAD WIDE_SPREAD_ABS ILLIQUID_STRATEGY ILLIQUID]
+2026/02/15 23:31:51 === Top Recommendations ===
+2026/02/15 23:31:51  #1 [IRON_FLY] if_NIFTY_20260224 (SHORT_VOL_PIN_TARGET) Score=0.50 | Expiry: 2026-02-24
+2026/02/15 23:31:51     Entry: CREDIT 293.40
+2026/02/15 23:31:51     Rationale:
+2026/02/15 23:31:51      - Basis: Regime is 'TRANSITION' and DTE (11.0) is within ideal window.
+2026/02/15 23:31:51      - Thesis: Mindset: Aggressive Mean Reversion. We believe the price is pinned or will revert to the ATM level. We sell the 'meat' of the curve (ATM) for maximum credit.
+2026/02/15 23:31:51      - Legs: Sold ATM Straddle at 25500. Bought protected wings ~2% out. This creates a 'tent' profit zone centered on current price.
+2026/02/15 23:31:51       - SELL 1 CALL 25500 @ 196.93 | Fair: 197.91 (ModelIV: 11.63%) [Diff: +0.5%]
+2026/02/15 23:31:51       - SELL 1 PUT 25500 @ 211.68 | Fair: 212.33 (ModelIV: 11.63%) [Diff: +0.3%]
+2026/02/15 23:31:51       -  BUY 1 CALL 26000 @ 47.48 | Fair: 47.08 (ModelIV: 11.90%) [Diff: -0.8%]
+2026/02/15 23:31:51       -  BUY 1 PUT 25000 @ 67.72 | Fair: 67.01 (ModelIV: 13.39%) [Diff: -1.1%]
+2026/02/15 23:31:51     ---------------------------------------------------
+2026/02/15 23:31:51  #2 [IRON_FLY] if_NIFTY_20260302 (SHORT_VOL_PIN_TARGET) Score=0.50 | Expiry: 2026-03-02
+2026/02/15 23:31:51     Entry: CREDIT 329.48
+2026/02/15 23:31:51     Rationale:
+2026/02/15 23:31:51      - Basis: Regime is 'TRANSITION' and DTE (17.0) is within ideal window.
+2026/02/15 23:31:51      - Thesis: Mindset: Aggressive Mean Reversion. We believe the price is pinned or will revert to the ATM level. We sell the 'meat' of the curve (ATM) for maximum credit.
+2026/02/15 23:31:51      - Legs: Sold ATM Straddle at 25550. Bought protected wings ~2% out. This creates a 'tent' profit zone centered on current price.
+2026/02/15 23:31:51       - SELL 1 CALL 25550 @ 244.32 | Fair: 244.81 (ModelIV: 11.61%) [Diff: +0.2%]
+2026/02/15 23:31:51       - SELL 1 PUT 25550 @ 264.00 | Fair: 264.55 (ModelIV: 11.61%) [Diff: +0.2%]
+2026/02/15 23:31:51       -  BUY 1 CALL 26050 @ 74.35 | Fair: 75.02 (ModelIV: 11.49%) [Diff: +0.9%]
+2026/02/15 23:31:51       -  BUY 1 PUT 25050 @ 104.50 | Fair: 104.50 (ModelIV: 12.96%) [Diff: +0.0%]
+2026/02/15 23:31:51     ---------------------------------------------------
+2026/02/15 23:31:51  #3 [IRON_FLY] if_NIFTY_20260330 (SHORT_VOL_PIN_TARGET) Score=0.50 | Expiry: 2026-03-30
+2026/02/15 23:31:51     Entry: CREDIT 392.07
+2026/02/15 23:31:51     Rationale:
+2026/02/15 23:31:51      - Basis: Regime is 'TRANSITION' and DTE (45.0) is within ideal window.
+2026/02/15 23:31:51      - Thesis: Mindset: Aggressive Mean Reversion. We believe the price is pinned or will revert to the ATM level. We sell the 'meat' of the curve (ATM) for maximum credit.
+2026/02/15 23:31:51      - Legs: Sold ATM Straddle at 25650. Bought protected wings ~2% out. This creates a 'tent' profit zone centered on current price.
+2026/02/15 23:31:51       - SELL 1 CALL 25650 @ 406.02 | Fair: 405.84 (ModelIV: 11.32%) [Diff: -0.0%]
+2026/02/15 23:31:51       - SELL 1 PUT 25650 @ 402.12 | Fair: 401.92 (ModelIV: 11.32%) [Diff: -0.0%]
+2026/02/15 23:31:51       -  BUY 1 CALL 26150 @ 188.05 | Fair: 189.38 (ModelIV: 10.74%) [Diff: +0.7%]
+2026/02/15 23:31:51       -  BUY 1 PUT 25150 @ 228.02 | Fair: 228.47 (ModelIV: 12.27%) [Diff: +0.2%]
+2026/02/15 23:31:51     ---------------------------------------------------
+2026/02/15 23:31:51  #4 [IRON_FLY] if_NIFTY_20260428 (SHORT_VOL_PIN_TARGET) Score=0.50 | Expiry: 2026-04-28
+2026/02/15 23:31:51     Entry: CREDIT 406.20
+2026/02/15 23:31:51     Rationale:
+2026/02/15 23:31:51      - Basis: Regime is 'TRANSITION' and DTE (74.0) is within ideal window.
+2026/02/15 23:31:51      - Thesis: Mindset: Aggressive Mean Reversion. We believe the price is pinned or will revert to the ATM level. We sell the 'meat' of the curve (ATM) for maximum credit.
+2026/02/15 23:31:51      - Legs: Sold ATM Straddle at 25800. Bought protected wings ~2% out. This creates a 'tent' profit zone centered on current price.
+2026/02/15 23:31:51       - SELL 1 CALL 25800 @ 514.77 | Fair: 517.22 (ModelIV: 11.18%) [Diff: +0.5%]
+2026/02/15 23:31:51       - SELL 1 PUT 25800 @ 503.45 | Fair: 506.88 (ModelIV: 11.18%) [Diff: +0.7%]
+2026/02/15 23:31:51       -  BUY 1 CALL 26300 @ 290.33 | Fair: 290.75 (ModelIV: 10.72%) [Diff: +0.1%]
+2026/02/15 23:31:51       -  BUY 1 PUT 25300 @ 321.70 | Fair: 321.54 (ModelIV: 11.83%) [Diff: -0.1%]
+2026/02/15 23:31:51     ---------------------------------------------------
+2026/02/15 23:31:51 Replay finished. Audit log: runs/20260215_233151/events.jsonl

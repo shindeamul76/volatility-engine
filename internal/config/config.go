@@ -60,6 +60,41 @@ type ReportConfig struct {
 	Workers int      `yaml:"workers"`
 }
 
+type DeciderConfig struct {
+	MaxOpenPositions int     `yaml:"max_open_positions"`
+	MinScore         float64 `yaml:"min_score"`
+	TakeProfit       float64 `yaml:"take_profit"`
+	StopLoss         float64 `yaml:"stop_loss"`
+	RollMinScoreDiff float64 `yaml:"roll_min_score_diff"`
+}
+
+type ExecutionConfig struct {
+	TickSize float64        `yaml:"tick_size"`
+	Slippage SlippageConfig `yaml:"slippage"`
+	Fees     FeeConfig      `yaml:"fees"`
+}
+
+type FeeConfig struct {
+	PerLeg   float64 `yaml:"per_leg"`
+	PerOrder float64 `yaml:"per_order"`
+	Bps      float64 `yaml:"bps"`
+}
+
+type SlippageConfig struct {
+	Mode  string  `yaml:"mode"` // "none" | "bps" | "ticks"
+	Bps   float64 `yaml:"bps"`
+	Ticks float64 `yaml:"ticks"`
+}
+
+type ReplayConfig struct {
+	CloseAllAtEnd    *bool   `yaml:"close_all_at_end"`
+	MaxOpenPositions int     `yaml:"max_open_positions"`
+	MinScore         float64 `yaml:"min_score"`
+	TakeProfit       float64 `yaml:"take_profit"`
+	StopLoss         float64 `yaml:"stop_loss"`
+	RollMinScoreDiff float64 `yaml:"roll_min_score_diff"`
+}
+
 // Config is the root configuration structure
 type Config struct {
 	Market    MarketConfig    `yaml:"market"`
@@ -67,6 +102,9 @@ type Config struct {
 	Selection SelectionConfig `yaml:"selection"`
 	Risk      RiskConfig      `yaml:"risk"`
 	Report    ReportConfig    `yaml:"report"`
+	Replay    ReplayConfig    `yaml:"replay"`
+	Decider   DeciderConfig   `yaml:"decider"`
+	Execution ExecutionConfig `yaml:"execution"`
 	Files     []FileConfig    `yaml:"files"`
 }
 
@@ -141,6 +179,27 @@ func (c *Config) Validate() error {
 	}
 	if c.Report.Workers <= 0 {
 		c.Report.Workers = 1
+	}
+
+	// Replay Defaults
+	if c.Replay.CloseAllAtEnd == nil {
+		def := true
+		c.Replay.CloseAllAtEnd = &def
+	}
+	if c.Replay.MaxOpenPositions <= 0 {
+		c.Replay.MaxOpenPositions = 1
+	}
+	if c.Replay.MinScore <= 0 {
+		c.Replay.MinScore = 0.50
+	}
+	if c.Replay.TakeProfit <= 0 {
+		c.Replay.TakeProfit = 0.30
+	}
+	if c.Replay.StopLoss <= 0 {
+		c.Replay.StopLoss = 0.50
+	}
+	if c.Replay.RollMinScoreDiff <= 0 {
+		c.Replay.RollMinScoreDiff = 0.10
 	}
 
 	// Validate each file config

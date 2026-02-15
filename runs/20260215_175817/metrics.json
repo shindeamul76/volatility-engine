@@ -1,0 +1,14 @@
+{
+  "total_trades": 1,
+  "win_rate": 0,
+  "wins": 0,
+  "losses": 1,
+  "avg_win": 0,
+  "avg_loss": -4279,
+  "max_drawdown": -7465.25,
+  "avg_holding_days": 8,
+  "realized_pnl": -4279,
+  "final_equity": 95761,
+  "initial_cash": 100000,
+  "return_pct": -4.239
+}

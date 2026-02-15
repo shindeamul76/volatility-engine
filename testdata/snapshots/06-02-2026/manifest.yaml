@@ -1,0 +1,17 @@
+as_of: "2026-02-06T15:30:00+05:30"
+underlying: NIFTY
+spot: 25693.7
+risk_free_rate: 0.06
+files:
+    - path: option-chain-ED-NIFTY-02-Mar-2026.csv
+      expiry: "2026-03-02T15:30:00+05:30"
+    - path: option-chain-ED-NIFTY-10-Feb-2026.csv
+      expiry: "2026-02-10T15:30:00+05:30"
+    - path: option-chain-ED-NIFTY-10-Mar-2026.csv
+      expiry: "2026-03-10T15:30:00+05:30"
+    - path: option-chain-ED-NIFTY-17-Feb-2026.csv
+      expiry: "2026-02-17T15:30:00+05:30"
+    - path: option-chain-ED-NIFTY-24-Feb-2026.csv
+      expiry: "2026-02-24T15:30:00+05:30"
+    - path: option-chain-ED-NIFTY-30-Mar-2026.csv
+      expiry: "2026-03-30T15:30:00+05:30"

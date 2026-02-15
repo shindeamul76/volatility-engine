@@ -138,33 +138,35 @@ func (s *Solver) Solve(req market.IVRequest) market.IVResult {
 			break
 		}
 
-		// Newton step if vega is sufficient
-		if vega > 0.001 {
-			newtonStep := err / vega
-			sigmaNew := sigma - newtonStep
-
-			// Check if Newton stays in bracket
-			if sigmaNew > volLow && sigmaNew < volHigh {
-				sigma = sigmaNew
-				methodUsed = "NEWTON"
-				// Update bracket
-				if err > 0 {
-					volHigh = sigma
-				} else {
-					volLow = sigma
-				}
-				continue
-			}
-		}
-
-		// Fallback to bisection
-		methodUsed = "BISECTION"
+		// Update bracket with current point
 		if err > 0 {
 			volHigh = sigma
 		} else {
 			volLow = sigma
 		}
-		sigma = (volLow + volHigh) / 2.0
+
+		// Calculate next step
+		nextSigma := sigma
+		useNewton := false
+
+		if math.Abs(vega) > 0.001 {
+			newtonStep := err / vega
+			candidate := sigma - newtonStep
+			// Check if Newton candidate is inside the *new* bracket
+			// Note: volLow/volHigh were just updated.
+			if candidate > volLow && candidate < volHigh {
+				nextSigma = candidate
+				useNewton = true
+			}
+		}
+
+		if useNewton {
+			methodUsed = "NEWTON"
+			sigma = nextSigma
+		} else {
+			methodUsed = "BISECTION"
+			sigma = (volLow + volHigh) / 2.0
+		}
 	}
 
 	if result.Status != market.IVStatusConverged {
@@ -315,7 +317,7 @@ func scoreSolverStability(iterations int, vega float64) float64 {
 func scoreConsistency(req market.IVRequest) float64 {
 	// If paired market data is missing, return a neutral/conservative score
 	if req.Market.PairedMid <= 0 {
-		return 0.7
+		return 0.8
 	}
 
 	K := req.Instrument.Strike

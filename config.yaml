@@ -17,7 +17,7 @@ selection:
   max_points_per_expiry: 60      # Recommended sweet spot cap for stability
 
 risk:
-  contract_multiplier: 100
+  contract_multiplier: 65
   scenario:
     spot_shocks: [-0.2, -0.1, -0.05, 0, 0.05, 0.1, 0.2]
     vol_shocks_abs: [-0.10, -0.05, 0, 0.05, 0.10]
@@ -26,6 +26,21 @@ risk:
     grid_min_mult: 0.5
     grid_max_mult: 1.5
     grid_steps: 400
+    min_score: 0.5
+  take_profit: 0.3
+  stop_loss: 0.5
+  roll_min_score_diff: 0.1
+
+execution:
+  tick_size: 0.05  # NSE NIFTY options tick size
+  slippage:
+    mode: "none"  # "none" | "bps" | "ticks"
+    bps: 0        # basis points (e.g., 5 = 0.05%)
+    ticks: 0      # number of ticks
+  fees:
+    per_leg: 20   # Flat fee per leg (INR)
+    per_order: 0  # Flat fee per order (INR)
+    bps: 0        # Fee in bps on notional (e.g. 1 = 0.01%)
 
 report:
   top_n: 3

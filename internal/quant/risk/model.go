@@ -2,6 +2,8 @@ package risk
 
 import (
 	"math"
+
+	"volatility-engine/internal/domain/market"
 )
 
 // BSM calculates Black-Scholes-Merton price and greeks.
@@ -18,7 +20,7 @@ type BSMResult struct {
 }
 
 func BSM(isCall bool, S, K, T, r, sigma float64) BSMResult {
-	if T <= 0 {
+	if T < market.MinTTEYears {
 		intrinsic := 0.0
 		if isCall {
 			intrinsic = math.Max(0, S-K)
@@ -52,7 +54,7 @@ func BSM(isCall bool, S, K, T, r, sigma float64) BSMResult {
 		rho = -K * T * math.Exp(-r*T) * normCdf(-d2) / 100.0
 	}
 
-	theta = theta / 365.0 // Theta per day
+	theta = theta / market.DaysPerYear // Theta per day (Standardized to 365)
 
 	return BSMResult{
 		Price: price,
@@ -71,7 +73,7 @@ func BSM(isCall bool, S, K, T, r, sigma float64) BSMResult {
 // T is time to expiry in years.
 // sigma is volatility (decimal).
 func BSMForward(isCall bool, F, K, DF, T, sigma float64) BSMResult {
-	if T <= 0 {
+	if T < market.MinTTEYears {
 		var intrinsic float64
 		if isCall {
 			intrinsic = math.Max(0, F-K) * DF
@@ -114,7 +116,7 @@ func BSMForward(isCall bool, F, K, DF, T, sigma float64) BSMResult {
 	} else {
 		theta = (-(DF * F * sigma * npd1) / (2 * math.Sqrt(T))) + (r * K * DF * normCdf(-d2))
 	}
-	theta = theta / 365.0 // Per day
+	theta = theta / market.DaysPerYear // Per day
 
 	// Rho (per 1% rate change)
 	rho := K * T * DF * nd2 / 100.0
