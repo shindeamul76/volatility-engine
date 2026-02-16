@@ -583,7 +583,7 @@ func runSnapshotPipeline() {
 			IVRank: regimeState.HistoricalContext.IVRank,
 		}
 
-		err := rptGen.GenerateBatch(snap.ID, topCandidates, nil, meta, cfg.Pricing.RiskFreeRate)
+		err := rptGen.GenerateBatch(snap.ID, topCandidates, &surfaceSnap, meta, cfg.Pricing.RiskFreeRate)
 		if err != nil {
 			log.Printf("Error generating risk reports: %v", err)
 		} else {

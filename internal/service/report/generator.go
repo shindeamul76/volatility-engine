@@ -8,30 +8,21 @@ import (
 
 	"volatility-engine/internal/config"
 	"volatility-engine/internal/domain/market"
-	"volatility-engine/internal/domain/risk"
-	"volatility-engine/internal/engines/payoff"
 	reportEngine "volatility-engine/internal/engines/report"
-	riskEngine "volatility-engine/internal/engines/risk"
-	simEngine "volatility-engine/internal/engines/sim"
+	"volatility-engine/internal/quant/risk"
 )
 
 type Generator struct {
-	simEvaluator   *simEngine.Evaluator
-	payoffBuilder  *payoff.Builder
-	riskAggregator *riskEngine.Aggregator
-	jsonRenderer   *reportEngine.JSONRenderer
-	mdRenderer     *reportEngine.MarkdownRenderer
-	cfg            config.Config
+	jsonRenderer *reportEngine.JSONRenderer
+	mdRenderer   *reportEngine.MarkdownRenderer
+	cfg          config.Config
 }
 
 func NewGenerator(cfg config.Config) *Generator {
 	return &Generator{
-		simEvaluator:   simEngine.NewEvaluator(), // Has internal cache
-		payoffBuilder:  &payoff.Builder{},
-		riskAggregator: &riskEngine.Aggregator{},
-		jsonRenderer:   &reportEngine.JSONRenderer{},
-		mdRenderer:     &reportEngine.MarkdownRenderer{},
-		cfg:            cfg,
+		jsonRenderer: &reportEngine.JSONRenderer{},
+		mdRenderer:   &reportEngine.MarkdownRenderer{},
+		cfg:          cfg,
 	}
 }
 
@@ -39,19 +30,12 @@ func NewGenerator(cfg config.Config) *Generator {
 func (g *Generator) GenerateBatch(
 	snapshotID string,
 	candidates []market.StrategyCandidate,
-	snapshots map[string]market.Snapshot, // Keyed by underlying? Or just main snapshot?
-	// Actually we act on one underlying usually.
-	// But we need the Expiry Context (Skew) for each candidate.
-	// We might need to pass a lookup for Skews/Contexts.
-	// Let's pass the RegimeState which has IV30/Rank, and maybe a map of per-expiry data?
+	surface *market.IVSurfaceSnapshot,
 	regimeMeta struct {
 		Regime string
 		IV30   float64
 		IVRank float64
 	},
-	// Helper to get Skew/Context for an expiry
-	// For now, let's assume Simulator behaves autonomously regarding Skew (using basic rules or passed params)
-	// But our Plan said "One SimContext per expiry".
 	riskFreeRate float64,
 ) error {
 
@@ -75,7 +59,7 @@ func (g *Generator) GenerateBatch(
 		go func() {
 			defer wg.Done()
 			for cand := range tasks {
-				g.processCandidate(cand, baseDir, regimeMeta, riskFreeRate)
+				g.processCandidate(cand, baseDir, surface, regimeMeta, riskFreeRate)
 			}
 		}()
 	}
@@ -92,6 +76,7 @@ func (g *Generator) GenerateBatch(
 func (g *Generator) processCandidate(
 	candidate market.StrategyCandidate,
 	outDir string,
+	surface *market.IVSurfaceSnapshot,
 	regimeMeta struct {
 		Regime string
 		IV30   float64
@@ -99,51 +84,48 @@ func (g *Generator) processCandidate(
 	},
 	r float64,
 ) {
-	// Reconstruct Snapshot-like object for Evaluator?
-	// Evaluator needs `market.Snapshot`.
-	// We didn't pass full snapshot to batch (too big?).
-	// We need Spot.
-	// `config.Config` has Spot.
-
 	spot := g.cfg.Market.Spot
 
-	// Create minimal snapshot for Evaluator
-	snap := market.Snapshot{
-		AsOf: candidate.AsOf,
-		Underlying: market.Underlying{
-			Symbol: candidate.Underlying,
-			Spot:   spot,
-		},
-	}
+	// 1. Payoff Analysis
+	payoffMetrics := risk.AnalyzePayoff(candidate.Legs)
 
-	// 1. Payoff
-	payoffCurve := g.payoffBuilder.BuildPayoff(candidate, spot)
-	payoffMetrics := g.payoffBuilder.CalculateMetrics(payoffCurve)
-
-	// 2. Sim
-	gridSpec := risk.ScenarioGridSpec{
-		SpotShocks:     g.cfg.Risk.Scenario.SpotShocks,
-		VolShocks:      g.cfg.Risk.Scenario.VolShocksAbs,
-		TimeSteps:      g.cfg.Risk.Scenario.TimeShiftsDays,
-		ScenariosCount: 0, // Calculated by len * len * len
-	}
-	// Re-calc scenarios count for info
-	gridSpec.ScenariosCount = len(gridSpec.SpotShocks) * len(gridSpec.VolShocks) * len(gridSpec.TimeSteps)
-
-	surface := g.simEvaluator.Evaluate(candidate, gridSpec, snap, r)
-
-	// 3. Aggregate
-	// Need current greeks
-	currentGreeks := market.Greeks{}
-	for _, res := range surface.Results {
-		if res.Scenario.SpotChangePct == 0 && res.Scenario.VolChange == 0 && res.Scenario.DaysForward == 0 {
-			currentGreeks = res.Greeks
-			break
+	// 2. Scenario Analysis
+	// Prepare Skew Map
+	skews := make(map[string]market.IVSkewSnapshot)
+	if surface != nil {
+		for _, s := range surface.Skews {
+			skews[s.Expiry] = s
 		}
 	}
 
-	report := g.riskAggregator.Summarize(candidate, surface, payoffMetrics, currentGreeks, regimeMeta)
-	report.Meta.Spot = spot // Fill spot explicitly
+	gridSpec := risk.ScenarioGridSpec{
+		SpotShocks:   g.cfg.Risk.Scenario.SpotShocks,
+		VolShocksAbs: g.cfg.Risk.Scenario.VolShocksAbs,
+		TimeSteps:    g.cfg.Risk.Scenario.TimeShiftsDays,
+	}
+	// Defaults if config missing
+	if len(gridSpec.SpotShocks) == 0 {
+		gridSpec = risk.DefaultScenarioGrid()
+	}
+
+	scenarios := risk.RunScenarios(candidate, spot, r, skews, gridSpec)
+
+	// 3. Construct Report
+	report := risk.RiskReport{
+		Meta: risk.ReportMeta{
+			AsOf:       candidate.AsOf,
+			Underlying: candidate.Underlying,
+			Spot:       spot,
+			Expiry:     candidate.Expiry,
+			Regime:     regimeMeta.Regime,
+			IV30:       regimeMeta.IV30,
+			IVRank:     regimeMeta.IVRank,
+		},
+		Candidate: candidate,
+		Payoff:    payoffMetrics,
+		Greeks:    scenarios.BaseCase.Greeks,
+		Scenarios: scenarios,
+	}
 
 	// 4. Render & Save
 	// JSON

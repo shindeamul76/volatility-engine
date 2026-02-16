@@ -1,0 +1,2223 @@
+{
+  "meta": {
+    "as_of": "2026-02-14T08:54:02.690251Z",
+    "underlying": "NIFTY",
+    "spot": 25471.1,
+    "expiry": "2026-02-24",
+    "regime": "TRANSITION",
+    "iv30": 0.11581311127669376,
+    "iv_rank": 1
+  },
+  "candidate": {
+    "candidate_id": "ic_NIFTY_20260224",
+    "as_of": "2026-02-14T08:54:02.690251Z",
+    "underlying": "NIFTY",
+    "expiry": "2026-02-24",
+    "strategy_type": "IRON_CONDOR",
+    "intent": "SHORT_VOL_DEFINED_RISK",
+    "legs": [
+      {
+        "side": "SELL",
+        "type": "PUT",
+        "strike": 24800,
+        "qty": 1,
+        "mark": 44.55,
+        "iv": 0,
+        "confidence": 1,
+        "delta": 0
+      },
+      {
+        "side": "BUY",
+        "type": "PUT",
+        "strike": 24400,
+        "qty": 1,
+        "mark": 23.175,
+        "iv": 0,
+        "confidence": 1,
+        "delta": 0
+      },
+      {
+        "side": "SELL",
+        "type": "CALL",
+        "strike": 26200,
+        "qty": 1,
+        "mark": 28.1,
+        "iv": 0,
+        "confidence": 1,
+        "delta": 0
+      },
+      {
+        "side": "BUY",
+        "type": "CALL",
+        "strike": 26600,
+        "qty": 1,
+        "mark": 13.275,
+        "iv": 0,
+        "confidence": 1,
+        "delta": 0
+      }
+    ],
+    "entry": {
+      "net_premium": 36.199999999999996,
+      "premium_type": "CREDIT",
+      "assumptions": {
+        "pricing": "",
+        "slippage_model": ""
+      }
+    },
+    "quick_metrics": {
+      "max_profit": 36.199999999999996,
+      "max_loss_approx": 500,
+      "breakevens_approx": {
+        "low": 0,
+        "high": 0
+      },
+      "min_leg_confidence": 0
+    },
+    "rationale": {
+      "regime": "TRANSITION",
+      "selection_basis": "Regime is 'TRANSITION' and DTE (0) is within ideal 2-45 day window for premium selling.",
+      "thesis": "Mindset: Volatility is overrated. We expect the market to stay range-bound or at least not move beyond the wings. We collect premium upfront and profit from time decay (Theta) and volatility crush (Vega).",
+      "leg_selection": "Short strikes chosen at approx 20 Delta (High Probability OTM). Wings bought ~1.5% further out to define risk and cap margin requirement.",
+      "reasons": [
+        "High Vol Regime",
+        "High Probability of Profit (POP)",
+        "Defined Risk"
+      ],
+      "score": 0
+    },
+    "management": {
+      "close_if_dte_below_days": 0
+    },
+    "quality": {
+      "score": 0.5,
+      "flags": null,
+      "warnings": null
+    }
+  },
+  "payoff": {
+    "entry_cost": -36.199999999999996,
+    "max_profit": 36.199999999999996,
+    "max_loss": -363.8,
+    "unbounded_profit": false,
+    "unbounded_loss": false,
+    "breakevens": [
+      24763.8,
+      26236.2
+    ],
+    "risk_reward_ratio": 0.09950522264980757,
+    "profile_points": [
+      {
+        "spot": 0,
+        "profit": -363.8
+      },
+      {
+        "spot": 24400,
+        "profit": -363.8
+      },
+      {
+        "spot": 24800,
+        "profit": 36.199999999999996
+      },
+      {
+        "spot": 26200,
+        "profit": 36.199999999999996
+      },
+      {
+        "spot": 26600,
+        "profit": -363.8
+      },
+      {
+        "spot": 53200,
+        "profit": -363.8
+      }
+    ]
+  },
+  "greeks": {
+    "delta": -2.220446049250313e-16,
+    "gamma": -2.6301044255981036e-17,
+    "vega_per_vol_point": -1.4024803467302424e-13,
+    "theta_per_day": 3.2890754463349943e-15,
+    "rho": -4.758041008922951e-15
+  },
+  "scenarios": {
+    "grid_spec": {
+      "spot_shocks_pct": [
+        -0.2,
+        -0.1,
+        -0.05,
+        0,
+        0.05,
+        0.1,
+        0.2
+      ],
+      "vol_shocks_points": [
+        -0.1,
+        -0.05,
+        0,
+        0.05,
+        0.1
+      ],
+      "time_steps_days": [
+        0,
+        7,
+        14
+      ],
+      "total_scenarios_count": 0
+    },
+    "worst_case": {
+      "scenario": {
+        "spot_change_pct": -0.2,
+        "vol_change_points": 0.1,
+        "days_forward": 14
+      },
+      "estimated_spot": 20376.88,
+      "estimated_date": "",
+      "estimated_fwd": 25538.180659183297,
+      "strategy_value": -398.9493275174409,
+      "pnl": -362.7493275174409,
+      "greeks": {
+        "delta": 6.8833827526759706e-15,
+        "gamma": 1.1493824068980642e-16,
+        "vega_per_vol_point": 2.301228396332897e-12,
+        "theta_per_day": -0.06558071137354293,
+        "rho": 0.17488189699400714
+      }
+    },
+    "best_case": {
+      "scenario": {
+        "spot_change_pct": 0,
+        "vol_change_points": -0.1,
+        "days_forward": 0
+      },
+      "estimated_spot": 25471.1,
+      "estimated_date": "",
+      "estimated_fwd": 25597.02113939273,
+      "strategy_value": 1.3322955768362696e-13,
+      "pnl": 36.20000000000013,
+      "greeks": {
+        "delta": -2.220446049250313e-16,
+        "gamma": -2.6301044255981036e-17,
+        "vega_per_vol_point": -1.4024803467302424e-13,
+        "theta_per_day": 3.2890754463349943e-15,
+        "rho": -4.758041008922951e-15
+      }
+    },
+    "base_case": {
+      "scenario": {
+        "spot_change_pct": 0,
+        "vol_change_points": 0,
+        "days_forward": 0
+      },
+      "estimated_spot": 25471.1,
+      "estimated_date": "",
+      "estimated_fwd": 25597.02113939273,
+      "strategy_value": 1.3322955768362696e-13,
+      "pnl": 36.20000000000013,
+      "greeks": {
+        "delta": -2.220446049250313e-16,
+        "gamma": -2.6301044255981036e-17,
+        "vega_per_vol_point": -1.4024803467302424e-13,
+        "theta_per_day": 3.2890754463349943e-15,
+        "rho": -4.758041008922951e-15
+      }
+    },
+    "results": [
+      {
+        "scenario": {
+          "spot_change_pct": -0.2,
+          "vol_change_points": -0.1,
+          "days_forward": 0
+        },
+        "estimated_spot": 20376.88,
+        "estimated_date": "",
+        "estimated_fwd": 25597.02113939273,
+        "strategy_value": -398.03225322654544,
+        "pnl": -361.83225322654545,
+        "greeks": {
+          "delta": 0,
+          "gamma": 0,
+          "vega_per_vol_point": 0,
+          "theta_per_day": -0.0654299594345007,
+          "rho": 0.3271497971725026
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": -0.2,
+          "vol_change_points": -0.05,
+          "days_forward": 0
+        },
+        "estimated_spot": 20376.88,
+        "estimated_date": "",
+        "estimated_fwd": 25597.02113939273,
+        "strategy_value": -398.03225322654544,
+        "pnl": -361.83225322654545,
+        "greeks": {
+          "delta": 0,
+          "gamma": 0,
+          "vega_per_vol_point": 0,
+          "theta_per_day": -0.0654299594345007,
+          "rho": 0.3271497971725026
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": -0.2,
+          "vol_change_points": 0,
+          "days_forward": 0
+        },
+        "estimated_spot": 20376.88,
+        "estimated_date": "",
+        "estimated_fwd": 25597.02113939273,
+        "strategy_value": -398.03225322654544,
+        "pnl": -361.83225322654545,
+        "greeks": {
+          "delta": 0,
+          "gamma": 0,
+          "vega_per_vol_point": 0,
+          "theta_per_day": -0.0654299594345007,
+          "rho": 0.3271497971725026
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": -0.2,
+          "vol_change_points": 0.05,
+          "days_forward": 0
+        },
+        "estimated_spot": 20376.88,
+        "estimated_date": "",
+        "estimated_fwd": 25597.02113939273,
+        "strategy_value": -398.03225322654544,
+        "pnl": -361.83225322654545,
+        "greeks": {
+          "delta": 0,
+          "gamma": 3.5875384701222195e-26,
+          "vega_per_vol_point": 7.34601115084968e-22,
+          "theta_per_day": -0.0654299594345007,
+          "rho": 0.3271497971725026
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": -0.2,
+          "vol_change_points": 0.1,
+          "days_forward": 0
+        },
+        "estimated_spot": 20376.88,
+        "estimated_date": "",
+        "estimated_fwd": 25597.02113939273,
+        "strategy_value": -398.03225166314957,
+        "pnl": -361.8322516631496,
+        "greeks": {
+          "delta": 1.4310467089106993e-8,
+          "gamma": 1.2665316690585126e-10,
+          "vega_per_vol_point": 0.0000047545837455243845,
+          "theta_per_day": -0.0654308787858688,
+          "rho": 0.327150035560946
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": -0.1,
+          "vol_change_points": -0.1,
+          "days_forward": 0
+        },
+        "estimated_spot": 22923.989999999998,
+        "estimated_date": "",
+        "estimated_fwd": 25597.02113939273,
+        "strategy_value": -398.03225322654544,
+        "pnl": -361.83225322654545,
+        "greeks": {
+          "delta": 0,
+          "gamma": 3.500731740551899e-90,
+          "vega_per_vol_point": 1.5120551899712709e-86,
+          "theta_per_day": -0.0654299594345007,
+          "rho": 0.3271497971725026
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": -0.1,
+          "vol_change_points": -0.05,
+          "days_forward": 0
+        },
+        "estimated_spot": 22923.989999999998,
+        "estimated_date": "",
+        "estimated_fwd": 25597.02113939273,
+        "strategy_value": -398.03225322654544,
+        "pnl": -361.83225322654545,
+        "greeks": {
+          "delta": 0,
+          "gamma": 3.500731740551899e-90,
+          "vega_per_vol_point": 1.5120551899712709e-86,
+          "theta_per_day": -0.0654299594345007,
+          "rho": 0.3271497971725026
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": -0.1,
+          "vol_change_points": 0,
+          "days_forward": 0
+        },
+        "estimated_spot": 22923.989999999998,
+        "estimated_date": "",
+        "estimated_fwd": 25597.02113939273,
+        "strategy_value": -398.03225322654544,
+        "pnl": -361.83225322654545,
+        "greeks": {
+          "delta": 0,
+          "gamma": 3.500731740551899e-90,
+          "vega_per_vol_point": 1.5120551899712709e-86,
+          "theta_per_day": -0.0654299594345007,
+          "rho": 0.3271497971725026
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": -0.1,
+          "vol_change_points": 0.05,
+          "days_forward": 0
+        },
+        "estimated_spot": 22923.989999999998,
+        "estimated_date": "",
+        "estimated_fwd": 25597.02113939273,
+        "strategy_value": -397.9888557412236,
+        "pnl": -361.7888557412236,
+        "greeks": {
+          "delta": 0.0004212740477054777,
+          "gamma": 0.000003817620072737132,
+          "vega_per_vol_point": 0.09893563983986914,
+          "theta_per_day": -0.07690388800558975,
+          "rho": 0.3350516201080126
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": -0.1,
+          "vol_change_points": 0.1,
+          "days_forward": 0
+        },
+        "estimated_spot": 22923.989999999998,
+        "estimated_date": "",
+        "estimated_fwd": 25597.02113939273,
+        "strategy_value": -390.4530985817483,
+        "pnl": -354.2530985817483,
+        "greeks": {
+          "delta": 0.025284471279067078,
+          "gamma": 0.00007057755041645303,
+          "vega_per_vol_point": 3.3532665523355947,
+          "theta_per_day": -0.7742297645134955,
+          "rho": 0.7973211495931761
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": -0.05,
+          "vol_change_points": -0.1,
+          "days_forward": 0
+        },
+        "estimated_spot": 24197.545,
+        "estimated_date": "",
+        "estimated_fwd": 25597.02113939273,
+        "strategy_value": -394.02122613662897,
+        "pnl": -357.821226136629,
+        "greeks": {
+          "delta": 0.11807460918324597,
+          "gamma": 0.0028508373446044974,
+          "vega_per_vol_point": 13.719662938202344,
+          "theta_per_day": -0.7630945111956224,
+          "rho": 2.672167311127918
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": -0.05,
+          "vol_change_points": -0.05,
+          "days_forward": 0
+        },
+        "estimated_spot": 24197.545,
+        "estimated_date": "",
+        "estimated_fwd": 25597.02113939273,
+        "strategy_value": -394.02122613662897,
+        "pnl": -357.821226136629,
+        "greeks": {
+          "delta": 0.11807460918324597,
+          "gamma": 0.0028508373446044974,
+          "vega_per_vol_point": 13.719662938202344,
+          "theta_per_day": -0.7630945111956224,
+          "rho": 2.672167311127918
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": -0.05,
+          "vol_change_points": 0,
+          "days_forward": 0
+        },
+        "estimated_spot": 24197.545,
+        "estimated_date": "",
+        "estimated_fwd": 25597.02113939273,
+        "strategy_value": -394.02122613662897,
+        "pnl": -357.821226136629,
+        "greeks": {
+          "delta": 0.11807460918324597,
+          "gamma": 0.0028508373446044974,
+          "vega_per_vol_point": 13.719662938202344,
+          "theta_per_day": -0.7630945111956224,
+          "rho": 2.672167311127918
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": -0.05,
+          "vol_change_points": 0.05,
+          "days_forward": 0
+        },
+        "estimated_spot": 24197.545,
+        "estimated_date": "",
+        "estimated_fwd": 25597.02113939273,
+        "strategy_value": -296.14628668997415,
+        "pnl": -259.94628668997416,
+        "greeks": {
+          "delta": 0.2966892217728717,
+          "gamma": 0.00043772872999202844,
+          "vega_per_vol_point": 12.639424648812083,
+          "theta_per_day": -2.4927584234928277,
+          "rho": 6.144079793058096
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": -0.05,
+          "vol_change_points": 0.1,
+          "days_forward": 0
+        },
+        "estimated_spot": 24197.545,
+        "estimated_date": "",
+        "estimated_fwd": 25597.02113939273,
+        "strategy_value": -259.5008417595541,
+        "pnl": -223.3008417595541,
+        "greeks": {
+          "delta": 0.1845446538833681,
+          "gamma": 0.00006235339133309222,
+          "vega_per_vol_point": 3.3008346307066674,
+          "theta_per_day": -1.3818700143054647,
+          "rho": 3.8835849933795448
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0,
+          "vol_change_points": -0.1,
+          "days_forward": 0
+        },
+        "estimated_spot": 25471.1,
+        "estimated_date": "",
+        "estimated_fwd": 25597.02113939273,
+        "strategy_value": 1.3322955768362696e-13,
+        "pnl": 36.20000000000013,
+        "greeks": {
+          "delta": -2.220446049250313e-16,
+          "gamma": -2.6301044255981036e-17,
+          "vega_per_vol_point": -1.4024803467302424e-13,
+          "theta_per_day": 3.2890754463349943e-15,
+          "rho": -4.758041008922951e-15
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0,
+          "vol_change_points": -0.05,
+          "days_forward": 0
+        },
+        "estimated_spot": 25471.1,
+        "estimated_date": "",
+        "estimated_fwd": 25597.02113939273,
+        "strategy_value": 1.3322955768362696e-13,
+        "pnl": 36.20000000000013,
+        "greeks": {
+          "delta": -2.220446049250313e-16,
+          "gamma": -2.6301044255981036e-17,
+          "vega_per_vol_point": -1.4024803467302424e-13,
+          "theta_per_day": 3.2890754463349943e-15,
+          "rho": -4.758041008922951e-15
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0,
+          "vol_change_points": 0,
+          "days_forward": 0
+        },
+        "estimated_spot": 25471.1,
+        "estimated_date": "",
+        "estimated_fwd": 25597.02113939273,
+        "strategy_value": 1.3322955768362696e-13,
+        "pnl": 36.20000000000013,
+        "greeks": {
+          "delta": -2.220446049250313e-16,
+          "gamma": -2.6301044255981036e-17,
+          "vega_per_vol_point": -1.4024803467302424e-13,
+          "theta_per_day": 3.2890754463349943e-15,
+          "rho": -4.758041008922951e-15
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0,
+          "vol_change_points": 0.05,
+          "days_forward": 0
+        },
+        "estimated_spot": 25471.1,
+        "estimated_date": "",
+        "estimated_fwd": 25597.02113939273,
+        "strategy_value": -21.245514316325444,
+        "pnl": 14.954485683674552,
+        "greeks": {
+          "delta": -0.046581408679023606,
+          "gamma": -0.00043887198328176804,
+          "vega_per_vol_point": -14.041480451329962,
+          "theta_per_day": 1.5956933937830708,
+          "rho": -0.9577267432503718
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0,
+          "vol_change_points": 0.1,
+          "days_forward": 0
+        },
+        "estimated_spot": 25471.1,
+        "estimated_date": "",
+        "estimated_fwd": 25597.02113939273,
+        "strategy_value": -108.02674887155584,
+        "pnl": -71.82674887155585,
+        "greeks": {
+          "delta": -0.028809742005869055,
+          "gamma": -0.00028420989424499625,
+          "vega_per_vol_point": -16.67077040211695,
+          "theta_per_day": 3.159177343339838,
+          "rho": -0.5143471814253151
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0.05,
+          "vol_change_points": -0.1,
+          "days_forward": 0
+        },
+        "estimated_spot": 26744.655,
+        "estimated_date": "",
+        "estimated_fwd": 25597.02113939273,
+        "strategy_value": -398.0294108047893,
+        "pnl": -361.8294108047893,
+        "greeks": {
+          "delta": -0.00015115581387292742,
+          "gamma": 0.000007606428516054538,
+          "vega_per_vol_point": 0.0447180830716039,
+          "theta_per_day": -0.0655102549261457,
+          "rho": 0.32382476770809276
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0.05,
+          "vol_change_points": -0.05,
+          "days_forward": 0
+        },
+        "estimated_spot": 26744.655,
+        "estimated_date": "",
+        "estimated_fwd": 25597.02113939273,
+        "strategy_value": -398.0294108047893,
+        "pnl": -361.8294108047893,
+        "greeks": {
+          "delta": -0.00015115581387292742,
+          "gamma": 0.000007606428516054538,
+          "vega_per_vol_point": 0.0447180830716039,
+          "theta_per_day": -0.0655102549261457,
+          "rho": 0.32382476770809276
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0.05,
+          "vol_change_points": 0,
+          "days_forward": 0
+        },
+        "estimated_spot": 26744.655,
+        "estimated_date": "",
+        "estimated_fwd": 25597.02113939273,
+        "strategy_value": -398.0294108047893,
+        "pnl": -361.8294108047893,
+        "greeks": {
+          "delta": -0.00015115581387292742,
+          "gamma": 0.000007606428516054538,
+          "vega_per_vol_point": 0.0447180830716039,
+          "theta_per_day": -0.0655102549261457,
+          "rho": 0.32382476770809276
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0.05,
+          "vol_change_points": 0.05,
+          "days_forward": 0
+        },
+        "estimated_spot": 26744.655,
+        "estimated_date": "",
+        "estimated_fwd": 25597.02113939273,
+        "strategy_value": -334.92664479733946,
+        "pnl": -298.7266447973395,
+        "greeks": {
+          "delta": -0.20281224253067487,
+          "gamma": 0.00043452267777455454,
+          "vega_per_vol_point": 15.327315173111382,
+          "theta_per_day": -0.6961479318653483,
+          "rho": -4.182917927228949
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0.05,
+          "vol_change_points": 0.1,
+          "days_forward": 0
+        },
+        "estimated_spot": 26744.655,
+        "estimated_date": "",
+        "estimated_fwd": 25597.02113939273,
+        "strategy_value": -282.869111602314,
+        "pnl": -246.669111602314,
+        "greeks": {
+          "delta": -0.15645786529948247,
+          "gamma": 0.00009564470258913605,
+          "vega_per_vol_point": 6.185232032857094,
+          "theta_per_day": -0.49260975103166693,
+          "rho": -3.206747274960671
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0.1,
+          "vol_change_points": -0.1,
+          "days_forward": 0
+        },
+        "estimated_spot": 28018.21,
+        "estimated_date": "",
+        "estimated_fwd": 25597.02113939273,
+        "strategy_value": -398.03225322654544,
+        "pnl": -361.83225322654545,
+        "greeks": {
+          "delta": 0,
+          "gamma": 1.669981735185525e-88,
+          "vega_per_vol_point": 1.0775089436157652e-84,
+          "theta_per_day": -0.0654299594345007,
+          "rho": 0.3271497971725026
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0.1,
+          "vol_change_points": -0.05,
+          "days_forward": 0
+        },
+        "estimated_spot": 28018.21,
+        "estimated_date": "",
+        "estimated_fwd": 25597.02113939273,
+        "strategy_value": -398.03225322654544,
+        "pnl": -361.83225322654545,
+        "greeks": {
+          "delta": 0,
+          "gamma": 1.669981735185525e-88,
+          "vega_per_vol_point": 1.0775089436157652e-84,
+          "theta_per_day": -0.0654299594345007,
+          "rho": 0.3271497971725026
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0.1,
+          "vol_change_points": 0,
+          "days_forward": 0
+        },
+        "estimated_spot": 28018.21,
+        "estimated_date": "",
+        "estimated_fwd": 25597.02113939273,
+        "strategy_value": -398.03225322654544,
+        "pnl": -361.83225322654545,
+        "greeks": {
+          "delta": 0,
+          "gamma": 1.669981735185525e-88,
+          "vega_per_vol_point": 1.0775089436157652e-84,
+          "theta_per_day": -0.0654299594345007,
+          "rho": 0.3271497971725026
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0.1,
+          "vol_change_points": 0.05,
+          "days_forward": 0
+        },
+        "estimated_spot": 28018.21,
+        "estimated_date": "",
+        "estimated_fwd": 25597.02113939273,
+        "strategy_value": -397.97549544247636,
+        "pnl": -361.77549544247637,
+        "greeks": {
+          "delta": -0.00044461958208530383,
+          "gamma": 0.0000032766645185271363,
+          "vega_per_vol_point": 0.12685056068170242,
+          "theta_per_day": -0.07605788630731958,
+          "rho": 0.3168641511957482
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0.1,
+          "vol_change_points": 0.1,
+          "days_forward": 0
+        },
+        "estimated_spot": 28018.21,
+        "estimated_date": "",
+        "estimated_fwd": 25597.02113939273,
+        "strategy_value": -389.1559266603549,
+        "pnl": -352.9559266603549,
+        "greeks": {
+          "delta": -0.023679864861385846,
+          "gamma": 0.00005409741304072785,
+          "vega_per_vol_point": 3.8395324730017566,
+          "theta_per_day": -0.6588219853804009,
+          "rho": -0.22546150668294018
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0.2,
+          "vol_change_points": -0.1,
+          "days_forward": 0
+        },
+        "estimated_spot": 30565.319999999996,
+        "estimated_date": "",
+        "estimated_fwd": 25597.02113939273,
+        "strategy_value": -398.03225322654544,
+        "pnl": -361.83225322654545,
+        "greeks": {
+          "delta": 0,
+          "gamma": 0,
+          "vega_per_vol_point": 0,
+          "theta_per_day": -0.0654299594345007,
+          "rho": 0.3271497971725026
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0.2,
+          "vol_change_points": -0.05,
+          "days_forward": 0
+        },
+        "estimated_spot": 30565.319999999996,
+        "estimated_date": "",
+        "estimated_fwd": 25597.02113939273,
+        "strategy_value": -398.03225322654544,
+        "pnl": -361.83225322654545,
+        "greeks": {
+          "delta": 0,
+          "gamma": 0,
+          "vega_per_vol_point": 0,
+          "theta_per_day": -0.0654299594345007,
+          "rho": 0.3271497971725026
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0.2,
+          "vol_change_points": 0,
+          "days_forward": 0
+        },
+        "estimated_spot": 30565.319999999996,
+        "estimated_date": "",
+        "estimated_fwd": 25597.02113939273,
+        "strategy_value": -398.03225322654544,
+        "pnl": -361.83225322654545,
+        "greeks": {
+          "delta": 0,
+          "gamma": 0,
+          "vega_per_vol_point": 0,
+          "theta_per_day": -0.0654299594345007,
+          "rho": 0.3271497971725026
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0.2,
+          "vol_change_points": 0.05,
+          "days_forward": 0
+        },
+        "estimated_spot": 30565.319999999996,
+        "estimated_date": "",
+        "estimated_fwd": 25597.02113939273,
+        "strategy_value": -398.03225322654544,
+        "pnl": -361.83225322654545,
+        "greeks": {
+          "delta": 0,
+          "gamma": 4.518648505091086e-19,
+          "vega_per_vol_point": 2.081833987527571e-14,
+          "theta_per_day": -0.06542995943450247,
+          "rho": 0.3271497971725026
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0.2,
+          "vol_change_points": 0.1,
+          "days_forward": 0
+        },
+        "estimated_spot": 30565.319999999996,
+        "estimated_date": "",
+        "estimated_fwd": 25597.02113939273,
+        "strategy_value": -398.0318334860003,
+        "pnl": -361.83183348600033,
+        "greeks": {
+          "delta": -0.0000021321378003147373,
+          "gamma": 1.0471052592484073e-8,
+          "vega_per_vol_point": 0.0008844419047803942,
+          "theta_per_day": -0.06558132532870875,
+          "rho": 0.32709588822891433
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": -0.2,
+          "vol_change_points": -0.1,
+          "days_forward": 7
+        },
+        "estimated_spot": 20376.88,
+        "estimated_date": "",
+        "estimated_fwd": 25567.583972576398,
+        "strategy_value": -398.4905265561283,
+        "pnl": -362.2905265561283,
+        "greeks": {
+          "delta": 0,
+          "gamma": 0,
+          "vega_per_vol_point": 0,
+          "theta_per_day": -0.06550529203662414,
+          "rho": 0.2511036194737244
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": -0.2,
+          "vol_change_points": -0.05,
+          "days_forward": 7
+        },
+        "estimated_spot": 20376.88,
+        "estimated_date": "",
+        "estimated_fwd": 25567.583972576398,
+        "strategy_value": -398.4905265561283,
+        "pnl": -362.2905265561283,
+        "greeks": {
+          "delta": 0,
+          "gamma": 0,
+          "vega_per_vol_point": 0,
+          "theta_per_day": -0.06550529203662414,
+          "rho": 0.2511036194737244
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": -0.2,
+          "vol_change_points": 0,
+          "days_forward": 7
+        },
+        "estimated_spot": 20376.88,
+        "estimated_date": "",
+        "estimated_fwd": 25567.583972576398,
+        "strategy_value": -398.4905265561283,
+        "pnl": -362.2905265561283,
+        "greeks": {
+          "delta": 0,
+          "gamma": 0,
+          "vega_per_vol_point": 0,
+          "theta_per_day": -0.06550529203662414,
+          "rho": 0.2511036194737244
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": -0.2,
+          "vol_change_points": 0.05,
+          "days_forward": 7
+        },
+        "estimated_spot": 20376.88,
+        "estimated_date": "",
+        "estimated_fwd": 25567.583972576398,
+        "strategy_value": -398.4905265561283,
+        "pnl": -362.2905265561283,
+        "greeks": {
+          "delta": 0,
+          "gamma": 2.320613857618104e-33,
+          "vega_per_vol_point": 3.6430445237739547e-29,
+          "theta_per_day": -0.06550529203662414,
+          "rho": 0.2511036194737244
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": -0.2,
+          "vol_change_points": 0.1,
+          "days_forward": 7
+        },
+        "estimated_spot": 20376.88,
+        "estimated_date": "",
+        "estimated_fwd": 25567.583972576398,
+        "strategy_value": -398.4905265485495,
+        "pnl": -362.2905265485495,
+        "greeks": {
+          "delta": 9.006684287271582e-11,
+          "gamma": 1.0426990491093267e-12,
+          "vega_per_vol_point": 3.000972460147727e-8,
+          "theta_per_day": -0.06550529951330691,
+          "rho": 0.2511036206254271
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": -0.1,
+          "vol_change_points": -0.1,
+          "days_forward": 7
+        },
+        "estimated_spot": 22923.989999999998,
+        "estimated_date": "",
+        "estimated_fwd": 25567.583972576398,
+        "strategy_value": -398.4905265561283,
+        "pnl": -362.2905265561283,
+        "greeks": {
+          "delta": 0,
+          "gamma": 2.780594610953419e-121,
+          "vega_per_vol_point": 9.207740453411116e-118,
+          "theta_per_day": -0.06550529203662414,
+          "rho": 0.2511036194737244
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": -0.1,
+          "vol_change_points": -0.05,
+          "days_forward": 7
+        },
+        "estimated_spot": 22923.989999999998,
+        "estimated_date": "",
+        "estimated_fwd": 25567.583972576398,
+        "strategy_value": -398.4905265561283,
+        "pnl": -362.2905265561283,
+        "greeks": {
+          "delta": 0,
+          "gamma": 2.780594610953419e-121,
+          "vega_per_vol_point": 9.207740453411116e-118,
+          "theta_per_day": -0.06550529203662414,
+          "rho": 0.2511036194737244
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": -0.1,
+          "vol_change_points": 0,
+          "days_forward": 7
+        },
+        "estimated_spot": 22923.989999999998,
+        "estimated_date": "",
+        "estimated_fwd": 25567.583972576398,
+        "strategy_value": -398.4905265561283,
+        "pnl": -362.2905265561283,
+        "greeks": {
+          "delta": 0,
+          "gamma": 2.780594610953419e-121,
+          "vega_per_vol_point": 9.207740453411116e-118,
+          "theta_per_day": -0.06550529203662414,
+          "rho": 0.2511036194737244
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": -0.1,
+          "vol_change_points": 0.05,
+          "days_forward": 7
+        },
+        "estimated_spot": 22923.989999999998,
+        "estimated_date": "",
+        "estimated_fwd": 25567.583972576398,
+        "strategy_value": -398.4864693448185,
+        "pnl": -362.2864693448185,
+        "greeks": {
+          "delta": 0.00005094665746951943,
+          "gamma": 6.062336430729798e-7,
+          "vega_per_vol_point": 0.012044996456987056,
+          "theta_per_day": -0.06726769526335129,
+          "rho": 0.25183700028101796
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": -0.1,
+          "vol_change_points": 0.1,
+          "days_forward": 7
+        },
+        "estimated_spot": 22923.989999999998,
+        "estimated_date": "",
+        "estimated_fwd": 25567.583972576398,
+        "strategy_value": -395.20402330101746,
+        "pnl": -359.00402330101747,
+        "greeks": {
+          "delta": 0.013979738268199593,
+          "gamma": 0.00005160735538051799,
+          "vega_per_vol_point": 1.8798347848146342,
+          "theta_per_day": -0.5671709812309089,
+          "rho": 0.450973541971736
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": -0.05,
+          "vol_change_points": -0.1,
+          "days_forward": 7
+        },
+        "estimated_spot": 24197.545,
+        "estimated_date": "",
+        "estimated_fwd": 25567.583972576398,
+        "strategy_value": -397.6494924553278,
+        "pnl": -361.4494924553278,
+        "greeks": {
+          "delta": 0.03501158006377181,
+          "gamma": 0.0012724490000159282,
+          "vega_per_vol_point": 4.694809434897695,
+          "theta_per_day": -0.3066929283543547,
+          "rho": 0.7844221057835519
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": -0.05,
+          "vol_change_points": -0.05,
+          "days_forward": 7
+        },
+        "estimated_spot": 24197.545,
+        "estimated_date": "",
+        "estimated_fwd": 25567.583972576398,
+        "strategy_value": -397.6494924553278,
+        "pnl": -361.4494924553278,
+        "greeks": {
+          "delta": 0.03501158006377181,
+          "gamma": 0.0012724490000159282,
+          "vega_per_vol_point": 4.694809434897695,
+          "theta_per_day": -0.3066929283543547,
+          "rho": 0.7844221057835519
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": -0.05,
+          "vol_change_points": 0,
+          "days_forward": 7
+        },
+        "estimated_spot": 24197.545,
+        "estimated_date": "",
+        "estimated_fwd": 25567.583972576398,
+        "strategy_value": -397.6494924553278,
+        "pnl": -361.4494924553278,
+        "greeks": {
+          "delta": 0.03501158006377181,
+          "gamma": 0.0012724490000159282,
+          "vega_per_vol_point": 4.694809434897695,
+          "theta_per_day": -0.3066929283543547,
+          "rho": 0.7844221057835519
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": -0.05,
+          "vol_change_points": 0.05,
+          "days_forward": 7
+        },
+        "estimated_spot": 24197.545,
+        "estimated_date": "",
+        "estimated_fwd": 25567.583972576398,
+        "strategy_value": -315.405608292549,
+        "pnl": -279.205608292549,
+        "greeks": {
+          "delta": 0.29945202184800734,
+          "gamma": 0.0006223644776326993,
+          "vega_per_vol_point": 13.777601875589182,
+          "theta_per_day": -3.040049910821337,
+          "rho": 4.76472372035386
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": -0.05,
+          "vol_change_points": 0.1,
+          "days_forward": 7
+        },
+        "estimated_spot": 24197.545,
+        "estimated_date": "",
+        "estimated_fwd": 25567.583972576398,
+        "strategy_value": -271.4375274268524,
+        "pnl": -235.2375274268524,
+        "greeks": {
+          "delta": 0.20764354510743377,
+          "gamma": 0.00012455063139385703,
+          "vega_per_vol_point": 5.054942298837342,
+          "theta_per_day": -2.079349709303921,
+          "rho": 3.337143445064127
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0,
+          "vol_change_points": -0.1,
+          "days_forward": 7
+        },
+        "estimated_spot": 25471.1,
+        "estimated_date": "",
+        "estimated_fwd": 25567.583972576398,
+        "strategy_value": 0,
+        "pnl": 36.199999999999996,
+        "greeks": {
+          "delta": 0,
+          "gamma": -1.685567650486863e-23,
+          "vega_per_vol_point": -6.890909734398825e-20,
+          "theta_per_day": 1.4980238553040924e-21,
+          "rho": 0
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0,
+          "vol_change_points": -0.05,
+          "days_forward": 7
+        },
+        "estimated_spot": 25471.1,
+        "estimated_date": "",
+        "estimated_fwd": 25567.583972576398,
+        "strategy_value": 0,
+        "pnl": 36.199999999999996,
+        "greeks": {
+          "delta": 0,
+          "gamma": -1.685567650486863e-23,
+          "vega_per_vol_point": -6.890909734398825e-20,
+          "theta_per_day": 1.4980238553040924e-21,
+          "rho": 0
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0,
+          "vol_change_points": 0,
+          "days_forward": 7
+        },
+        "estimated_spot": 25471.1,
+        "estimated_date": "",
+        "estimated_fwd": 25567.583972576398,
+        "strategy_value": 0,
+        "pnl": 36.199999999999996,
+        "greeks": {
+          "delta": 0,
+          "gamma": -1.685567650486863e-23,
+          "vega_per_vol_point": -6.890909734398825e-20,
+          "theta_per_day": 1.4980238553040924e-21,
+          "rho": 0
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0,
+          "vol_change_points": 0.05,
+          "days_forward": 7
+        },
+        "estimated_spot": 25471.1,
+        "estimated_date": "",
+        "estimated_fwd": 25567.583972576398,
+        "strategy_value": -10.9488740869755,
+        "pnl": 25.251125913024495,
+        "greeks": {
+          "delta": -0.028617078180601274,
+          "gamma": -0.0003727051079976925,
+          "vega_per_vol_point": -9.142121074830682,
+          "theta_per_day": 1.310471328834179,
+          "rho": -0.452412889782344
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0,
+          "vol_change_points": 0.1,
+          "days_forward": 7
+        },
+        "estimated_spot": 25471.1,
+        "estimated_date": "",
+        "estimated_fwd": 25567.583972576398,
+        "strategy_value": -83.4631885647715,
+        "pnl": -47.263188564771504,
+        "greeks": {
+          "delta": -0.026126324796883482,
+          "gamma": -0.0003526088463011568,
+          "vega_per_vol_point": -15.856826059641973,
+          "theta_per_day": 3.8875214430052014,
+          "rho": -0.36674164351479166
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0.05,
+          "vol_change_points": -0.1,
+          "days_forward": 7
+        },
+        "estimated_spot": 26744.655,
+        "estimated_date": "",
+        "estimated_fwd": 25567.583972576398,
+        "strategy_value": -398.4885376842576,
+        "pnl": -362.2885376842576,
+        "greeks": {
+          "delta": -0.0001222677145595874,
+          "gamma": 0.000007121011225357835,
+          "vega_per_vol_point": 0.03209598008542841,
+          "theta_per_day": -0.0656651682603675,
+          "rho": 0.24904181332429332
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0.05,
+          "vol_change_points": -0.05,
+          "days_forward": 7
+        },
+        "estimated_spot": 26744.655,
+        "estimated_date": "",
+        "estimated_fwd": 25567.583972576398,
+        "strategy_value": -398.4885376842576,
+        "pnl": -362.2885376842576,
+        "greeks": {
+          "delta": -0.0001222677145595874,
+          "gamma": 0.000007121011225357835,
+          "vega_per_vol_point": 0.03209598008542841,
+          "theta_per_day": -0.0656651682603675,
+          "rho": 0.24904181332429332
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0.05,
+          "vol_change_points": 0,
+          "days_forward": 7
+        },
+        "estimated_spot": 26744.655,
+        "estimated_date": "",
+        "estimated_fwd": 25567.583972576398,
+        "strategy_value": -398.4885376842576,
+        "pnl": -362.2885376842576,
+        "greeks": {
+          "delta": -0.0001222677145595874,
+          "gamma": 0.000007121011225357835,
+          "vega_per_vol_point": 0.03209598008542841,
+          "theta_per_day": -0.0656651682603675,
+          "rho": 0.24904181332429332
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0.05,
+          "vol_change_points": 0.05,
+          "days_forward": 7
+        },
+        "estimated_spot": 26744.655,
+        "estimated_date": "",
+        "estimated_fwd": 25567.583972576398,
+        "strategy_value": -340.95521530115195,
+        "pnl": -304.75521530115196,
+        "greeks": {
+          "delta": -0.21595627743826107,
+          "gamma": 0.0005532548358791992,
+          "vega_per_vol_point": 14.961854966310712,
+          "theta_per_day": -1.0581675186051722,
+          "rho": -3.4246186618355274
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0.05,
+          "vol_change_points": 0.1,
+          "days_forward": 7
+        },
+        "estimated_spot": 26744.655,
+        "estimated_date": "",
+        "estimated_fwd": 25567.583972576398,
+        "strategy_value": -287.6918163468114,
+        "pnl": -251.4918163468114,
+        "greeks": {
+          "delta": -0.17737809547682837,
+          "gamma": 0.00013984336578533264,
+          "vega_per_vol_point": 6.933356394772073,
+          "theta_per_day": -0.9254465316386487,
+          "rho": -2.8080316572595763
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0.1,
+          "vol_change_points": -0.1,
+          "days_forward": 7
+        },
+        "estimated_spot": 28018.21,
+        "estimated_date": "",
+        "estimated_fwd": 25567.583972576398,
+        "strategy_value": -398.4905265561283,
+        "pnl": -362.2905265561283,
+        "greeks": {
+          "delta": 0,
+          "gamma": 5.441072359338362e-110,
+          "vega_per_vol_point": 2.6915363234220206e-106,
+          "theta_per_day": -0.06550529203662325,
+          "rho": 0.2511036194737244
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0.1,
+          "vol_change_points": -0.05,
+          "days_forward": 7
+        },
+        "estimated_spot": 28018.21,
+        "estimated_date": "",
+        "estimated_fwd": 25567.583972576398,
+        "strategy_value": -398.4905265561283,
+        "pnl": -362.2905265561283,
+        "greeks": {
+          "delta": 0,
+          "gamma": 5.441072359338362e-110,
+          "vega_per_vol_point": 2.6915363234220206e-106,
+          "theta_per_day": -0.06550529203662325,
+          "rho": 0.2511036194737244
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0.1,
+          "vol_change_points": 0,
+          "days_forward": 7
+        },
+        "estimated_spot": 28018.21,
+        "estimated_date": "",
+        "estimated_fwd": 25567.583972576398,
+        "strategy_value": -398.4905265561283,
+        "pnl": -362.2905265561283,
+        "greeks": {
+          "delta": 0,
+          "gamma": 5.441072359338362e-110,
+          "vega_per_vol_point": 2.6915363234220206e-106,
+          "theta_per_day": -0.06550529203662325,
+          "rho": 0.2511036194737244
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0.1,
+          "vol_change_points": 0.05,
+          "days_forward": 7
+        },
+        "estimated_spot": 28018.21,
+        "estimated_date": "",
+        "estimated_fwd": 25567.583972576398,
+        "strategy_value": -398.4799801192428,
+        "pnl": -362.2799801192428,
+        "greeks": {
+          "delta": -0.00010351834476107769,
+          "gamma": 9.655378110939581e-7,
+          "vega_per_vol_point": 0.028657366620790065,
+          "theta_per_day": -0.06876469788891537,
+          "rho": 0.2492693252637821
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0.1,
+          "vol_change_points": 0.1,
+          "days_forward": 7
+        },
+        "estimated_spot": 28018.21,
+        "estimated_date": "",
+        "estimated_fwd": 25567.583972576398,
+        "strategy_value": -393.6199091213555,
+        "pnl": -357.4199091213555,
+        "greeks": {
+          "delta": -0.01614968481777146,
+          "gamma": 0.000046967959937152844,
+          "vega_per_vol_point": 2.555701487593786,
+          "theta_per_day": -0.6014695117598299,
+          "rho": -0.037093235214950226
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0.2,
+          "vol_change_points": -0.1,
+          "days_forward": 7
+        },
+        "estimated_spot": 30565.319999999996,
+        "estimated_date": "",
+        "estimated_fwd": 25567.583972576398,
+        "strategy_value": -398.4905265561283,
+        "pnl": -362.2905265561283,
+        "greeks": {
+          "delta": 0,
+          "gamma": 0,
+          "vega_per_vol_point": 0,
+          "theta_per_day": -0.06550529203662325,
+          "rho": 0.2511036194737244
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0.2,
+          "vol_change_points": -0.05,
+          "days_forward": 7
+        },
+        "estimated_spot": 30565.319999999996,
+        "estimated_date": "",
+        "estimated_fwd": 25567.583972576398,
+        "strategy_value": -398.4905265561283,
+        "pnl": -362.2905265561283,
+        "greeks": {
+          "delta": 0,
+          "gamma": 0,
+          "vega_per_vol_point": 0,
+          "theta_per_day": -0.06550529203662325,
+          "rho": 0.2511036194737244
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0.2,
+          "vol_change_points": 0,
+          "days_forward": 7
+        },
+        "estimated_spot": 30565.319999999996,
+        "estimated_date": "",
+        "estimated_fwd": 25567.583972576398,
+        "strategy_value": -398.4905265561283,
+        "pnl": -362.2905265561283,
+        "greeks": {
+          "delta": 0,
+          "gamma": 0,
+          "vega_per_vol_point": 0,
+          "theta_per_day": -0.06550529203662325,
+          "rho": 0.2511036194737244
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0.2,
+          "vol_change_points": 0.05,
+          "days_forward": 7
+        },
+        "estimated_spot": 30565.319999999996,
+        "estimated_date": "",
+        "estimated_fwd": 25567.583972576398,
+        "strategy_value": -398.4905265561283,
+        "pnl": -362.2905265561283,
+        "greeks": {
+          "delta": 0,
+          "gamma": 2.5390579138571565e-23,
+          "vega_per_vol_point": 8.968436194620464e-19,
+          "theta_per_day": -0.06550529203662325,
+          "rho": 0.2511036194737244
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0.2,
+          "vol_change_points": 0.1,
+          "days_forward": 7
+        },
+        "estimated_spot": 30565.319999999996,
+        "estimated_date": "",
+        "estimated_fwd": 25567.583972576398,
+        "strategy_value": -398.49051052096183,
+        "pnl": -362.29051052096185,
+        "greeks": {
+          "delta": -1.0420538953948011e-7,
+          "gamma": 6.590985486002767e-10,
+          "vega_per_vol_point": 0.000042681129692724964,
+          "theta_per_day": -0.06551497218447722,
+          "rho": 0.2511016023382808
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": -0.2,
+          "vol_change_points": -0.1,
+          "days_forward": 14
+        },
+        "estimated_spot": 20376.88,
+        "estimated_date": "",
+        "estimated_fwd": 25538.180659183297,
+        "strategy_value": -398.9493275174391,
+        "pnl": -362.7493275174391,
+        "greeks": {
+          "delta": 0,
+          "gamma": 0,
+          "vega_per_vol_point": 0,
+          "theta_per_day": -0.06558071137272936,
+          "rho": 0.17488189699394496
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": -0.2,
+          "vol_change_points": -0.05,
+          "days_forward": 14
+        },
+        "estimated_spot": 20376.88,
+        "estimated_date": "",
+        "estimated_fwd": 25538.180659183297,
+        "strategy_value": -398.9493275174391,
+        "pnl": -362.7493275174391,
+        "greeks": {
+          "delta": 0,
+          "gamma": 0,
+          "vega_per_vol_point": 0,
+          "theta_per_day": -0.06558071137272936,
+          "rho": 0.17488189699394496
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": -0.2,
+          "vol_change_points": 0,
+          "days_forward": 14
+        },
+        "estimated_spot": 20376.88,
+        "estimated_date": "",
+        "estimated_fwd": 25538.180659183297,
+        "strategy_value": -398.9493275174391,
+        "pnl": -362.7493275174391,
+        "greeks": {
+          "delta": 0,
+          "gamma": 0,
+          "vega_per_vol_point": 0,
+          "theta_per_day": -0.06558071137272936,
+          "rho": 0.17488189699394496
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": -0.2,
+          "vol_change_points": 0.05,
+          "days_forward": 14
+        },
+        "estimated_spot": 20376.88,
+        "estimated_date": "",
+        "estimated_fwd": 25538.180659183297,
+        "strategy_value": -398.9493275174391,
+        "pnl": -362.7493275174391,
+        "greeks": {
+          "delta": 0,
+          "gamma": 7.121791761159837e-47,
+          "vega_per_vol_point": 7.777553644236701e-43,
+          "theta_per_day": -0.06558071137272936,
+          "rho": 0.17488189699394496
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": -0.2,
+          "vol_change_points": 0.1,
+          "days_forward": 14
+        },
+        "estimated_spot": 20376.88,
+        "estimated_date": "",
+        "estimated_fwd": 25538.180659183297,
+        "strategy_value": -398.9493275174409,
+        "pnl": -362.7493275174409,
+        "greeks": {
+          "delta": 6.8833827526759706e-15,
+          "gamma": 1.1493824068980642e-16,
+          "vega_per_vol_point": 2.301228396332897e-12,
+          "theta_per_day": -0.06558071137354293,
+          "rho": 0.17488189699400714
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": -0.1,
+          "vol_change_points": -0.1,
+          "days_forward": 14
+        },
+        "estimated_spot": 22923.989999999998,
+        "estimated_date": "",
+        "estimated_fwd": 25538.180659183297,
+        "strategy_value": -398.9493275174391,
+        "pnl": -362.7493275174391,
+        "greeks": {
+          "delta": 0,
+          "gamma": 9.350205384920683e-180,
+          "vega_per_vol_point": 2.1539156385764085e-176,
+          "theta_per_day": -0.06558071137272936,
+          "rho": 0.17488189699394496
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": -0.1,
+          "vol_change_points": -0.05,
+          "days_forward": 14
+        },
+        "estimated_spot": 22923.989999999998,
+        "estimated_date": "",
+        "estimated_fwd": 25538.180659183297,
+        "strategy_value": -398.9493275174391,
+        "pnl": -362.7493275174391,
+        "greeks": {
+          "delta": 0,
+          "gamma": 9.350205384920683e-180,
+          "vega_per_vol_point": 2.1539156385764085e-176,
+          "theta_per_day": -0.06558071137272936,
+          "rho": 0.17488189699394496
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": -0.1,
+          "vol_change_points": 0,
+          "days_forward": 14
+        },
+        "estimated_spot": 22923.989999999998,
+        "estimated_date": "",
+        "estimated_fwd": 25538.180659183297,
+        "strategy_value": -398.9493275174391,
+        "pnl": -362.7493275174391,
+        "greeks": {
+          "delta": 0,
+          "gamma": 9.350205384920683e-180,
+          "vega_per_vol_point": 2.1539156385764085e-176,
+          "theta_per_day": -0.06558071137272936,
+          "rho": 0.17488189699394496
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": -0.1,
+          "vol_change_points": 0.05,
+          "days_forward": 14
+        },
+        "estimated_spot": 22923.989999999998,
+        "estimated_date": "",
+        "estimated_fwd": 25538.180659183297,
+        "strategy_value": -398.9492710216523,
+        "pnl": -362.7492710216523,
+        "greeks": {
+          "delta": 0.0000010084415981159722,
+          "gamma": 1.7318765261159646e-8,
+          "vega_per_vol_point": 0.00023937330444316458,
+          "theta_per_day": -0.06562938471815993,
+          "rho": 0.1748920059295358
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": -0.1,
+          "vol_change_points": 0.1,
+          "days_forward": 14
+        },
+        "estimated_spot": 22923.989999999998,
+        "estimated_date": "",
+        "estimated_fwd": 25538.180659183297,
+        "strategy_value": -398.210262405764,
+        "pnl": -362.010262405764,
+        "greeks": {
+          "delta": 0.004386180378999793,
+          "gamma": 0.000023463923407318483,
+          "vega_per_vol_point": 0.5945670756706286,
+          "theta_per_day": -0.28637021596898177,
+          "rho": 0.21863408988587565
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": -0.05,
+          "vol_change_points": -0.1,
+          "days_forward": 14
+        },
+        "estimated_spot": 24197.545,
+        "estimated_date": "",
+        "estimated_fwd": 25538.180659183297,
+        "strategy_value": -398.8994343768996,
+        "pnl": -362.6994343768996,
+        "greeks": {
+          "delta": 0.003241678494078082,
+          "gamma": 0.00019363814923168942,
+          "vega_per_vol_point": 0.49700488070549276,
+          "theta_per_day": -0.0939982675543014,
+          "rho": 0.2092449734193469
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": -0.05,
+          "vol_change_points": -0.05,
+          "days_forward": 14
+        },
+        "estimated_spot": 24197.545,
+        "estimated_date": "",
+        "estimated_fwd": 25538.180659183297,
+        "strategy_value": -398.8994343768996,
+        "pnl": -362.6994343768996,
+        "greeks": {
+          "delta": 0.003241678494078082,
+          "gamma": 0.00019363814923168942,
+          "vega_per_vol_point": 0.49700488070549276,
+          "theta_per_day": -0.0939982675543014,
+          "rho": 0.2092449734193469
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": -0.05,
+          "vol_change_points": 0,
+          "days_forward": 14
+        },
+        "estimated_spot": 24197.545,
+        "estimated_date": "",
+        "estimated_fwd": 25538.180659183297,
+        "strategy_value": -398.8994343768996,
+        "pnl": -362.6994343768996,
+        "greeks": {
+          "delta": 0.003241678494078082,
+          "gamma": 0.00019363814923168942,
+          "vega_per_vol_point": 0.49700488070549276,
+          "theta_per_day": -0.0939982675543014,
+          "rho": 0.2092449734193469
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": -0.05,
+          "vol_change_points": 0.05,
+          "days_forward": 14
+        },
+        "estimated_spot": 24197.545,
+        "estimated_date": "",
+        "estimated_fwd": 25538.180659183297,
+        "strategy_value": -339.1929571744417,
+        "pnl": -302.9929571744417,
+        "greeks": {
+          "delta": 0.28646527782560727,
+          "gamma": 0.0008995021464651802,
+          "vega_per_vol_point": 13.852341352323752,
+          "theta_per_day": -3.7925385638287157,
+          "rho": 3.187265494048033
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": -0.05,
+          "vol_change_points": 0.1,
+          "days_forward": 14
+        },
+        "estimated_spot": 24197.545,
+        "estimated_date": "",
+        "estimated_fwd": 25538.180659183297,
+        "strategy_value": -289.6742246038828,
+        "pnl": -253.47422460388282,
+        "greeks": {
+          "delta": 0.23321611589699814,
+          "gamma": 0.00023431414403052845,
+          "vega_per_vol_point": 6.615473295418621,
+          "theta_per_day": -3.2493453864639936,
+          "rho": 2.6007371764369145
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0,
+          "vol_change_points": -0.1,
+          "days_forward": 14
+        },
+        "estimated_spot": 25471.1,
+        "estimated_date": "",
+        "estimated_fwd": 25538.180659183297,
+        "strategy_value": 0,
+        "pnl": 36.199999999999996,
+        "greeks": {
+          "delta": 0,
+          "gamma": -2.842294469381612e-35,
+          "vega_per_vol_point": -8.083353840261855e-32,
+          "theta_per_day": 2.5260480750818296e-33,
+          "rho": 0
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0,
+          "vol_change_points": -0.05,
+          "days_forward": 14
+        },
+        "estimated_spot": 25471.1,
+        "estimated_date": "",
+        "estimated_fwd": 25538.180659183297,
+        "strategy_value": 0,
+        "pnl": 36.199999999999996,
+        "greeks": {
+          "delta": 0,
+          "gamma": -2.842294469381612e-35,
+          "vega_per_vol_point": -8.083353840261855e-32,
+          "theta_per_day": 2.5260480750818296e-33,
+          "rho": 0
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0,
+          "vol_change_points": 0,
+          "days_forward": 14
+        },
+        "estimated_spot": 25471.1,
+        "estimated_date": "",
+        "estimated_fwd": 25538.180659183297,
+        "strategy_value": 0,
+        "pnl": 36.199999999999996,
+        "greeks": {
+          "delta": 0,
+          "gamma": -2.842294469381612e-35,
+          "vega_per_vol_point": -8.083353840261855e-32,
+          "theta_per_day": 2.5260480750818296e-33,
+          "rho": 0
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0,
+          "vol_change_points": 0.05,
+          "days_forward": 14
+        },
+        "estimated_spot": 25471.1,
+        "estimated_date": "",
+        "estimated_fwd": 25538.180659183297,
+        "strategy_value": -3.472451069693453,
+        "pnl": 32.72754893030654,
+        "greeks": {
+          "delta": -0.011080684773902227,
+          "gamma": -0.0002308798920513433,
+          "vega_per_vol_point": -3.9396703237265385,
+          "theta_per_day": 0.7845125329110296,
+          "rho": -0.12219825923280926
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0,
+          "vol_change_points": 0.1,
+          "days_forward": 14
+        },
+        "estimated_spot": 25471.1,
+        "estimated_date": "",
+        "estimated_fwd": 25538.180659183297,
+        "strategy_value": -53.348833337757696,
+        "pnl": -17.1488333377577,
+        "greeks": {
+          "delta": -0.020216456856505693,
+          "gamma": -0.00043054778959590394,
+          "vega_per_vol_point": -13.469037717699393,
+          "theta_per_day": 4.705858958346834,
+          "rho": -0.20233931436711544
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0.05,
+          "vol_change_points": -0.1,
+          "days_forward": 14
+        },
+        "estimated_spot": 26744.655,
+        "estimated_date": "",
+        "estimated_fwd": 25538.180659183297,
+        "strategy_value": -398.9485493374786,
+        "pnl": -362.7485493374786,
+        "greeks": {
+          "delta": -0.000059634516884843336,
+          "gamma": 0.000004345767272588957,
+          "vega_per_vol_point": 0.013625974853266488,
+          "theta_per_day": -0.06574421907152939,
+          "rho": 0.17418241961963865
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0.05,
+          "vol_change_points": -0.05,
+          "days_forward": 14
+        },
+        "estimated_spot": 26744.655,
+        "estimated_date": "",
+        "estimated_fwd": 25538.180659183297,
+        "strategy_value": -398.9485493374786,
+        "pnl": -362.7485493374786,
+        "greeks": {
+          "delta": -0.000059634516884843336,
+          "gamma": 0.000004345767272588957,
+          "vega_per_vol_point": 0.013625974853266488,
+          "theta_per_day": -0.06574421907152939,
+          "rho": 0.17418241961963865
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0.05,
+          "vol_change_points": 0,
+          "days_forward": 14
+        },
+        "estimated_spot": 26744.655,
+        "estimated_date": "",
+        "estimated_fwd": 25538.180659183297,
+        "strategy_value": -398.9485493374786,
+        "pnl": -362.7485493374786,
+        "greeks": {
+          "delta": -0.000059634516884843336,
+          "gamma": 0.000004345767272588957,
+          "vega_per_vol_point": 0.013625974853266488,
+          "theta_per_day": -0.06574421907152939,
+          "rho": 0.17418241961963865
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0.05,
+          "vol_change_points": 0.05,
+          "days_forward": 14
+        },
+        "estimated_spot": 26744.655,
+        "estimated_date": "",
+        "estimated_fwd": 25538.180659183297,
+        "strategy_value": -350.39207127243066,
+        "pnl": -314.19207127243067,
+        "greeks": {
+          "delta": -0.2267901492665424,
+          "gamma": 0.0007498443328973726,
+          "vega_per_vol_point": 14.106636710672824,
+          "theta_per_day": -1.705537030660512,
+          "rho": -2.505219606908385
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0.05,
+          "vol_change_points": 0.1,
+          "days_forward": 14
+        },
+        "estimated_spot": 26744.655,
+        "estimated_date": "",
+        "estimated_fwd": 25538.180659183297,
+        "strategy_value": -296.70878354805075,
+        "pnl": -260.50878354805076,
+        "greeks": {
+          "delta": -0.2045832822406195,
+          "gamma": 0.00021960895125404379,
+          "vega_per_vol_point": 7.574323348688777,
+          "theta_per_day": -1.7530215110441052,
+          "rho": -2.2684057068470977
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0.1,
+          "vol_change_points": -0.1,
+          "days_forward": 14
+        },
+        "estimated_spot": 28018.21,
+        "estimated_date": "",
+        "estimated_fwd": 25538.180659183297,
+        "strategy_value": -398.94932751743545,
+        "pnl": -362.74932751743546,
+        "greeks": {
+          "delta": 0,
+          "gamma": 1.9352256204863083e-150,
+          "vega_per_vol_point": 6.659467370383618e-147,
+          "theta_per_day": -0.06558071137272936,
+          "rho": 0.17488189699394496
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0.1,
+          "vol_change_points": -0.05,
+          "days_forward": 14
+        },
+        "estimated_spot": 28018.21,
+        "estimated_date": "",
+        "estimated_fwd": 25538.180659183297,
+        "strategy_value": -398.94932751743545,
+        "pnl": -362.74932751743546,
+        "greeks": {
+          "delta": 0,
+          "gamma": 1.9352256204863083e-150,
+          "vega_per_vol_point": 6.659467370383618e-147,
+          "theta_per_day": -0.06558071137272936,
+          "rho": 0.17488189699394496
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0.1,
+          "vol_change_points": 0,
+          "days_forward": 14
+        },
+        "estimated_spot": 28018.21,
+        "estimated_date": "",
+        "estimated_fwd": 25538.180659183297,
+        "strategy_value": -398.94932751743545,
+        "pnl": -362.74932751743546,
+        "greeks": {
+          "delta": 0,
+          "gamma": 1.9352256204863083e-150,
+          "vega_per_vol_point": 6.659467370383618e-147,
+          "theta_per_day": -0.06558071137272936,
+          "rho": 0.17488189699394496
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0.1,
+          "vol_change_points": 0.05,
+          "days_forward": 14
+        },
+        "estimated_spot": 28018.21,
+        "estimated_date": "",
+        "estimated_fwd": 25538.180659183297,
+        "strategy_value": -398.9488245547616,
+        "pnl": -362.7488245547616,
+        "greeks": {
+          "delta": -0.0000067757961297321145,
+          "gamma": 8.775552632922763e-8,
+          "vega_per_vol_point": 0.0018118974593158033,
+          "theta_per_day": -0.06588915195869838,
+          "rho": 0.17479845649353898
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0.1,
+          "vol_change_points": 0.1,
+          "days_forward": 14
+        },
+        "estimated_spot": 28018.21,
+        "estimated_date": "",
+        "estimated_fwd": 25538.180659183297,
+        "strategy_value": -397.29415665565807,
+        "pnl": -361.0941566556581,
+        "greeks": {
+          "delta": -0.0074432297021376215,
+          "gamma": 0.000030202357921028637,
+          "vega_per_vol_point": 1.1432505670140618,
+          "theta_per_day": -0.4240194811151268,
+          "rho": 0.08273892987744702
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0.2,
+          "vol_change_points": -0.1,
+          "days_forward": 14
+        },
+        "estimated_spot": 30565.319999999996,
+        "estimated_date": "",
+        "estimated_fwd": 25538.180659183297,
+        "strategy_value": -398.94932751743545,
+        "pnl": -362.74932751743546,
+        "greeks": {
+          "delta": 0,
+          "gamma": 0,
+          "vega_per_vol_point": 0,
+          "theta_per_day": -0.06558071137272936,
+          "rho": 0.17488189699394496
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0.2,
+          "vol_change_points": -0.05,
+          "days_forward": 14
+        },
+        "estimated_spot": 30565.319999999996,
+        "estimated_date": "",
+        "estimated_fwd": 25538.180659183297,
+        "strategy_value": -398.94932751743545,
+        "pnl": -362.74932751743546,
+        "greeks": {
+          "delta": 0,
+          "gamma": 0,
+          "vega_per_vol_point": 0,
+          "theta_per_day": -0.06558071137272936,
+          "rho": 0.17488189699394496
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0.2,
+          "vol_change_points": 0,
+          "days_forward": 14
+        },
+        "estimated_spot": 30565.319999999996,
+        "estimated_date": "",
+        "estimated_fwd": 25538.180659183297,
+        "strategy_value": -398.94932751743545,
+        "pnl": -362.74932751743546,
+        "greeks": {
+          "delta": 0,
+          "gamma": 0,
+          "vega_per_vol_point": 0,
+          "theta_per_day": -0.06558071137272936,
+          "rho": 0.17488189699394496
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0.2,
+          "vol_change_points": 0.05,
+          "days_forward": 14
+        },
+        "estimated_spot": 30565.319999999996,
+        "estimated_date": "",
+        "estimated_fwd": 25538.180659183297,
+        "strategy_value": -398.94932751743545,
+        "pnl": -362.74932751743546,
+        "greeks": {
+          "delta": 0,
+          "gamma": 2.522070265028223e-31,
+          "vega_per_vol_point": 6.197170492611069e-27,
+          "theta_per_day": -0.06558071137272936,
+          "rho": 0.17488189699394496
+        }
+      },
+      {
+        "scenario": {
+          "spot_change_pct": 0.2,
+          "vol_change_points": 0.1,
+          "days_forward": 14
+        },
+        "estimated_spot": 30565.319999999996,
+        "estimated_date": "",
+        "estimated_fwd": 25538.180659183297,
+        "strategy_value": -398.9493274779379,
+        "pnl": -362.7493274779379,
+        "greeks": {
+          "delta": -3.6094516264739696e-10,
+          "gamma": 3.2332244908586623e-12,
+          "vega_per_vol_point": 1.4565102895447308e-7,
+          "theta_per_day": -0.06558075962023224,
+          "rho": 0.17488189214050642
+        }
+      }
+    ]
+  }
+}
