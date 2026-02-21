@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"gopkg.in/yaml.v3"
+	
 )
 
 // FileConfig represents a CSV file to ingest with its expiry
@@ -60,6 +61,52 @@ type ReportConfig struct {
 	Workers int      `yaml:"workers"`
 }
 
+type DeciderConfig struct {
+	MaxOpenPositions int     `yaml:"max_open_positions"`
+	MinScore         float64 `yaml:"min_score"`
+	TakeProfit       float64 `yaml:"take_profit"`
+	StopLoss         float64 `yaml:"stop_loss"`
+	RollMinScoreDiff float64 `yaml:"roll_min_score_diff"`
+}
+
+type ExecutionConfig struct {
+	TickSize float64        `yaml:"tick_size"`
+	Slippage SlippageConfig `yaml:"slippage"`
+	Fees     FeeConfig      `yaml:"fees"`
+}
+
+type FeeConfig struct {
+	PerLeg   float64 `yaml:"per_leg"`
+	PerOrder float64 `yaml:"per_order"`
+	Bps      float64 `yaml:"bps"`
+}
+
+type SlippageConfig struct {
+	Mode  string  `yaml:"mode"` // "none" | "bps" | "ticks"
+	Bps   float64 `yaml:"bps"`
+	Ticks float64 `yaml:"ticks"`
+}
+
+type RiskGateConfig struct {
+	Enabled             bool    `yaml:"enabled"`
+	MaxDebitPerTradeINR float64 `yaml:"max_debit_per_trade_inr"` // Max debit for long premium trades
+	MaxLossPerTradeINR  float64 `yaml:"max_loss_per_trade_inr"`  // Max worst-case loss per trade
+	MaxTotalRiskINR     float64 `yaml:"max_total_risk_inr"`      // Total open risk cap
+	MaxDailyLossINR     float64 `yaml:"max_daily_loss_inr"`      // Daily loss circuit breaker
+	MaxDrawdownPct      float64 `yaml:"max_drawdown_pct"`        // Max drawdown % circuit breaker
+	RiskPerTradePct     float64 `yaml:"risk_per_trade_pct"`      // % of equity to risk per trade
+	MaxLotsPerTrade     int     `yaml:"max_lots_per_trade"`      // Hard cap on lots
+}
+
+type ReplayConfig struct {
+	CloseAllAtEnd    *bool   `yaml:"close_all_at_end"`
+	MaxOpenPositions int     `yaml:"max_open_positions"`
+	MinScore         float64 `yaml:"min_score"`
+	TakeProfit       float64 `yaml:"take_profit"`
+	StopLoss         float64 `yaml:"stop_loss"`
+	RollMinScoreDiff float64 `yaml:"roll_min_score_diff"`
+}
+
 // Config is the root configuration structure
 type Config struct {
 	Market    MarketConfig    `yaml:"market"`
@@ -67,6 +114,10 @@ type Config struct {
 	Selection SelectionConfig `yaml:"selection"`
 	Risk      RiskConfig      `yaml:"risk"`
 	Report    ReportConfig    `yaml:"report"`
+	Replay    ReplayConfig    `yaml:"replay"`
+	RiskGate  RiskGateConfig  `yaml:"risk_gate"`
+	Decider   DeciderConfig   `yaml:"decider"`
+	Execution ExecutionConfig `yaml:"execution"`
 	Files     []FileConfig    `yaml:"files"`
 }
 
@@ -82,6 +133,7 @@ func Load(path string) (*Config, error) {
 		return nil, fmt.Errorf("failed to parse config file: %w", err)
 	}
 
+	
 	// Validate
 	if err := cfg.Validate(); err != nil {
 		return nil, fmt.Errorf("invalid config: %w", err)
@@ -141,6 +193,50 @@ func (c *Config) Validate() error {
 	}
 	if c.Report.Workers <= 0 {
 		c.Report.Workers = 1
+	}
+
+	// Replay Defaults
+	if c.Replay.CloseAllAtEnd == nil {
+		def := true
+		c.Replay.CloseAllAtEnd = &def
+	}
+	if c.Replay.MaxOpenPositions <= 0 {
+		c.Replay.MaxOpenPositions = 1
+	}
+	if c.Replay.MinScore <= 0 {
+		c.Replay.MinScore = 0.50
+	}
+	if c.Replay.TakeProfit <= 0 {
+		c.Replay.TakeProfit = 0.30
+	}
+	if c.Replay.StopLoss <= 0 {
+		c.Replay.StopLoss = 0.50
+	}
+	if c.Replay.RollMinScoreDiff <= 0 {
+		c.Replay.RollMinScoreDiff = 0.10
+	}
+
+	// RiskGate Defaults
+	if c.RiskGate.MaxDebitPerTradeINR <= 0 {
+		c.RiskGate.MaxDebitPerTradeINR = 25000
+	}
+	if c.RiskGate.MaxLossPerTradeINR <= 0 {
+		c.RiskGate.MaxLossPerTradeINR = 50000
+	}
+	if c.RiskGate.MaxTotalRiskINR <= 0 {
+		c.RiskGate.MaxTotalRiskINR = 80000
+	}
+	if c.RiskGate.MaxDailyLossINR <= 0 {
+		c.RiskGate.MaxDailyLossINR = 10000
+	}
+	if c.RiskGate.MaxDrawdownPct <= 0 {
+		c.RiskGate.MaxDrawdownPct = 0.10
+	}
+	if c.RiskGate.RiskPerTradePct <= 0 {
+		c.RiskGate.RiskPerTradePct = 0.02
+	}
+	if c.RiskGate.MaxLotsPerTrade <= 0 {
+		c.RiskGate.MaxLotsPerTrade = 10
 	}
 
 	// Validate each file config

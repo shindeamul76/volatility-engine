@@ -1,0 +1,67 @@
+{"folder":"testdata\\snapshots\\05-02-2026","t":"2026-02-05T10:00:00Z","type":"SNAPSHOT_LOADED"}
+{"iv30":0.10794794593592863,"rank":0.011150217657821825,"regime":"LOW_VOL","t":"2026-02-05T10:00:00Z","type":"REGIME"}
+{"count":6,"t":"2026-02-05T10:00:00Z","top":"straddle_NIFTY_20260224","type":"CANDIDATES"}
+{"pos":"pos_000001","reason":"Opening best candidate straddle_NIFTY_20260224 (Score 0.70)","status":"OPEN","t":"2026-02-05T10:00:00Z","type":"DECISION_ENTRY"}
+{"action":"REJECTED","budget_inr":0,"entry_cost":32589.375,"max_loss":32589.375,"original_qty":0,"pos":"pos_000001","qty":0,"reason":"[Max debit exceeded: 32589.38 \u003e 25000.00]","risk_per_lot":0,"t":"2026-02-05T10:00:00Z","type":"RISK_GATE"}
+{"cash":100000,"equity":100000,"equity_mid":100000,"open_pos":0,"pnl_units":"INR","t":"2026-02-05T10:00:00Z","type":"PORTFOLIO","unreal_pnl":0}
+{"drawdown":0,"equity":100000,"peak":100000,"realized":0,"t":"2026-02-05T10:00:00Z","type":"PORTFOLIO_DAILY","unrealized":0}
+{"folder":"testdata\\snapshots\\06-02-2026","t":"2026-02-06T10:00:00Z","type":"SNAPSHOT_LOADED"}
+{"iv30":0.10501103772357676,"rank":0.001533017163438816,"regime":"LOW_VOL","t":"2026-02-06T10:00:00Z","type":"REGIME"}
+{"count":6,"t":"2026-02-06T10:00:00Z","top":"straddle_NIFTY_20260224","type":"CANDIDATES"}
+{"pos":"pos_000002","reason":"Opening best candidate straddle_NIFTY_20260224 (Score 0.70)","status":"OPEN","t":"2026-02-06T10:00:00Z","type":"DECISION_ENTRY"}
+{"action":"REJECTED","budget_inr":0,"entry_cost":30447.625,"max_loss":30447.625,"original_qty":0,"pos":"pos_000002","qty":0,"reason":"[Max debit exceeded: 30447.62 \u003e 25000.00]","risk_per_lot":0,"t":"2026-02-06T10:00:00Z","type":"RISK_GATE"}
+{"cash":100000,"equity":100000,"equity_mid":100000,"open_pos":0,"pnl_units":"INR","t":"2026-02-06T10:00:00Z","type":"PORTFOLIO","unreal_pnl":0}
+{"drawdown":0,"equity":100000,"peak":100000,"realized":0,"t":"2026-02-06T10:00:00Z","type":"PORTFOLIO_DAILY","unrealized":0}
+{"folder":"testdata\\snapshots\\10-02-2026","t":"2026-02-10T10:00:00Z","type":"SNAPSHOT_LOADED"}
+{"iv30":0.09911789445942926,"rank":0.001365989269409384,"regime":"LOW_VOL","t":"2026-02-10T10:00:00Z","type":"REGIME"}
+{"count":5,"t":"2026-02-10T10:00:00Z","top":"straddle_NIFTY_20260224","type":"CANDIDATES"}
+{"pos":"pos_000003","reason":"Opening best candidate straddle_NIFTY_20260224 (Score 0.70)","status":"OPEN","t":"2026-02-10T10:00:00Z","type":"DECISION_ENTRY"}
+{"action":"REJECTED","budget_inr":0,"entry_cost":25848.875,"max_loss":25848.875,"original_qty":0,"pos":"pos_000003","qty":0,"reason":"[Max debit exceeded: 25848.88 \u003e 25000.00]","risk_per_lot":0,"t":"2026-02-10T10:00:00Z","type":"RISK_GATE"}
+{"cash":100000,"equity":100000,"equity_mid":100000,"open_pos":0,"pnl_units":"INR","t":"2026-02-10T10:00:00Z","type":"PORTFOLIO","unreal_pnl":0}
+{"drawdown":0,"equity":100000,"peak":100000,"realized":0,"t":"2026-02-10T10:00:00Z","type":"PORTFOLIO_DAILY","unrealized":0}
+{"folder":"testdata\\snapshots\\11-02-2026","t":"2026-02-11T10:00:00Z","type":"SNAPSHOT_LOADED"}
+{"iv30":0.09790497775728634,"rank":0.0003480949151282585,"regime":"LOW_VOL","t":"2026-02-11T10:00:00Z","type":"REGIME"}
+{"count":4,"t":"2026-02-11T10:00:00Z","top":"straddle_NIFTY_20260224","type":"CANDIDATES"}
+{"pos":"pos_000004","reason":"Opening best candidate straddle_NIFTY_20260224 (Score 0.70)","status":"OPEN","t":"2026-02-11T10:00:00Z","type":"DECISION_ENTRY"}
+{"action":"REJECTED","budget_inr":2000,"entry_cost":24147.5,"max_loss":24147.5,"original_qty":1,"pos":"pos_000004","qty":0,"reason":"[Insufficient capital for 1 lot (Cost 24147.50 \u003e Alloc 2000.00)]","risk_per_lot":24147.5,"t":"2026-02-11T10:00:00Z","type":"RISK_GATE"}
+{"cash":100000,"equity":100000,"equity_mid":100000,"open_pos":0,"pnl_units":"INR","t":"2026-02-11T10:00:00Z","type":"PORTFOLIO","unreal_pnl":0}
+{"drawdown":0,"equity":100000,"peak":100000,"realized":0,"t":"2026-02-11T10:00:00Z","type":"PORTFOLIO_DAILY","unrealized":0}
+{"folder":"testdata\\snapshots\\12-02-2026","t":"2026-02-12T10:00:00Z","type":"SNAPSHOT_LOADED"}
+{"iv30":0.09979695785059664,"rank":0.1326543951466182,"regime":"LOW_VOL","t":"2026-02-12T10:00:00Z","type":"REGIME"}
+{"count":5,"t":"2026-02-12T10:00:00Z","top":"straddle_NIFTY_20260224","type":"CANDIDATES"}
+{"pos":"pos_000005","reason":"Opening best candidate straddle_NIFTY_20260224 (Score 0.70)","status":"OPEN","t":"2026-02-12T10:00:00Z","type":"DECISION_ENTRY"}
+{"action":"REJECTED","budget_inr":2000,"entry_cost":23144.875,"max_loss":23144.875,"original_qty":1,"pos":"pos_000005","qty":0,"reason":"[Insufficient capital for 1 lot (Cost 23144.88 \u003e Alloc 2000.00)]","risk_per_lot":23144.875,"t":"2026-02-12T10:00:00Z","type":"RISK_GATE"}
+{"cash":100000,"equity":100000,"equity_mid":100000,"open_pos":0,"pnl_units":"INR","t":"2026-02-12T10:00:00Z","type":"PORTFOLIO","unreal_pnl":0}
+{"drawdown":0,"equity":100000,"peak":100000,"realized":0,"t":"2026-02-12T10:00:00Z","type":"PORTFOLIO_DAILY","unrealized":0}
+{"folder":"testdata\\snapshots\\13-02-2026","t":"2026-02-13T10:00:00Z","type":"SNAPSHOT_LOADED"}
+{"iv30":0.11417643435074977,"rank":1,"regime":"TRANSITION","t":"2026-02-13T10:00:00Z","type":"REGIME"}
+{"count":4,"t":"2026-02-13T10:00:00Z","top":"if_NIFTY_20260224","type":"CANDIDATES"}
+{"pos":"","reason":"New Top: if_NIFTY_20260224 (0.50) replaced straddle_NIFTY_20260224 (0.70)","status":"INFO","t":"2026-02-13T10:00:00Z","type":"DECISION_CANDIDATE_CHANGE"}
+{"pos":"pos_000006","reason":"Opening best candidate if_NIFTY_20260224 (Score 0.50)","status":"OPEN","t":"2026-02-13T10:00:00Z","type":"DECISION_ENTRY"}
+{"action":"REJECTED","budget_inr":2000,"entry_cost":19071,"max_loss":13429.000000000002,"original_qty":1,"pos":"pos_000006","qty":0,"reason":"[Insufficient capital for 1 lot (Cost 13429.00 \u003e Alloc 2000.00)]","risk_per_lot":13429.000000000002,"t":"2026-02-13T10:00:00Z","type":"RISK_GATE"}
+{"cash":100000,"equity":100000,"equity_mid":100000,"open_pos":0,"pnl_units":"INR","t":"2026-02-13T10:00:00Z","type":"PORTFOLIO","unreal_pnl":0}
+{"drawdown":0,"equity":100000,"peak":100000,"realized":0,"t":"2026-02-13T10:00:00Z","type":"PORTFOLIO_DAILY","unrealized":0}
+{"folder":"testdata\\snapshots\\16-02-2026","t":"2026-02-16T10:00:00Z","type":"SNAPSHOT_LOADED"}
+{"iv30":0.11087432508977343,"rank":0.7128750049326065,"regime":"TRANSITION","t":"2026-02-16T10:00:00Z","type":"REGIME"}
+{"count":1,"t":"2026-02-16T10:00:00Z","top":"ic_NIFTY_20260224","type":"CANDIDATES"}
+{"pos":"","reason":"New Top: ic_NIFTY_20260224 (0.50) replaced if_NIFTY_20260224 (0.50)","status":"INFO","t":"2026-02-16T10:00:00Z","type":"DECISION_CANDIDATE_CHANGE"}
+{"pos":"pos_000007","reason":"Opening best candidate ic_NIFTY_20260224 (Score 0.50)","status":"OPEN","t":"2026-02-16T10:00:00Z","type":"DECISION_ENTRY"}
+{"action":"REJECTED","budget_inr":2000,"entry_cost":1907.7499999999998,"max_loss":24092.25,"original_qty":1,"pos":"pos_000007","qty":0,"reason":"[Insufficient capital for 1 lot (Cost 24092.25 \u003e Alloc 2000.00)]","risk_per_lot":24092.25,"t":"2026-02-16T10:00:00Z","type":"RISK_GATE"}
+{"cash":100000,"equity":100000,"equity_mid":100000,"open_pos":0,"pnl_units":"INR","t":"2026-02-16T10:00:00Z","type":"PORTFOLIO","unreal_pnl":0}
+{"drawdown":0,"equity":100000,"peak":100000,"realized":0,"t":"2026-02-16T10:00:00Z","type":"PORTFOLIO_DAILY","unrealized":0}
+{"folder":"testdata\\snapshots\\17-02-2026","t":"2026-02-17T10:00:00Z","type":"SNAPSHOT_LOADED"}
+{"iv30":0.10886638263703202,"rank":0.6025484965402211,"regime":"TRANSITION","t":"2026-02-17T10:00:00Z","type":"REGIME"}
+{"count":2,"t":"2026-02-17T10:00:00Z","top":"if_NIFTY_20260224","type":"CANDIDATES"}
+{"pos":"","reason":"New Top: if_NIFTY_20260224 (0.70) replaced ic_NIFTY_20260224 (0.50)","status":"INFO","t":"2026-02-17T10:00:00Z","type":"DECISION_CANDIDATE_CHANGE"}
+{"pos":"pos_000008","reason":"Opening best candidate if_NIFTY_20260224 (Score 0.70)","status":"OPEN","t":"2026-02-17T10:00:00Z","type":"DECISION_ENTRY"}
+{"action":"REJECTED","budget_inr":2000,"entry_cost":16487.25,"max_loss":16012.75,"original_qty":1,"pos":"pos_000008","qty":0,"reason":"[Insufficient capital for 1 lot (Cost 16012.75 \u003e Alloc 2000.00)]","risk_per_lot":16012.75,"t":"2026-02-17T10:00:00Z","type":"RISK_GATE"}
+{"cash":100000,"equity":100000,"equity_mid":100000,"open_pos":0,"pnl_units":"INR","t":"2026-02-17T10:00:00Z","type":"PORTFOLIO","unreal_pnl":0}
+{"drawdown":0,"equity":100000,"peak":100000,"realized":0,"t":"2026-02-17T10:00:00Z","type":"PORTFOLIO_DAILY","unrealized":0}
+{"folder":"testdata\\snapshots\\18-02-2026","t":"2026-02-18T10:00:00Z","type":"SNAPSHOT_LOADED"}
+{"iv30":0.10400328725147283,"rank":0.335345453377628,"regime":"TRANSITION","t":"2026-02-18T10:00:00Z","type":"REGIME"}
+{"count":2,"t":"2026-02-18T10:00:00Z","top":"if_NIFTY_20260224","type":"CANDIDATES"}
+{"pos":"pos_000009","reason":"Opening best candidate if_NIFTY_20260224 (Score 0.70)","status":"OPEN","t":"2026-02-18T10:00:00Z","type":"DECISION_ENTRY"}
+{"action":"REJECTED","budget_inr":2000,"entry_cost":14399.125,"max_loss":18100.875,"original_qty":1,"pos":"pos_000009","qty":0,"reason":"[Insufficient capital for 1 lot (Cost 18100.88 \u003e Alloc 2000.00)]","risk_per_lot":18100.875,"t":"2026-02-18T10:00:00Z","type":"RISK_GATE"}
+{"cash":100000,"equity":100000,"equity_mid":100000,"open_pos":0,"pnl_units":"INR","t":"2026-02-18T10:00:00Z","type":"PORTFOLIO","unreal_pnl":0}
+{"drawdown":0,"equity":100000,"peak":100000,"realized":0,"t":"2026-02-18T10:00:00Z","type":"PORTFOLIO_DAILY","unrealized":0}
+{"final_cash":100000,"final_equity":100000,"force_close_fail":0,"force_closed_intrinsic":0,"force_closed_ok":0,"losses":0,"open_positions":0,"pnl_units":"INR","realized_pnl":0,"total_trades":0,"type":"PORTFOLIO_SUMMARY","unrealized_pnl":0,"wins":0}

@@ -290,6 +290,31 @@ func (p *Processor) GenerateChain(snap *market.Snapshot, expiry time.Time) (*mar
 			Quality:      q.Quality,
 		}
 
+		// Enforce Rules
+		spreadPct := 0.0
+		if opt.Mid > 0 {
+			spreadPct = (opt.Ask - opt.Bid) / opt.Mid
+		}
+		if spreadPct > p.Rules.MaxSpreadPct {
+			opt.Quality.IsTradable = false
+			opt.Quality.IsUsableForStrategy = false
+			// Only invalidate for IV if VERY wide? Or strict? Rules.MaxSpreadPct is usually 0.12.
+			// IV surface can tolerate wider spreads if liquidity is okay, but generally 12% is wide.
+			// Let's stick to standard rule: Wide Spread = Bad for everything.
+			opt.Quality.IsUsableForIV = false
+
+			hasFlag := false
+			for _, f := range opt.Quality.Flags {
+				if f == market.FlagWideSpread {
+					hasFlag = true
+					break
+				}
+			}
+			if !hasFlag {
+				opt.Quality.Flags = append(opt.Quality.Flags, market.FlagWideSpread)
+			}
+		}
+
 		if q.Contract.Type == market.Call {
 			strikeMap[k].Call = opt
 		} else {

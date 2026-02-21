@@ -18,69 +18,68 @@ type GoldenTestCase struct {
 }
 
 var goldenCases = []GoldenTestCase{
-	// ATM Cases
 	{
 		name: "ATM_30D_NormalVol",
 		S:    100, K: 100, T: 30.0 / 365.0, r: 0.05, sigma: 0.20, isCall: true,
-		expectedPrice: 2.3588, expectedDelta: 0.5199, expectedGamma: 0.0656,
-		expectedVega: 0.1078, expectedTheta: -0.0176,
+		expectedPrice: 2.4934, expectedDelta: 0.5400, expectedGamma: 0.0692,
+		expectedVega: 0.1138, expectedTheta: -0.04499,
 	},
 	{
 		name: "ATM_30D_NormalVol_Put",
 		S:    100, K: 100, T: 30.0 / 365.0, r: 0.05, sigma: 0.20, isCall: false,
-		expectedPrice: 2.3177, expectedDelta: -0.4801, expectedGamma: 0.0656,
-		expectedVega: 0.1078, expectedTheta: -0.01644,
+		expectedPrice: 2.0833, expectedDelta: -0.4600, expectedGamma: 0.0692,
+		expectedVega: 0.1138, expectedTheta: -0.03135,
 	},
 	{
 		name: "ATM_7D_HighVol",
 		S:    100, K: 100, T: 7.0 / 365.0, r: 0.05, sigma: 0.50, isCall: true,
-		expectedPrice: 2.1094, expectedDelta: 0.5099, expectedGamma: 0.1548,
-		expectedVega: 0.0597, expectedTheta: -0.0727,
+		expectedPrice: 2.8087, expectedDelta: 0.5193, expectedGamma: 0.0575,
+		expectedVega: 0.0552, expectedTheta: -0.20381,
 	},
 	{
 		name: "ATM_1Y_LowVol",
 		S:    100, K: 100, T: 1.0, r: 0.05, sigma: 0.10, isCall: true,
-		expectedPrice: 4.0658, expectedDelta: 0.6368, expectedGamma: 0.0395,
-		expectedVega: 0.3950, expectedTheta: -0.0108,
+		expectedPrice: 6.8050, expectedDelta: 0.7088, expectedGamma: 0.0343,
+		expectedVega: 0.3429, expectedTheta: -0.01348,
 	},
 
 	// ITM Cases
 	{
 		name: "ITM_Call_30D",
 		S:    110, K: 100, T: 30.0 / 365.0, r: 0.05, sigma: 0.20, isCall: true,
-		expectedPrice: 10.2151, expectedDelta: 0.9520, expectedGamma: 0.0191,
-		expectedVega: 0.0314, expectedTheta: -0.0067,
+		expectedPrice: 10.5111, expectedDelta: 0.9610, expectedGamma: 0.0134,
+		expectedVega: 0.0266, expectedTheta: -0.02191,
 	},
 	{
 		name: "ITM_Put_30D",
 		S:    90, K: 100, T: 30.0 / 365.0, r: 0.05, sigma: 0.20, isCall: false,
-		expectedPrice: 10.2562, expectedDelta: -0.9681, expectedGamma: 0.0138,
-		expectedVega: 0.0228, expectedTheta: -0.00556,
+		expectedPrice: 9.6743, expectedDelta: -0.9588, expectedGamma: 0.0171,
+		expectedVega: 0.0228, expectedTheta: 0.00556,
 	},
 	{
 		name: "Deep_ITM_Call_1Y",
 		S:    120, K: 100, T: 1.0, r: 0.05, sigma: 0.20, isCall: true,
-		expectedPrice: 25.0867, expectedDelta: 0.9559, expectedGamma: 0.0099,
-		expectedVega: 0.0988, expectedTheta: -0.0063,
+		expectedPrice: 26.1690, expectedDelta: 0.8965, expectedGamma: 0.0075,
+		expectedVega: 0.2160, expectedTheta: -0.01707,
 	},
 
 	// OTM Cases
 	{
 		name: "OTM_Call_30D",
 		S:    90, K: 100, T: 30.0 / 365.0, r: 0.05, sigma: 0.20, isCall: true,
-		expectedPrice: 0.0385, expectedDelta: 0.0319, expectedGamma: 0.0138,
-		expectedVega: 0.0228, expectedTheta: -0.00248,
+		expectedPrice: 0.0844, expectedDelta: 0.0412, expectedGamma: 0.0171,
+		expectedVega: 0.0228, expectedTheta: -0.00808,
 	},
 	{
 		name: "OTM_Put_30D",
 		S:    110, K: 100, T: 30.0 / 365.0, r: 0.05, sigma: 0.20, isCall: false,
-		expectedPrice: 0.0796, expectedDelta: -0.0480, expectedGamma: 0.0191,
-		expectedVega: 0.0314, expectedTheta: -0.00261,
+		expectedPrice: 0.1010, expectedDelta: -0.0390, expectedGamma: 0.0134,
+		expectedVega: 0.0266, expectedTheta: -0.00827,
 	},
 	{
 		name: "Deep_OTM_Call_7D",
 		S:    80, K: 100, T: 7.0 / 365.0, r: 0.05, sigma: 0.30, isCall: true,
-		expectedPrice: 0.0001, expectedDelta: 0.0001, expectedGamma: 0.0001,
+		expectedPrice: 0.0001, expectedDelta: 0.0000, expectedGamma: 0.0000,
 		expectedVega: 0.00003, expectedTheta: -0.00001,
 	},
 
@@ -88,38 +87,38 @@ var goldenCases = []GoldenTestCase{
 	{
 		name: "ATM_30D_VeryHighVol",
 		S:    100, K: 100, T: 30.0 / 365.0, r: 0.05, sigma: 0.80, isCall: true,
-		expectedPrice: 6.5917, expectedDelta: 0.5199, expectedGamma: 0.0410,
-		expectedVega: 0.0674, expectedTheta: -0.0554,
+		expectedPrice: 9.3176, expectedDelta: 0.5527, expectedGamma: 0.0172,
+		expectedVega: 0.1134, expectedTheta: -0.15746,
 	},
 
 	// Short Maturity
 	{
 		name: "ATM_1D_NormalVol",
 		S:    100, K: 100, T: 1.0 / 365.0, r: 0.05, sigma: 0.20, isCall: true,
-		expectedPrice: 0.4289, expectedDelta: 0.5033, expectedGamma: 0.3945,
-		expectedVega: 0.0065, expectedTheta: -0.0665,
+		expectedPrice: 0.4245, expectedDelta: 0.5073, expectedGamma: 0.3810,
+		expectedVega: 0.0209, expectedTheta: -0.21567,
 	},
 	{
 		name: "OTM_1D_HighVol",
 		S:    95, K: 100, T: 1.0 / 365.0, r: 0.05, sigma: 0.50, isCall: true,
-		expectedPrice: 0.0699, expectedDelta: 0.0775, expectedGamma: 0.0876,
-		expectedVega: 0.0014, expectedTheta: -0.0312,
+		expectedPrice: 0.0244, expectedDelta: 0.0261, expectedGamma: 0.0244,
+		expectedVega: 0.0030, expectedTheta: -0.07564,
 	},
 
 	// Long Maturity
 	{
 		name: "ATM_2Y_NormalVol",
 		S:    100, K: 100, T: 2.0, r: 0.05, sigma: 0.20, isCall: true,
-		expectedPrice: 13.2704, expectedDelta: 0.6368, expectedGamma: 0.0140,
-		expectedVega: 0.5590, expectedTheta: -0.0076,
+		expectedPrice: 16.1268, expectedDelta: 0.6897, expectedGamma: 0.0125,
+		expectedVega: 0.4991, expectedTheta: -0.01408,
 	},
 
 	// Different rates
 	{
 		name: "ATM_30D_ZeroRate",
 		S:    100, K: 100, T: 30.0 / 365.0, r: 0.00, sigma: 0.20, isCall: true,
-		expectedPrice: 2.2621, expectedDelta: 0.5095, expectedGamma: 0.0660,
-		expectedVega: 0.1083, expectedTheta: -0.0176,
+		expectedPrice: 2.2871, expectedDelta: 0.5114, expectedGamma: 0.0695,
+		expectedVega: 0.1143, expectedTheta: -0.0381,
 	},
 }
 
