@@ -318,6 +318,12 @@ func (r *Runner) Run(baseDir string) error {
 			freshUnrealized += m.UnrealizedPnL
 		}
 
+		// Track peak equity and compute drawdown
+		if finalEquity > r.PeakEquity {
+			r.PeakEquity = finalEquity
+		}
+		drawdown := finalEquity - r.PeakEquity // 0 or negative
+
 		_ = r.Audit.Append(map[string]any{
 			"t":          man.AsOf.UTC().Format(time.RFC3339),
 			"type":       "PORTFOLIO",
