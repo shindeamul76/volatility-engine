@@ -1,6 +1,7 @@
 package app
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"math"
@@ -55,6 +56,12 @@ func (e *Engine) RunSnapshot(in SnapshotInput) (*EngineOutput, error) {
 		r = cfg.Pricing.RiskFreeRate
 	}
 
+	// fmt.Println("Running snapshot for", underlying, "at", asOf.Format("2006-01-02 15:04:05"))
+	// fmt.Println("Files:", in.Files)
+	// fmt.Println("Spot:", spot)
+	// fmt.Println("RiskFreeRate:", r)
+	// fmt.Println("Expiries:", in.Files)
+
 	// 1) Ingest and merge quotes
 	var allQuotes []market.Quote
 	expiryMap := make(map[string]market.ExpiryMetadata)
@@ -64,10 +71,15 @@ func (e *Engine) RunSnapshot(in SnapshotInput) (*EngineOutput, error) {
 		s3Key := fmt.Sprintf("s3://vol-engine/replay/%s_%s_%d.csv",
 			underlying, asOf.Format("20060102_150405"), i)
 
-		snapPart, err := e.ingestSvc.IngestSnapshot(fc.Path, underlying, spot, fc.Expiry.UTC(), s3Key)
+		snapPart, err := e.ingestSvc.IngestSnapshot(fc.Path, underlying, spot, fc.Expiry.UTC(), asOf, s3Key)
 		if err != nil {
 			log.Printf("Warning: Failed to ingest %s: %v", fc.Path, err)
 			continue
+		}
+
+		// DEBUG: log snapPart as full JSON
+		if snapJSON, err := json.MarshalIndent(snapPart, "", "  "); err == nil {
+			log.Printf("[DEBUG] snapPart for %s:\n%s", fc.Path, string(snapJSON))
 		}
 
 		allQuotes = append(allQuotes, snapPart.Quotes...)
@@ -148,7 +160,9 @@ func (e *Engine) RunSnapshot(in SnapshotInput) (*EngineOutput, error) {
 				return
 			}
 
-			chainSnap, err := e.chainProc.GenerateChain(snap, loopExpiry)
+			chainSnap, err := e.chainProc.GenerateChain(snap, eMeta)
+
+			// log.Printf("Generated chain for %s: %v", loopExpiry.Format("2006-01-02"), chainSnap)
 			if err != nil {
 				finish(fmt.Sprintf("Chain Gen Failed: %v", err))
 				return

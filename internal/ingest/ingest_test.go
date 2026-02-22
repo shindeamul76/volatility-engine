@@ -15,8 +15,9 @@ func TestIngestSnapshot(t *testing.T) {
 	// Use the sample file we just created
 	path := "../../testdata/snapshots/sample_nifty.csv"
 	expiry := time.Date(2026, 2, 5, 15, 30, 0, 0, time.UTC)
+	asOf := time.Date(2026, 1, 28, 15, 30, 0, 0, time.UTC)
 
-	snap, err := svc.IngestSnapshot(path, "NIFTY", 20000.0, expiry, "s3://test-bucket/nifty_sample.csv")
+	snap, err := svc.IngestSnapshot(path, "NIFTY", 20000.0, expiry, asOf, "s3://test-bucket/nifty_sample.csv")
 	if err != nil {
 		t.Fatalf("IngestSnapshot failed: %v", err)
 	}

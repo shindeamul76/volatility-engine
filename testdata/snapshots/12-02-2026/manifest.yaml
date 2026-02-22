@@ -1,7 +1,7 @@
 as_of: "2026-02-12T15:30:00+05:30"
 underlying: NIFTY
 spot: 25807.2
-risk_free_rate: 0.06
+risk_free_rate: 0.065
 files:
     - path: option-chain-ED-NIFTY-02-Mar-2026.csv
       expiry: "2026-03-02T15:30:00+05:30"

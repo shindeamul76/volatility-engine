@@ -238,12 +238,12 @@ func (p *Processor) GenerateForwardState(snap *market.Snapshot, chainSnap *marke
 	return fs
 }
 
-func (p *Processor) GenerateChain(snap *market.Snapshot, expiry time.Time) (*market.ChainSnapshot, error) {
+func (p *Processor) GenerateChain(snap *market.Snapshot, eMeta market.ExpiryMetadata) (*market.ChainSnapshot, error) {
 	// 1. Initialize Chain Snapshot
 	chainID := fmt.Sprintf("chain_%s_%s_%s",
 		snap.AsOf.Format("20060102_150405"),
 		strings.ToLower(snap.Underlying.Symbol),
-		expiry.Format("20060102"))
+		eMeta.Expiry.Format("20060102"))
 
 	cs := &market.ChainSnapshot{
 		ID:         chainID,
@@ -257,13 +257,13 @@ func (p *Processor) GenerateChain(snap *market.Snapshot, expiry time.Time) (*mar
 	}
 
 	// Fix #1: Reliable TTEYears Calculation
-	cs.Expiry.Expiry = expiry
+	cs.Expiry.Expiry = eMeta.Expiry
 	// cs.Expiry.Date not in struct, strictly using Time
-	cs.Expiry.TTEYears = expiry.Sub(snap.AsOf).Hours() / 24.0 / 365.0
+	cs.Expiry.TTEYears = eMeta.TTEYears
 
 	// 2. Group by Strike
 	// Fix #4: Robust Expiry Matching (string comparison)
-	expiryDateStr := expiry.Format("2006-01-02")
+	expiryDateStr := eMeta.Expiry.Format("2006-01-02")
 	quotesForExpiry := []market.Quote{}
 	for _, q := range snap.Quotes {
 		if q.Contract.Expiry.Format("2006-01-02") == expiryDateStr {
@@ -327,14 +327,14 @@ func (p *Processor) GenerateChain(snap *market.Snapshot, expiry time.Time) (*mar
 
 	// Calculate Implied Forward (using new robust method)
 	// Passes spot for ATM detection
-	impliedFwd := p.calculateImpliedForward(strikeMap, strikes, snap.Underlying.Spot, expiry, snap.AsOf)
+	impliedFwd := p.calculateImpliedForward(strikeMap, strikes, snap.Underlying.Spot, eMeta.Expiry, snap.AsOf)
 	cs.ChainState.ImpliedForward = impliedFwd
 
 	// 3. Determine ATM Strike
 	centerPrice := snap.Underlying.Spot
 
-	fmt.Println("Implied Forward: ", impliedFwd)
-	fmt.Println("Center Price: ", centerPrice)
+	// fmt.Println("Implied Forward: ", impliedFwd)
+	// fmt.Println("Center Price: ", centerPrice)
 	if impliedFwd > 0 {
 		centerPrice = impliedFwd
 	}

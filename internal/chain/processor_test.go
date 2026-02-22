@@ -49,7 +49,7 @@ func TestGenerateChain(t *testing.T) {
 
 	// 2. Generate Chain
 	proc := chain.NewProcessor(0.05)
-	cs, err := proc.GenerateChain(snap, expiry)
+	cs, err := proc.GenerateChain(snap, snap.Expiries[0])
 	if err != nil {
 		t.Fatalf("GenerateChain failed: %v", err)
 	}

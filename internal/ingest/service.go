@@ -5,6 +5,7 @@ import (
 	"strings"
 	"time"
 
+	"volatility-engine/internal/calendar"
 	"volatility-engine/internal/domain/market"
 )
 
@@ -22,19 +23,20 @@ func NewIngestService() *IngestService {
 }
 
 // IngestSnapshot reads a file and returns a canonical Snapshot.
-func (s *IngestService) IngestSnapshot(filePath string, underlying string, spot float64, expiry time.Time, s3Key string) (*market.Snapshot, error) {
+// asOf is the actual observation time of the data (e.g. from manifest).
+func (s *IngestService) IngestSnapshot(filePath string, underlying string, spot float64, expiry time.Time, asOf time.Time, s3Key string) (*market.Snapshot, error) {
 	rawRows, err := s.Reader.ReadFile(filePath)
 	// println("RawRows-->", rawRows)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read file: %w", err)
 	}
 
-	timestamp := time.Now()
-	id := fmt.Sprintf("snap_%s_%s_%s", timestamp.Format("20060102"), timestamp.Format("150405"), strings.ToLower(underlying))
+	id := fmt.Sprintf("snap_%s_%s_%s", asOf.Format("20060102"), asOf.Format("150405"), strings.ToLower(underlying))
+
 
 	snapshot := &market.Snapshot{
 		ID:   id,
-		AsOf: timestamp, // Ideally parsing this from filename or metadata
+		AsOf: asOf,
 		Underlying: market.Underlying{
 			Symbol: underlying,
 			Spot:   spot,
@@ -42,8 +44,9 @@ func (s *IngestService) IngestSnapshot(filePath string, underlying string, spot 
 		Expiries: []market.ExpiryMetadata{
 			{
 				Expiry:       expiry,
-				DaysToExpiry: int(expiry.Sub(timestamp).Hours() / 24), // Approx
-				// TODO: Precise trading calendar logic
+				DaysToExpiry: calendar.CalendarDaysBetween(asOf, expiry),
+				TradingDays:  calendar.TradingDaysBetween(asOf, expiry),
+				TTEYears:     calendar.TTEYears(asOf, expiry),
 			},
 		},
 		Quotes:         []market.Quote{},

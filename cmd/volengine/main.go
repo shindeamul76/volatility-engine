@@ -5,7 +5,9 @@ import (
 	"io"
 	"log"
 	"os"
+	"os/signal"
 	"path/filepath"
+	"syscall"
 	"time"
 
 	"volatility-engine/internal/app"
@@ -34,6 +36,8 @@ func main() {
 			runSnapshotPipeline()
 		case "replay-run":
 			runReplay()
+		case "live-run":
+			runLive()
 		default:
 			log.Fatalf("Unknown command: %s", cmd)
 		}
@@ -42,6 +46,7 @@ func main() {
 		fmt.Println("Commands:")
 		fmt.Println("  snapshot-run    Run the pipeline on a single snapshot")
 		fmt.Println("  replay-run      Run the historical replay loop")
+		fmt.Println("  live-run        Fetch live NSE data every N minutes")
 	}
 }
 
@@ -166,4 +171,194 @@ func runReplay() {
 	}
 
 	log.Printf("Replay finished. Audit log: %s", auditPath)
+}
+
+func runLive() {
+	log.Println("Running live NSE fetch loop...")
+
+	cfg, err := config.Load("config.yaml")
+	if err != nil {
+		log.Fatalf("Failed to load config: %v", err)
+	}
+
+	if !cfg.Live.Enabled {
+		log.Fatalf("Live mode is disabled in config. Set live.enabled: true")
+	}
+
+	engine := app.NewEngine(cfg)
+
+	// Parse expiry specs from config
+	expirySpecs, err := replay.ParseExpirySpecs(cfg.Live.Expiries)
+	fmt.Println(expirySpecs)
+	if err != nil {
+		log.Fatalf("Failed to parse expiries: %v", err)
+	}
+
+	log.Printf("[LIVE] Symbol: %s, Expiries: %v, Interval: %d min",
+		cfg.Live.Symbol, cfg.Live.Expiries, cfg.Live.IntervalMins)
+
+	// Graceful shutdown
+	sigCh := make(chan os.Signal, 1)
+	signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)
+
+	consecutiveFailures := 0
+	maxConsecutiveFailures := 3
+
+	// runOneCycle performs a single live fetch + engine run
+	runOneCycle := func() error {
+		tempDir, err := os.MkdirTemp("", "nse-live-*")
+		if err != nil {
+			return fmt.Errorf("failed to create temp dir: %w", err)
+		}
+		defer os.RemoveAll(tempDir)
+
+		src := replay.NewSourceNSE(cfg.Live.Symbol, expirySpecs, cfg.Pricing.RiskFreeRate, tempDir)
+
+		runID := time.Now().Format("20060102_150405")
+		outDir := fmt.Sprintf("runs/live_%s", runID)
+		if err := os.MkdirAll(outDir, 0777); err != nil {
+			return fmt.Errorf("failed to create output dir: %w", err)
+		}
+
+		auditPath := filepath.Join(outDir, "events.jsonl")
+		audit, err := replay.NewAuditor(auditPath)
+		if err != nil {
+			return fmt.Errorf("audit init failed: %w", err)
+		}
+		defer audit.Close()
+
+		pf := replay.NewPortfolio(100000.0, cfg.Risk.ContractMultiplier)
+		exec := replay.NewExecSim(
+			replay.SlippageModel{
+				Mode:     cfg.Execution.Slippage.Mode,
+				Bps:      cfg.Execution.Slippage.Bps,
+				Tick:     cfg.Execution.Slippage.Ticks,
+				TickSize: cfg.Execution.TickSize,
+			},
+			replay.FeeModel{
+				PerLeg:   cfg.Execution.Fees.PerLeg,
+				PerOrder: cfg.Execution.Fees.PerOrder,
+				Bps:      cfg.Execution.Fees.Bps,
+			},
+		)
+		dec := replay.NewDecider(cfg.Replay)
+		rg := replay.NewRiskGate(cfg.RiskGate)
+
+		r := &replay.Runner{
+			Cfg:        cfg,
+			Engine:     engine,
+			Source:     src,
+			Decider:    dec,
+			RiskGate:   rg,
+			Exec:       exec,
+			Audit:      audit,
+			Pf:         pf,
+			OutputDir:  outDir,
+			PeakEquity: pf.InitialCash,
+		}
+
+		log.Printf("[LIVE] Starting cycle %s", runID)
+		if err := r.Run(tempDir); err != nil {
+			return fmt.Errorf("live cycle failed: %w", err)
+		}
+
+		log.Printf("[LIVE] Cycle %s complete. Output: %s", runID, outDir)
+		return nil
+	}
+
+	// Run immediately on startup
+	log.Println("[LIVE] Running initial fetch...")
+	if err := runOneCycle(); err != nil {
+		log.Printf("[LIVE] Initial fetch failed: %v", err)
+		consecutiveFailures++
+	} else {
+		consecutiveFailures = 0
+	}
+
+	// Start ticker
+	interval := time.Duration(cfg.Live.IntervalMins) * time.Minute
+	ticker := time.NewTicker(interval)
+	defer ticker.Stop()
+
+	log.Printf("[LIVE] Ticker started: every %d minutes. Press Ctrl+C to stop.", cfg.Live.IntervalMins)
+
+	for {
+		select {
+		case <-sigCh:
+			log.Println("[LIVE] Shutdown signal received. Exiting gracefully.")
+			return
+		case t := <-ticker.C:
+			log.Printf("[LIVE] Tick at %s", t.Format(time.RFC3339))
+
+			if consecutiveFailures >= maxConsecutiveFailures {
+				log.Printf("[LIVE] %d consecutive failures. Falling back to SourceFS from %s",
+					consecutiveFailures, cfg.Live.FallbackDir)
+
+				// Run a fallback cycle using SourceFS
+				runID := time.Now().Format("20060102_150405")
+				outDir := fmt.Sprintf("runs/live_fallback_%s", runID)
+				if err := os.MkdirAll(outDir, 0777); err != nil {
+					log.Printf("[LIVE] Fallback outdir failed: %v", err)
+					continue
+				}
+
+				auditPath := filepath.Join(outDir, "events.jsonl")
+				audit, err := replay.NewAuditor(auditPath)
+				if err != nil {
+					log.Printf("[LIVE] Fallback audit init failed: %v", err)
+					continue
+				}
+
+				fsSrc := replay.NewSourceFS(cfg.Live.FallbackDir)
+				pf := replay.NewPortfolio(100000.0, cfg.Risk.ContractMultiplier)
+				exec := replay.NewExecSim(
+					replay.SlippageModel{
+						Mode:     cfg.Execution.Slippage.Mode,
+						Bps:      cfg.Execution.Slippage.Bps,
+						Tick:     cfg.Execution.Slippage.Ticks,
+						TickSize: cfg.Execution.TickSize,
+					},
+					replay.FeeModel{
+						PerLeg:   cfg.Execution.Fees.PerLeg,
+						PerOrder: cfg.Execution.Fees.PerOrder,
+						Bps:      cfg.Execution.Fees.Bps,
+					},
+				)
+				dec := replay.NewDecider(cfg.Replay)
+				rg := replay.NewRiskGate(cfg.RiskGate)
+
+				r := &replay.Runner{
+					Cfg:        cfg,
+					Engine:     engine,
+					Source:     fsSrc,
+					Decider:    dec,
+					RiskGate:   rg,
+					Exec:       exec,
+					Audit:      audit,
+					Pf:         pf,
+					OutputDir:  outDir,
+					PeakEquity: pf.InitialCash,
+				}
+
+				if err := r.Run(cfg.Live.FallbackDir); err != nil {
+					log.Printf("[LIVE] Fallback run failed: %v", err)
+				} else {
+					log.Printf("[LIVE] Fallback run complete. Output: %s", outDir)
+				}
+				audit.Close()
+
+				// Reset and try live again next tick
+				consecutiveFailures = 0
+				continue
+			}
+
+			if err := runOneCycle(); err != nil {
+				log.Printf("[LIVE] Cycle failed: %v", err)
+				consecutiveFailures++
+				log.Printf("[LIVE] Consecutive failures: %d/%d", consecutiveFailures, maxConsecutiveFailures)
+			} else {
+				consecutiveFailures = 0
+			}
+		}
+	}
 }

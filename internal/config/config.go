@@ -97,6 +97,14 @@ type RiskGateConfig struct {
 	MaxLotsPerTrade     int     `yaml:"max_lots_per_trade"`      // Hard cap on lots
 }
 
+type LiveConfig struct {
+	Enabled      bool     `yaml:"enabled"`
+	Symbol       string   `yaml:"symbol"`        // "NIFTY"
+	Expiries     []string `yaml:"expiries"`      // ["24-Feb-2026","02-Mar-2026"]
+	IntervalMins int      `yaml:"interval_mins"` // 20
+	FallbackDir  string   `yaml:"fallback_dir"`  // "testdata/snapshots"
+}
+
 type ReplayConfig struct {
 	CloseAllAtEnd    *bool   `yaml:"close_all_at_end"`
 	MaxOpenPositions int     `yaml:"max_open_positions"`
@@ -114,6 +122,7 @@ type Config struct {
 	Risk      RiskConfig      `yaml:"risk"`
 	Report    ReportConfig    `yaml:"report"`
 	Replay    ReplayConfig    `yaml:"replay"`
+	Live      LiveConfig      `yaml:"live"`
 	RiskGate  RiskGateConfig  `yaml:"risk_gate"`
 	Decider   DeciderConfig   `yaml:"decider"`
 	Execution ExecutionConfig `yaml:"execution"`
@@ -215,6 +224,17 @@ func (c *Config) Validate() error {
 	}
 
 	// RiskGate Defaults
+	// Live Defaults
+	if c.Live.Symbol == "" {
+		c.Live.Symbol = "NIFTY"
+	}
+	if c.Live.IntervalMins <= 0 {
+		c.Live.IntervalMins = 20
+	}
+	if c.Live.FallbackDir == "" {
+		c.Live.FallbackDir = "testdata/snapshots"
+	}
+
 	if c.RiskGate.MaxDebitPerTradeINR <= 0 {
 		c.RiskGate.MaxDebitPerTradeINR = 25000
 	}
