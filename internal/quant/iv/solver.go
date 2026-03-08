@@ -95,6 +95,7 @@ func (s *Solver) Solve(req market.IVRequest) market.IVResult {
 			IsForwardModel: true,
 		}
 		res := pricing.Calculate(ctx)
+		
 		return res.Price, res.Greeks.VegaPerVolPoint * 100 // Convert back to gross vega
 	}
 

@@ -35,8 +35,8 @@ live:
   enabled: true
   symbol: NIFTY
   expiries:
-    - "24-Feb-2026"
-    # - "02-Mar-2026"
+    # - "24-Feb-2026"
+    - "10-Mar-2026"
   interval_mins: 1
   fallback_dir: "testdata/snapshots"
 
