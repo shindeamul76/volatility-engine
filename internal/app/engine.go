@@ -81,6 +81,8 @@ func (e *Engine) RunSnapshot(in SnapshotInput) (*EngineOutput, error) {
 		if snapJSON, err := json.MarshalIndent(snapPart, "", "  "); err == nil {
 			log.Printf("[DEBUG] snapPart for %s:\n%s", fc.Path, string(snapJSON))
 		}
+		
+
 
 		allQuotes = append(allQuotes, snapPart.Quotes...)
 		for _, exp := range snapPart.Expiries {

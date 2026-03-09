@@ -1,0 +1,8 @@
+{"folder":"C:\\Users\\Amul\\AppData\\Local\\Temp\\nse-live-638951980","t":"2026-02-25T19:04:46Z","type":"SNAPSHOT_LOADED"}
+{"iv30":0.12570472524058438,"rank":0.3777815929427224,"regime":"TRANSITION","t":"2026-02-25T19:04:46Z","type":"REGIME"}
+{"count":2,"t":"2026-02-25T19:04:46Z","top":"if_NIFTY_20260302","type":"CANDIDATES"}
+{"pos":"pos_000001","reason":"Opening best candidate if_NIFTY_20260302 (Score 0.70)","status":"OPEN","t":"2026-02-25T19:04:46Z","type":"DECISION_ENTRY"}
+{"action":"REJECTED","budget_inr":2000,"entry_cost":15679.624999999996,"max_loss":16820.375000000007,"original_qty":1,"pos":"pos_000001","qty":0,"reason":"[Insufficient capital for 1 lot (Cost 16820.38 \u003e Alloc 2000.00)]","risk_per_lot":16820.375000000007,"t":"2026-02-25T19:04:46Z","type":"RISK_GATE"}
+{"cash":100000,"equity":100000,"equity_mid":100000,"open_pos":0,"pnl_units":"INR","t":"2026-02-25T19:04:46Z","type":"PORTFOLIO","unreal_pnl":0}
+{"drawdown":0,"equity":100000,"peak":100000,"realized":0,"t":"2026-02-25T19:04:46Z","type":"PORTFOLIO_DAILY","unrealized":0}
+{"final_cash":100000,"final_equity":100000,"force_close_fail":0,"force_closed_intrinsic":0,"force_closed_ok":0,"losses":0,"open_positions":0,"pnl_units":"INR","realized_pnl":0,"total_trades":0,"type":"PORTFOLIO_SUMMARY","unrealized_pnl":0,"wins":0}

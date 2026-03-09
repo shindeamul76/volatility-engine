@@ -92,6 +92,7 @@ func canUseForParity(sc *market.StrikeChain) bool {
 
 // GenerateForwardState creates a detailed ForwardState JSON structure
 func (p *Processor) GenerateForwardState(snap *market.Snapshot, chainSnap *market.ChainSnapshot, expiry time.Time) *market.ForwardState {
+	
 	tte := expiry.Sub(snap.AsOf).Hours() / 24.0 / 365.0
 	df := math.Exp(-p.RiskFreeRate * tte)
 	erT := math.Exp(p.RiskFreeRate * tte)
