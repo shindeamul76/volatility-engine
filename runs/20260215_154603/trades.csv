@@ -1,2 +1,0 @@
-pos_id,strategy_id,entry_time,exit_time,entry_cost,exit_credit,pnl_inr,status
-pos_000001,straddle_NIFTY_20260224,2026-02-05T10:00:00Z,2026-02-13T10:00:00Z,-32695.00,28496.00,-4199.00,CLOSED

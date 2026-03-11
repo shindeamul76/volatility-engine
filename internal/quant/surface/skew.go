@@ -1,6 +1,8 @@
 package surface
 
 import (
+	// "encoding/json"
+	// "log"
 	"math"
 	"sort"
 
@@ -37,6 +39,10 @@ func (b *Builder) BuildSkew(expiry string, points []market.IVPoint, forward, tte
 	sort.Ints(keys)
 
 	var selectedPoints []market.IVPoint
+
+	// if skewJSON, err := json.MarshalIndent(byStrike, "", "  "); err == nil {
+	// 	log.Printf("[DEBUG] byStrike for %s:\n%s", expiry, string(skewJSON))
+	// }
 
 	// 2. Select Preferred Points
 	for _, kInt := range keys {

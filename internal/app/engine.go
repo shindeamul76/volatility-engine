@@ -76,13 +76,10 @@ func (e *Engine) RunSnapshot(in SnapshotInput) (*EngineOutput, error) {
 			log.Printf("Warning: Failed to ingest %s: %v", fc.Path, err)
 			continue
 		}
-
 		// DEBUG: log snapPart as full JSON
 		if snapJSON, err := json.MarshalIndent(snapPart, "", "  "); err == nil {
 			log.Printf("[DEBUG] snapPart for %s:\n%s", fc.Path, string(snapJSON))
 		}
-		
-
 
 		allQuotes = append(allQuotes, snapPart.Quotes...)
 		for _, exp := range snapPart.Expiries {
@@ -169,9 +166,20 @@ func (e *Engine) RunSnapshot(in SnapshotInput) (*EngineOutput, error) {
 				finish(fmt.Sprintf("Chain Gen Failed: %v", err))
 				return
 			}
+
+			// if snapJSON, err := json.MarshalIndent(chainSnap, "", "  "); err == nil {
+			// 	log.Printf("[DEBUG] chainSnap for %s:\n%s", loopExpiry.Format("2006-01-02"), string(snapJSON))
+			// }
+
 			ctx.ChainSnapshot = chainSnap
 
 			fwdState := e.chainProc.GenerateForwardState(snap, chainSnap, loopExpiry)
+
+			// DEBUG: log snapPart as full JSON
+			// if fwdJSON, err := json.MarshalIndent(fwdState, "", "  "); err == nil {
+			// 	log.Printf("[DEBUG] fwdState for %s:\n%s", loopExpiry.Format("2006-01-02"), string(fwdJSON))
+			// }
+
 			ctx.ForwardState = fwdState
 
 			S_input := fwdState.Forward.Mid
@@ -283,6 +291,11 @@ func (e *Engine) RunSnapshot(in SnapshotInput) (*EngineOutput, error) {
 				}
 
 				ivRes := e.ivSolver.Solve(ivReq)
+
+				// if ivResJSON, err := json.MarshalIndent(ivRes, "", "  "); err == nil {
+				// 	log.Printf("[DEBUG] ivRes for %s:\n%s", loopExpiry.Format("2006-01-02"), string(ivResJSON))
+				// }
+
 				if ivRes.Status == market.IVStatusConverged {
 					p := market.IVPoint{
 						Expiry:       ivRes.Instrument.Expiry,
@@ -302,9 +315,26 @@ func (e *Engine) RunSnapshot(in SnapshotInput) (*EngineOutput, error) {
 
 			ctx.IVPoints = surfacePoints
 
+			// DEBUG: Summary of all converged IVs for this expiry
+			log.Printf("[DEBUG] IV Summary for %s (%d converged points):", loopExpiry.Format("2006-01-02"), len(surfacePoints))
+			log.Printf("  %-10s %-6s %-10s %-10s %-12s %-10s", "Strike", "Type", "IV(%)", "Confidence", "FitError(₹)", "LogM")
+			log.Printf("  %s", "------------------------------------------------------------------------")
+			for _, sp := range surfacePoints {
+				log.Printf("  %-10.0f %-6s %-10.2f %-10.4f %-12.6f %-10.4f",
+					sp.Strike, sp.Type, sp.ImpliedVol*100, sp.Confidence, sp.FitErrorAbs, sp.LogMoneyness)
+			}
+
+			log.Printf("SurfacePoints Length: %d", len(surfacePoints))
+			log.Printf("MinPts: %d", minPts)
+
 			if len(surfacePoints) >= minPts {
 				skewSnap := e.surfaceBuilder.BuildSkew(loopExpiry.Format("2006-01-02"), surfacePoints, S_input, tte)
 				ctx.SkewSnapshot = &skewSnap
+
+				if skewJSON, err := json.MarshalIndent(skewSnap, "", "  "); err == nil {
+					log.Printf("[DEBUG] skewSnap for %s:\n%s", loopExpiry.Format("2006-01-02"), string(skewJSON))
+				}
+
 				ctx.Stage = "SkewReady"
 			} else {
 				ctx.Stage = "NoSkew"
@@ -339,9 +369,14 @@ func (e *Engine) RunSnapshot(in SnapshotInput) (*EngineOutput, error) {
 
 	ivHistoryProvider := &regime.CSVIVHistoryProvider{BaseDir: "data/history"}
 	priceHistoryProvider := &regime.CSVPriceHistoryProvider{BaseDir: "data/history"}
+
 	detector := regime.NewDetector(regime.DefaultSettings(), ivHistoryProvider, priceHistoryProvider)
 
 	regimeState := detector.Detect(surfaceSnap)
+
+	if regimeJSON, err := json.MarshalIndent(regimeState, "", "  "); err == nil {
+		log.Printf("[DEBUG] regimeState for %s:\n%s", snap.AsOf.Format("2006-01-02"), string(regimeJSON))
+	}
 
 	// Persist IV30 (same behavior)
 	if regimeState.IVReference.IV > 0 {
@@ -355,6 +390,10 @@ func (e *Engine) RunSnapshot(in SnapshotInput) (*EngineOutput, error) {
 		}
 		intelSnap := e.intelEngine.ComputeIntel(ctx.ChainSnapshot, &surfaceSnap)
 		ctx.IntelSnapshot = intelSnap
+
+		if intelJSON, err := json.MarshalIndent(intelSnap, "", "  "); err == nil {
+			log.Printf("[DEBUG] intelSnap for %s:\n%s", snap.AsOf.Format("2006-01-02"), string(intelJSON))
+		}
 
 		cands, err := e.selector.SelectStrategies(&regimeState, &surfaceSnap, intelSnap, ctx.ChainSnapshot, ctx.ForwardState)
 		if err == nil {
