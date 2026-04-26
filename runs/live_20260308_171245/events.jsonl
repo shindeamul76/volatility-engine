@@ -1,8 +1,0 @@
-{"folder":"/var/folders/_t/htqgb4_95bbd1gm2pm0cp_j00000gn/T/nse-live-1946895441","t":"2026-03-08T11:42:45Z","type":"SNAPSHOT_LOADED"}
-{"iv30":0.2978954555388082,"rank":1,"regime":"HIGH_VOL","t":"2026-03-08T11:42:45Z","type":"REGIME"}
-{"count":1,"t":"2026-03-08T11:42:45Z","top":"if_NIFTY_20260310","type":"CANDIDATES"}
-{"pos":"pos_000001","reason":"Opening best candidate if_NIFTY_20260310 (Score 0.70)","status":"OPEN","t":"2026-03-08T11:42:45Z","type":"DECISION_ENTRY"}
-{"action":"REJECTED","budget_inr":2000,"entry_cost":20406.750000000004,"max_loss":12093.249999999996,"original_qty":1,"pos":"pos_000001","qty":0,"reason":"[Insufficient capital for 1 lot (Cost 12093.25 \u003e Alloc 2000.00)]","risk_per_lot":12093.249999999996,"t":"2026-03-08T11:42:45Z","type":"RISK_GATE"}
-{"cash":100000,"equity":100000,"equity_mid":100000,"open_pos":0,"pnl_units":"INR","t":"2026-03-08T11:42:45Z","type":"PORTFOLIO","unreal_pnl":0}
-{"drawdown":0,"equity":100000,"peak":100000,"realized":0,"t":"2026-03-08T11:42:45Z","type":"PORTFOLIO_DAILY","unrealized":0}
-{"final_cash":100000,"final_equity":100000,"force_close_fail":0,"force_closed_intrinsic":0,"force_closed_ok":0,"losses":0,"open_positions":0,"pnl_units":"INR","realized_pnl":0,"total_trades":0,"type":"PORTFOLIO_SUMMARY","unrealized_pnl":0,"wins":0}

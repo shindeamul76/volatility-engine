@@ -158,6 +158,7 @@ func runReplay() {
 		RiskGate:   rg,
 		Exec:       exec,
 		Audit:      audit,
+		Alerts:     replay.NewAlertService(true),
 		Pf:         pf,
 		OutputDir:  outDir,
 		PeakEquity: pf.InitialCash,
@@ -204,6 +205,25 @@ func runLive() {
 	consecutiveFailures := 0
 	maxConsecutiveFailures := 3
 
+	// Create a SINGLE output directory for the entire live day session
+	runID := time.Now().Format("20060102_150405")
+	outDir := fmt.Sprintf("runs/live_session_%s", runID)
+	if err := os.MkdirAll(outDir, 0777); err != nil {
+		log.Fatalf("failed to create output dir: %v", err)
+	}
+
+	auditPath := filepath.Join(outDir, "events.jsonl")
+	audit, err := replay.NewAuditor(auditPath)
+	if err != nil {
+		log.Fatalf("audit init failed: %v", err)
+	}
+	defer audit.Close()
+
+	// Persist the portfolio and peak equity across all live cycles!
+	pf := replay.NewPortfolio(100000.0, cfg.Risk.ContractMultiplier)
+	peakEquity := pf.InitialCash
+	var globalEquityCurve []replay.EquityPoint
+
 	// runOneCycle performs a single live fetch + engine run
 	runOneCycle := func() error {
 		tempDir, err := os.MkdirTemp("", "nse-live-*")
@@ -214,20 +234,6 @@ func runLive() {
 
 		src := replay.NewSourceNSE(cfg.Live.Symbol, expirySpecs, cfg.Pricing.RiskFreeRate, tempDir)
 
-		runID := time.Now().Format("20060102_150405")
-		outDir := fmt.Sprintf("runs/live_%s", runID)
-		if err := os.MkdirAll(outDir, 0777); err != nil {
-			return fmt.Errorf("failed to create output dir: %w", err)
-		}
-
-		auditPath := filepath.Join(outDir, "events.jsonl")
-		audit, err := replay.NewAuditor(auditPath)
-		if err != nil {
-			return fmt.Errorf("audit init failed: %w", err)
-		}
-		defer audit.Close()
-
-		pf := replay.NewPortfolio(100000.0, cfg.Risk.ContractMultiplier)
 		exec := replay.NewExecSim(
 			replay.SlippageModel{
 				Mode:     cfg.Execution.Slippage.Mode,
@@ -252,17 +258,21 @@ func runLive() {
 			RiskGate:   rg,
 			Exec:       exec,
 			Audit:      audit,
-			Pf:         pf,
-			OutputDir:  outDir,
-			PeakEquity: pf.InitialCash,
+			Alerts:     replay.NewAlertService(true),
+			Pf:          pf,
+			OutputDir:   outDir,
+			PeakEquity:  peakEquity,
+			EquityCurve: globalEquityCurve,
 		}
 
-		log.Printf("[LIVE] Starting cycle %s", runID)
+		log.Printf("[LIVE] Starting cycle %s", time.Now().Format("15:04:05"))
 		if err := r.Run(tempDir); err != nil {
 			return fmt.Errorf("live cycle failed: %w", err)
 		}
+		peakEquity = r.PeakEquity
+		globalEquityCurve = r.EquityCurve
 
-		log.Printf("[LIVE] Cycle %s complete. Output: %s", runID, outDir)
+		log.Printf("[LIVE] Cycle complete. Output: %s", outDir)
 		return nil
 	}
 
@@ -294,23 +304,7 @@ func runLive() {
 				log.Printf("[LIVE] %d consecutive failures. Falling back to SourceFS from %s",
 					consecutiveFailures, cfg.Live.FallbackDir)
 
-				// Run a fallback cycle using SourceFS
-				runID := time.Now().Format("20060102_150405")
-				outDir := fmt.Sprintf("runs/live_fallback_%s", runID)
-				if err := os.MkdirAll(outDir, 0777); err != nil {
-					log.Printf("[LIVE] Fallback outdir failed: %v", err)
-					continue
-				}
-
-				auditPath := filepath.Join(outDir, "events.jsonl")
-				audit, err := replay.NewAuditor(auditPath)
-				if err != nil {
-					log.Printf("[LIVE] Fallback audit init failed: %v", err)
-					continue
-				}
-
 				fsSrc := replay.NewSourceFS(cfg.Live.FallbackDir)
-				pf := replay.NewPortfolio(100000.0, cfg.Risk.ContractMultiplier)
 				exec := replay.NewExecSim(
 					replay.SlippageModel{
 						Mode:     cfg.Execution.Slippage.Mode,
@@ -335,17 +329,20 @@ func runLive() {
 					RiskGate:   rg,
 					Exec:       exec,
 					Audit:      audit,
-					Pf:         pf,
-					OutputDir:  outDir,
-					PeakEquity: pf.InitialCash,
+					Alerts:      replay.NewAlertService(true),
+					Pf:          pf,
+					OutputDir:   outDir,
+					PeakEquity:  peakEquity,
+					EquityCurve: globalEquityCurve,
 				}
 
 				if err := r.Run(cfg.Live.FallbackDir); err != nil {
 					log.Printf("[LIVE] Fallback run failed: %v", err)
 				} else {
-					log.Printf("[LIVE] Fallback run complete. Output: %s", outDir)
+					log.Printf("[LIVE] Fallback run complete.")
 				}
-				audit.Close()
+				peakEquity = r.PeakEquity
+				globalEquityCurve = r.EquityCurve
 
 				// Reset and try live again next tick
 				consecutiveFailures = 0

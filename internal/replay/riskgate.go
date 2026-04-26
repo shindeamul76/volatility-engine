@@ -89,20 +89,27 @@ func (rg *RiskGate) Evaluate(
 
 	// Determine entry cost per lot and max loss per lot
 	entryCostPerLot := math.Abs(candidate.Entry.NetPremium) * multiplier
-	maxLossPerLot := 0.0
+	maxLossPerLot := candidate.Metrics.MaxLossApprox * multiplier
+	marginPerLot := candidate.Metrics.MarginReq * multiplier
 
 	isDebit := candidate.Entry.PremiumType == "DEBIT"
 
 	if isDebit {
 		// Long premium: risk = debit paid
-		maxLossPerLot = entryCostPerLot
+		if maxLossPerLot <= 0 {
+			maxLossPerLot = entryCostPerLot
+		}
+		if marginPerLot <= 0 {
+			marginPerLot = entryCostPerLot
+		}
 	} else {
 		// Defined risk credit: use MaxLossApprox from candidate metrics
-		if candidate.Metrics.MaxLossApprox > 0 {
-			maxLossPerLot = candidate.Metrics.MaxLossApprox * multiplier
-		} else {
+		if maxLossPerLot <= 0 {
 			// Fallback: use entry cost as proxy (conservative)
 			maxLossPerLot = entryCostPerLot
+		}
+		if marginPerLot <= 0 {
+			marginPerLot = maxLossPerLot
 		}
 	}
 
@@ -135,16 +142,16 @@ func (rg *RiskGate) Evaluate(
 		originalQty = candidate.Legs[0].Qty
 	}
 
-	// Risk per lot for sizing
-	riskPerLot := maxLossPerLot
-	if riskPerLot <= 0 {
-		riskPerLot = entryCostPerLot
+	// Capital required per lot for sizing (Margin for credit, Premium for debit)
+	capitalPerLot := marginPerLot
+	if capitalPerLot <= 0 {
+		capitalPerLot = entryCostPerLot
 	}
-	if riskPerLot <= 0 {
+	if capitalPerLot <= 0 {
 		return RiskVerdict{
 			Action:  "REJECTED",
 			Qty:     0,
-			Reasons: []string{"Cannot size: risk per lot is zero or negative"},
+			Reasons: []string{"Cannot size: capital req per lot is zero or negative"},
 		}
 	}
 
@@ -153,8 +160,8 @@ func (rg *RiskGate) Evaluate(
 	reasons = append(reasons, fmt.Sprintf("Budget: %.2f (%.1f%% of equity %.2f)", budgetINR, rg.Cfg.RiskPerTradePct*100, equity))
 
 	// Base qty from budget
-	qty := int(math.Floor(budgetINR / riskPerLot))
-	reasons = append(reasons, fmt.Sprintf("Raw qty: %d (budget %.2f / risk_per_lot %.2f)", qty, budgetINR, riskPerLot))
+	qty := int(math.Floor(budgetINR / capitalPerLot))
+	reasons = append(reasons, fmt.Sprintf("Raw qty: %d (budget %.2f / capital_per_lot %.2f)", qty, budgetINR, capitalPerLot))
 
 	// Clamp to MaxLotsPerTrade
 	if qty > rg.Cfg.MaxLotsPerTrade {
@@ -173,7 +180,7 @@ func (rg *RiskGate) Evaluate(
 		}
 	}
 
-	maxQtyByRisk := int(math.Floor(remainingRiskBudget / riskPerLot))
+	maxQtyByRisk := int(math.Floor(remainingRiskBudget / maxLossPerLot))
 	if qty > maxQtyByRisk {
 		qty = maxQtyByRisk
 		reasons = append(reasons, fmt.Sprintf("Clamped by total risk cap: %d (remaining budget %.2f)", qty, remainingRiskBudget))
@@ -184,9 +191,9 @@ func (rg *RiskGate) Evaluate(
 		return RiskVerdict{
 			Action:       "REJECTED",
 			Qty:          0,
-			Reasons:      []string{fmt.Sprintf("Insufficient capital for 1 lot (Cost %.2f > Alloc %.2f)", riskPerLot, budgetINR)},
+			Reasons:      []string{fmt.Sprintf("Insufficient capital for 1 lot (Cost %.2f > Alloc %.2f)", capitalPerLot, budgetINR)},
 			BudgetINR:    budgetINR,
-			RiskPerLot:   riskPerLot,
+			RiskPerLot:   capitalPerLot,
 			EntryCostINR: entryCostPerLot,
 			MaxLossINR:   maxLossPerLot,
 			OriginalQty:  originalQty,
@@ -205,7 +212,7 @@ func (rg *RiskGate) Evaluate(
 		Qty:          qty,
 		Reasons:      reasons,
 		BudgetINR:    budgetINR,
-		RiskPerLot:   riskPerLot,
+		RiskPerLot:   capitalPerLot,
 		OriginalQty:  originalQty,
 		EntryCostINR: entryCostPerLot * float64(qty),
 		MaxLossINR:   maxLossPerLot * float64(qty),

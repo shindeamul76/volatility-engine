@@ -379,21 +379,23 @@ func (e *Engine) RunSnapshot(in SnapshotInput) (*EngineOutput, error) {
 		_ = ivHistoryProvider.RecordIV30(snap.Underlying.Symbol, snap.AsOf, regimeState.IVReference.IV, regimeState.IVReference.Confidence, regimeState.IVReference.Method)
 	}
 
-	// Pass 3: intel + candidates
-	for _, ctx := range expiryContexts {
-		if ctx.SkipReason != "" || ctx.SkewSnapshot == nil {
-			continue
-		}
+	// Pass 3: expiry selection → intel → candidate generation
+	// First, choose the best 2 expiries to generate variants for.
+	topContexts := e.selector.SelectTopExpiries(expiryContexts, &regimeState, 2)
+
+	for _, ctx := range topContexts {
 		intelSnap := e.intelEngine.ComputeIntel(ctx.ChainSnapshot, &surfaceSnap)
 		ctx.IntelSnapshot = intelSnap
 
 		if intelJSON, err := json.MarshalIndent(intelSnap, "", "  "); err == nil {
-			log.Printf("[DEBUG] intelSnap for %s:\n%s", snap.AsOf.Format("2006-01-02"), string(intelJSON))
+			log.Printf("[DEBUG] intelSnap for %s:\n%s", ctx.Expiry.Expiry.Format("2006-01-02"), string(intelJSON))
 		}
 
 		cands, err := e.selector.SelectStrategies(&regimeState, &surfaceSnap, intelSnap, ctx.ChainSnapshot, ctx.ForwardState)
 		if err == nil {
 			ctx.StrategyCandidates = cands
+		} else {
+			log.Printf("[STRATEGY] expiry=%s skipped: %v", ctx.Expiry.Expiry.Format("2006-01-02"), err)
 		}
 	}
 
