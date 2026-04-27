@@ -21,6 +21,7 @@ type Runner struct {
 	RiskGate  *RiskGate
 	Exec      *ExecSim
 	Audit     *Auditor
+	Alerts    *AlertService
 	Pf        *Portfolio
 	OutputDir string
 
@@ -40,7 +41,13 @@ func (r *Runner) Run(baseDir string) error {
 
 	// Setup CSV Reporters
 	eqPath := filepath.Join(r.OutputDir, "equity.csv")
-	eqFile, err := os.Create(eqPath)
+	
+	needsHeader := false
+	if _, err := os.Stat(eqPath); os.IsNotExist(err) {
+		needsHeader = true
+	}
+	
+	eqFile, err := os.OpenFile(eqPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
 	if err != nil {
 		return err
 	}
@@ -48,8 +55,10 @@ func (r *Runner) Run(baseDir string) error {
 	eqWriter := csv.NewWriter(eqFile)
 	defer eqWriter.Flush()
 
-	// Header: t, cash, equity, equity_mid, unrealized_pnl, realized_pnl, open_positions, peak, drawdown
-	_ = eqWriter.Write([]string{"t", "cash", "equity", "equity_mid", "unrealized_pnl", "realized_pnl", "open_positions", "peak", "drawdown"})
+	if needsHeader {
+		// Header: t, cash, equity, equity_mid, unrealized_pnl, realized_pnl, open_positions, peak, drawdown
+		_ = eqWriter.Write([]string{"t", "cash", "equity", "equity_mid", "unrealized_pnl", "realized_pnl", "open_positions", "peak", "drawdown"})
+	}
 
 	var lastSnap *market.Snapshot
 	for _, desc := range descs {
@@ -147,6 +156,9 @@ func (r *Runner) Run(baseDir string) error {
 		// 2. Exits
 		exitOrders, exitLogs := r.Decider.DecideExits(out, r.Pf)
 		for _, log := range exitLogs {
+			if log.Type == "DECISION_EXIT" && log.Status == "CLOSE" {
+				r.Alerts.Dispatch(man.AsOf, AlertLevelInfo, "POSITION_EXIT", log.Reason, map[string]any{"pos": log.PosID})
+			}
 			_ = r.Audit.Append(map[string]any{
 				"t":      man.AsOf.UTC().Format(time.RFC3339),
 				"type":   log.Type,
@@ -198,6 +210,9 @@ func (r *Runner) Run(baseDir string) error {
 		// 3. Entries — with RiskGate evaluation
 		entryOrders, entryLogs := r.Decider.DecideEntries(out, r.Pf)
 		for _, log := range entryLogs {
+			if log.Type == "DECISION_CANDIDATE_CHANGE" {
+				r.Alerts.Dispatch(man.AsOf, AlertLevelInfo, "TOP_CANDIDATE_CHANGE", log.Reason, nil)
+			}
 			_ = r.Audit.Append(map[string]any{
 				"t":      man.AsOf.UTC().Format(time.RFC3339),
 				"type":   log.Type,
@@ -323,6 +338,15 @@ func (r *Runner) Run(baseDir string) error {
 			r.PeakEquity = finalEquity
 		}
 		drawdown := finalEquity - r.PeakEquity // 0 or negative
+		
+		if r.PeakEquity > 0 {
+			drawdownPct := drawdown / r.PeakEquity
+			if drawdownPct <= -r.RiskGate.Cfg.MaxDrawdownPct {
+				r.Alerts.Dispatch(man.AsOf, AlertLevelWarning, "DRAWDOWN_ALERT",
+					fmt.Sprintf("Drawdown %.2f%% breached limit %.2f%%", drawdownPct*100, r.RiskGate.Cfg.MaxDrawdownPct*100),
+					map[string]any{"drawdown": drawdown, "equity": finalEquity, "peak": r.PeakEquity})
+			}
+		}
 
 		_ = r.Audit.Append(map[string]any{
 			"t":          man.AsOf.UTC().Format(time.RFC3339),
@@ -504,7 +528,7 @@ func (r *Runner) Run(baseDir string) error {
 	}
 
 	// Write stats.md (human readable)
-	if err := WriteStatsMarkdown(r.OutputDir, metrics); err != nil {
+	if err := WriteStatsMarkdown(r.OutputDir, metrics, r.Alerts); err != nil {
 		_ = r.Audit.Append(map[string]any{
 			"type":  "STATS_ERROR",
 			"error": err.Error(),

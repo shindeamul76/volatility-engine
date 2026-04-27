@@ -31,6 +31,9 @@ risk:
   stop_loss: 0.5
   roll_min_score_diff: 0.1
 
+replay:
+  close_all_at_end: false
+
 live:
   enabled: true
   symbol: NIFTY
@@ -48,7 +51,7 @@ risk_gate:
   max_total_risk_inr: 80000        # Total open risk cap (₹)
   max_daily_loss_inr: 10000        # Daily loss circuit breaker (₹)
   max_drawdown_pct: 0.10           # 10% max drawdown
-  risk_per_trade_pct: 0.02         # 2% of equity per trade
+  risk_per_trade_pct: 0.20         # 20% of equity per trade
   max_lots_per_trade: 10           # Hard cap on lots
 
 execution:

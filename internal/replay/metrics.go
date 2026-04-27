@@ -39,8 +39,8 @@ type Metrics struct {
 	// Daily stats
 	BestDayPnL   float64 `json:"best_day_pnl"`
 	WorstDayPnL  float64 `json:"worst_day_pnl"`
-	DaysInMarket int     `json:"days_in_market"` // Days with open positions
-	TotalDays    int     `json:"total_days"`     // Total replay days
+	TicksInMarket int    `json:"ticks_in_market"` // Ticks (minutes/days) with open positions
+	TotalTicks    int    `json:"total_ticks"`     // Total replay ticks (minutes/days)
 }
 
 // EquityPoint represents a point in the equity curve.
@@ -130,7 +130,7 @@ func ComputeMetrics(pf *Portfolio, equityCurve []EquityPoint) Metrics {
 
 	// Equity curve metrics
 	if len(equityCurve) > 0 {
-		m.TotalDays = len(equityCurve)
+		m.TotalTicks = len(equityCurve)
 		m.FinalEquity = equityCurve[len(equityCurve)-1].Equity
 		m.UnrealizedPnL = equityCurve[len(equityCurve)-1].Unrealized
 
@@ -150,7 +150,7 @@ func ComputeMetrics(pf *Portfolio, equityCurve []EquityPoint) Metrics {
 
 			// Time in market
 			if pt.OpenPositions > 0 {
-				m.DaysInMarket++
+				m.TicksInMarket++
 			}
 
 			// Best / worst day PnL

@@ -2,6 +2,7 @@ package replay
 
 import (
 	"fmt"
+	"log"
 	"time"
 
 	"volatility-engine/internal/app"
@@ -191,6 +192,17 @@ func (d *Decider) DecideEntries(out *app.EngineOutput, pf *Portfolio) ([]OrderIn
 			Reason: "No candidates generated",
 		})
 		return nil, logs
+	}
+
+	// Log all candidates for audit
+	log.Printf("[DECIDER] %d candidates available for entry decision:", len(out.Candidates))
+	for i, c := range out.Candidates {
+		log.Printf("  [%d] %-15s %-6s score=%.3f entry=%s %.2f (mid=%.2f liq=%.2f) maxLoss=%.2f expiry=%s id=%s",
+			i+1, c.StrategyType, c.Variant.VariantID, c.Quality.Score,
+			c.Entry.PremiumType, c.Entry.NetPremium,
+			c.EntryMid, c.EntryLiquidation,
+			c.Metrics.MaxLossApprox, c.Expiry, c.ID,
+		)
 	}
 
 	// 2. Define best.

@@ -26,7 +26,7 @@ func WriteStatsJSON(outputDir string, metrics Metrics) error {
 }
 
 // WriteStatsMarkdown writes a human-readable stats summary to stats.md.
-func WriteStatsMarkdown(outputDir string, m Metrics) error {
+func WriteStatsMarkdown(outputDir string, m Metrics, alerts *AlertService) error {
 	filePath := filepath.Join(outputDir, "stats.md")
 	f, err := os.Create(filePath)
 	if err != nil {
@@ -89,11 +89,22 @@ func WriteStatsMarkdown(outputDir string, m Metrics) error {
 	sb.WriteString("## Daily\n\n")
 	sb.WriteString(fmt.Sprintf("| Metric | Value |\n"))
 	sb.WriteString(fmt.Sprintf("|---|---|\n"))
-	sb.WriteString(fmt.Sprintf("| Total Days | %d |\n", m.TotalDays))
-	sb.WriteString(fmt.Sprintf("| Days In Market | %d |\n", m.DaysInMarket))
+	sb.WriteString(fmt.Sprintf("| Total Ticks | %d |\n", m.TotalTicks))
+	sb.WriteString(fmt.Sprintf("| Ticks In Market | %d |\n", m.TicksInMarket))
 	sb.WriteString(fmt.Sprintf("| Best Day PnL | ₹%.2f |\n", m.BestDayPnL))
 	sb.WriteString(fmt.Sprintf("| Worst Day PnL | ₹%.2f |\n", m.WorstDayPnL))
 	sb.WriteString("\n")
+
+	// Alerts
+	if alerts != nil && len(alerts.Alerts) > 0 {
+		sb.WriteString("## Alerts Log\n\n")
+		sb.WriteString("| Time | Level | Type | Message |\n")
+		sb.WriteString("|---|---|---|---|\n")
+		for _, a := range alerts.Alerts {
+			sb.WriteString(fmt.Sprintf("| %s | %s | %s | %s |\n", a.Time.Format("2006-01-02 15:04"), a.Level, a.Type, a.Message))
+		}
+		sb.WriteString("\n")
+	}
 
 	_, err = f.WriteString(sb.String())
 	return err

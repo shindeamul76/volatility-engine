@@ -5,20 +5,20 @@
 | Metric | Value |
 |---|---|
 | Initial Cash | ₹100000.00 |
-| Final Equity | ₹100000.00 |
-| Return | 0.00% |
+| Final Equity | ₹99689.25 |
+| Return | -0.31% |
 | Realized PnL | ₹0.00 |
-| Unrealized PnL | ₹0.00 |
-| Peak Equity | ₹100000.00 |
+| Unrealized PnL | ₹-230.75 |
+| Peak Equity | ₹99689.25 |
 | Max Drawdown | ₹0.00 (0.00%) |
 
 ## Trades
 
 | Metric | Value |
 |---|---|
-| Total Trades | 0 |
+| Total Trades | 1 |
 | Closed | 0 |
-| Open | 0 |
+| Open | 1 |
 | Wins | 0 |
 | Losses | 0 |
 | Win Rate | 0.0% |
@@ -34,15 +34,15 @@
 
 | Metric | Value |
 |---|---|
-| Total Fees Paid | ₹0.00 |
+| Total Fees Paid | ₹80.00 |
 | Avg Fee / Trade | ₹0.00 |
 
 ## Daily
 
 | Metric | Value |
 |---|---|
-| Total Days | 1 |
-| Days In Market | 0 |
+| Total Ticks | 1 |
+| Ticks In Market | 1 |
 | Best Day PnL | ₹0.00 |
 | Worst Day PnL | ₹0.00 |
 
