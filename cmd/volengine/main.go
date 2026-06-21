@@ -98,7 +98,7 @@ func runSnapshotPipeline() {
 	if err != nil {
 		log.Printf("Risk report error: %v", err)
 	}
-}
+} 
 
 func runReplay() {
 	log.Println("Running replay loop...")
@@ -190,6 +190,7 @@ func runLive() {
 
 	// Parse expiry specs from config
 	expirySpecs, err := replay.ParseExpirySpecs(cfg.Live.Expiries)
+
 	fmt.Println(expirySpecs)
 	if err != nil {
 		log.Fatalf("Failed to parse expiries: %v", err)
@@ -214,6 +215,7 @@ func runLive() {
 
 	auditPath := filepath.Join(outDir, "events.jsonl")
 	audit, err := replay.NewAuditor(auditPath)
+	
 	if err != nil {
 		log.Fatalf("audit init failed: %v", err)
 	}

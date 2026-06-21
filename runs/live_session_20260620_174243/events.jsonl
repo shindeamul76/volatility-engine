@@ -1,0 +1,55 @@
+{"folder":"/var/folders/_t/htqgb4_95bbd1gm2pm0cp_j00000gn/T/nse-live-1168712621","t":"2026-06-20T12:12:43Z","type":"SNAPSHOT_LOADED"}
+{"iv30":0.11042116194275632,"rank":0.0709454890991988,"regime":"LOW_VOL","t":"2026-06-20T12:12:43Z","type":"REGIME"}
+{"count":2,"t":"2026-06-20T12:12:43Z","top":"bcs_NIFTY_20260623_BCS-4","type":"CANDIDATES"}
+{"pos":"pos_000001","reason":"Opening best candidate bcs_NIFTY_20260623_BCS-4 (Score 0.88)","status":"OPEN","t":"2026-06-20T12:12:43Z","type":"DECISION_ENTRY"}
+{"action":"APPROVED","budget_inr":20000,"entry_cost":1785.8749999999998,"max_loss":11214.125,"original_qty":1,"pos":"pos_000001","qty":1,"reason":"[Budget: 20000.00 (20.0% of equity 100000.00) Raw qty: 1 (budget 20000.00 / capital_per_lot 11214.12)]","risk_per_lot":11214.125,"t":"2026-06-20T12:12:43Z","type":"RISK_GATE"}
+{"action":"OPEN","fee_inr":40,"legs":[{"fill_basis":"BID","fill_px":40.35,"qty":1,"side":"SELL","slippage_amt":0,"slippage_mode":"none","strike":24200,"tick_size":0.05,"type":"CALL"},{"fill_basis":"ASK","fill_px":13.100000000000001,"qty":1,"side":"BUY","slippage_amt":0,"slippage_mode":"none","strike":24400,"tick_size":0.05,"type":"CALL"}],"net_inr":1771.25,"net_points":27.25,"pnl_units":"INR","pos":"pos_000001","strategy":"bcs_NIFTY_20260623_BCS-4","t":"2026-06-20T12:12:43Z","type":"FILL"}
+{"entry_fee":40,"entry_inr":1771.25,"legs":[{"fill_basis":"BID","fill_px":40.35,"qty":1,"side":"SELL","slippage_amt":0,"slippage_mode":"none","strike":24200,"tick_size":0.05,"type":"CALL"},{"fill_basis":"ASK","fill_px":13.100000000000001,"qty":1,"side":"BUY","slippage_amt":0,"slippage_mode":"none","strike":24400,"tick_size":0.05,"type":"CALL"}],"pos_id":"pos_000001","strategy":"bcs_NIFTY_20260623_BCS-4","t":"2026-06-20T12:12:43Z","type":"POSITION_OPENED"}
+{"cash":101731.25,"equity":99934,"equity_mid":99945.375,"open_pos":1,"pnl_units":"INR","t":"2026-06-20T12:12:43Z","type":"PORTFOLIO","unreal_pnl":-25.999999999999908}
+{"drawdown":-66,"equity":99934,"peak":100000,"realized":0,"t":"2026-06-20T12:12:43Z","type":"PORTFOLIO_DAILY","unrealized":-25.999999999999908}
+{"final_cash":101731.25,"final_equity":99934,"force_close_fail":0,"force_closed_intrinsic":0,"force_closed_ok":0,"losses":0,"open_positions":1,"pnl_units":"INR","realized_pnl":0,"total_trades":1,"type":"PORTFOLIO_SUMMARY","unrealized_pnl":-25.999999999999908,"wins":0}
+{"folder":"/var/folders/_t/htqgb4_95bbd1gm2pm0cp_j00000gn/T/nse-live-417978222","t":"2026-06-20T12:13:44Z","type":"SNAPSHOT_LOADED"}
+{"iv30":0.11043438825287223,"rank":0.07099508156307548,"regime":"LOW_VOL","t":"2026-06-20T12:13:44Z","type":"REGIME"}
+{"count":2,"t":"2026-06-20T12:13:44Z","top":"bcs_NIFTY_20260623_BCS-4","type":"CANDIDATES"}
+{"equity":99934,"equity_inr":99934,"equity_mid":99945.375,"liquidation_value":-1797.25,"market_val_inr":-1797.25,"mid_value":-1785.8749999999998,"pnl_units":"INR","pos":"pos_000001","price_mode":"LIQUIDATION","t":"2026-06-20T12:13:44Z","type":"MTM","unreal_pnl":-25.999999999999908}
+{"pos":"pos_000001","reason":"DTE 2.9 \u003e 1, liq_pnl -66.0 in range (SL: -885.6, TP: 531.4)","status":"HOLD","t":"2026-06-20T12:13:44Z","type":"DECISION_EXIT"}
+{"pos":"","reason":"Max positions reached (1)","status":"SKIP","t":"2026-06-20T12:13:44Z","type":"DECISION_ENTRY"}
+{"cash":101731.25,"equity":99934,"equity_mid":99945.375,"open_pos":1,"pnl_units":"INR","t":"2026-06-20T12:13:44Z","type":"PORTFOLIO","unreal_pnl":-25.999999999999908}
+{"drawdown":-66,"equity":99934,"peak":100000,"realized":0,"t":"2026-06-20T12:13:44Z","type":"PORTFOLIO_DAILY","unrealized":-25.999999999999908}
+{"final_cash":101731.25,"final_equity":99934,"force_close_fail":0,"force_closed_intrinsic":0,"force_closed_ok":0,"losses":0,"open_positions":1,"pnl_units":"INR","realized_pnl":0,"total_trades":1,"type":"PORTFOLIO_SUMMARY","unrealized_pnl":-25.999999999999908,"wins":0}
+{"folder":"/var/folders/_t/htqgb4_95bbd1gm2pm0cp_j00000gn/T/nse-live-2953959753","t":"2026-06-20T12:14:44Z","type":"SNAPSHOT_LOADED"}
+{"iv30":0.11044757139669249,"rank":0.07104451217357514,"regime":"LOW_VOL","t":"2026-06-20T12:14:44Z","type":"REGIME"}
+{"count":2,"t":"2026-06-20T12:14:44Z","top":"bcs_NIFTY_20260623_BCS-4","type":"CANDIDATES"}
+{"equity":99934,"equity_inr":99934,"equity_mid":99945.375,"liquidation_value":-1797.25,"market_val_inr":-1797.25,"mid_value":-1785.8749999999998,"pnl_units":"INR","pos":"pos_000001","price_mode":"LIQUIDATION","t":"2026-06-20T12:14:44Z","type":"MTM","unreal_pnl":-25.999999999999908}
+{"pos":"pos_000001","reason":"DTE 2.9 \u003e 1, liq_pnl -66.0 in range (SL: -885.6, TP: 531.4)","status":"HOLD","t":"2026-06-20T12:14:44Z","type":"DECISION_EXIT"}
+{"pos":"","reason":"Max positions reached (1)","status":"SKIP","t":"2026-06-20T12:14:44Z","type":"DECISION_ENTRY"}
+{"cash":101731.25,"equity":99934,"equity_mid":99945.375,"open_pos":1,"pnl_units":"INR","t":"2026-06-20T12:14:44Z","type":"PORTFOLIO","unreal_pnl":-25.999999999999908}
+{"drawdown":-66,"equity":99934,"peak":100000,"realized":0,"t":"2026-06-20T12:14:44Z","type":"PORTFOLIO_DAILY","unrealized":-25.999999999999908}
+{"final_cash":101731.25,"final_equity":99934,"force_close_fail":0,"force_closed_intrinsic":0,"force_closed_ok":0,"losses":0,"open_positions":1,"pnl_units":"INR","realized_pnl":0,"total_trades":1,"type":"PORTFOLIO_SUMMARY","unrealized_pnl":-25.999999999999908,"wins":0}
+{"folder":"/var/folders/_t/htqgb4_95bbd1gm2pm0cp_j00000gn/T/nse-live-1647176314","t":"2026-06-20T12:15:44Z","type":"SNAPSHOT_LOADED"}
+{"iv30":0.11046075938847545,"rank":0.07109396096166273,"regime":"LOW_VOL","t":"2026-06-20T12:15:44Z","type":"REGIME"}
+{"count":2,"t":"2026-06-20T12:15:44Z","top":"bcs_NIFTY_20260623_BCS-4","type":"CANDIDATES"}
+{"equity":99934,"equity_inr":99934,"equity_mid":99945.375,"liquidation_value":-1797.25,"market_val_inr":-1797.25,"mid_value":-1785.8749999999998,"pnl_units":"INR","pos":"pos_000001","price_mode":"LIQUIDATION","t":"2026-06-20T12:15:44Z","type":"MTM","unreal_pnl":-25.999999999999908}
+{"pos":"pos_000001","reason":"DTE 2.9 \u003e 1, liq_pnl -66.0 in range (SL: -885.6, TP: 531.4)","status":"HOLD","t":"2026-06-20T12:15:44Z","type":"DECISION_EXIT"}
+{"pos":"","reason":"Max positions reached (1)","status":"SKIP","t":"2026-06-20T12:15:44Z","type":"DECISION_ENTRY"}
+{"cash":101731.25,"equity":99934,"equity_mid":99945.375,"open_pos":1,"pnl_units":"INR","t":"2026-06-20T12:15:44Z","type":"PORTFOLIO","unreal_pnl":-25.999999999999908}
+{"drawdown":-66,"equity":99934,"peak":100000,"realized":0,"t":"2026-06-20T12:15:44Z","type":"PORTFOLIO_DAILY","unrealized":-25.999999999999908}
+{"final_cash":101731.25,"final_equity":99934,"force_close_fail":0,"force_closed_intrinsic":0,"force_closed_ok":0,"losses":0,"open_positions":1,"pnl_units":"INR","realized_pnl":0,"total_trades":1,"type":"PORTFOLIO_SUMMARY","unrealized_pnl":-25.999999999999908,"wins":0}
+{"folder":"/var/folders/_t/htqgb4_95bbd1gm2pm0cp_j00000gn/T/nse-live-2975073569","t":"2026-06-20T12:16:44Z","type":"SNAPSHOT_LOADED"}
+{"iv30":0.11047395204204737,"rank":0.07114342722927396,"regime":"LOW_VOL","t":"2026-06-20T12:16:44Z","type":"REGIME"}
+{"count":2,"t":"2026-06-20T12:16:44Z","top":"bcs_NIFTY_20260623_BCS-4","type":"CANDIDATES"}
+{"equity":99934,"equity_inr":99934,"equity_mid":99945.375,"liquidation_value":-1797.25,"market_val_inr":-1797.25,"mid_value":-1785.8749999999998,"pnl_units":"INR","pos":"pos_000001","price_mode":"LIQUIDATION","t":"2026-06-20T12:16:44Z","type":"MTM","unreal_pnl":-25.999999999999908}
+{"pos":"pos_000001","reason":"DTE 2.9 \u003e 1, liq_pnl -66.0 in range (SL: -885.6, TP: 531.4)","status":"HOLD","t":"2026-06-20T12:16:44Z","type":"DECISION_EXIT"}
+{"pos":"","reason":"Max positions reached (1)","status":"SKIP","t":"2026-06-20T12:16:44Z","type":"DECISION_ENTRY"}
+{"cash":101731.25,"equity":99934,"equity_mid":99945.375,"open_pos":1,"pnl_units":"INR","t":"2026-06-20T12:16:44Z","type":"PORTFOLIO","unreal_pnl":-25.999999999999908}
+{"drawdown":-66,"equity":99934,"peak":100000,"realized":0,"t":"2026-06-20T12:16:44Z","type":"PORTFOLIO_DAILY","unrealized":-25.999999999999908}
+{"final_cash":101731.25,"final_equity":99934,"force_close_fail":0,"force_closed_intrinsic":0,"force_closed_ok":0,"losses":0,"open_positions":1,"pnl_units":"INR","realized_pnl":0,"total_trades":1,"type":"PORTFOLIO_SUMMARY","unrealized_pnl":-25.999999999999908,"wins":0}
+{"folder":"/var/folders/_t/htqgb4_95bbd1gm2pm0cp_j00000gn/T/nse-live-3615858700","t":"2026-06-20T12:17:44Z","type":"SNAPSHOT_LOADED"}
+{"iv30":0.11048714942286078,"rank":0.0711929112218252,"regime":"LOW_VOL","t":"2026-06-20T12:17:44Z","type":"REGIME"}
+{"count":2,"t":"2026-06-20T12:17:44Z","top":"bcs_NIFTY_20260623_BCS-4","type":"CANDIDATES"}
+{"equity":99934,"equity_inr":99934,"equity_mid":99945.375,"liquidation_value":-1797.25,"market_val_inr":-1797.25,"mid_value":-1785.8749999999998,"pnl_units":"INR","pos":"pos_000001","price_mode":"LIQUIDATION","t":"2026-06-20T12:17:44Z","type":"MTM","unreal_pnl":-25.999999999999908}
+{"pos":"pos_000001","reason":"DTE 2.9 \u003e 1, liq_pnl -66.0 in range (SL: -885.6, TP: 531.4)","status":"HOLD","t":"2026-06-20T12:17:44Z","type":"DECISION_EXIT"}
+{"pos":"","reason":"Max positions reached (1)","status":"SKIP","t":"2026-06-20T12:17:44Z","type":"DECISION_ENTRY"}
+{"cash":101731.25,"equity":99934,"equity_mid":99945.375,"open_pos":1,"pnl_units":"INR","t":"2026-06-20T12:17:44Z","type":"PORTFOLIO","unreal_pnl":-25.999999999999908}
+{"drawdown":-66,"equity":99934,"peak":100000,"realized":0,"t":"2026-06-20T12:17:44Z","type":"PORTFOLIO_DAILY","unrealized":-25.999999999999908}
+{"final_cash":101731.25,"final_equity":99934,"force_close_fail":0,"force_closed_intrinsic":0,"force_closed_ok":0,"losses":0,"open_positions":1,"pnl_units":"INR","realized_pnl":0,"total_trades":1,"type":"PORTFOLIO_SUMMARY","unrealized_pnl":-25.999999999999908,"wins":0}
