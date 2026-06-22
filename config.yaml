@@ -73,18 +73,18 @@ report:
 
 # CSV files to ingest (one per expiry)
 # Add more files as needed for multi-expiry IV30 calculation
-files:
-  - path: testdata/snapshots/16-02-2026/option-chain-ED-NIFTY-17-Feb-2026.csv
-    expiry: "2026-02-17T15:30:00"
-  - path: testdata/snapshots/16-02-2026/option-chain-ED-NIFTY-24-Feb-2026.csv
-    expiry: "2026-02-24T15:30:00"
-  - path: testdata/snapshots/16-02-2026/option-chain-ED-NIFTY-02-Mar-2026.csv
-    expiry: "2026-03-02T15:30:00"
-  - path: testdata/snapshots/16-02-2026/option-chain-ED-NIFTY-10-Mar-2026.csv
-    expiry: "2026-03-10T15:30:00"
-  - path: testdata/snapshots/16-02-2026/option-chain-ED-NIFTY-30-Mar-2026.csv
-    expiry: "2026-03-30T15:30:00"
-  - path: testdata/snapshots/16-02-2026/option-chain-ED-NIFTY-28-Apr-2026.csv
-    expiry: "2026-04-28T15:30:00"
+# files:
+#   - path: testdata/snapshots/16-02-2026/option-chain-ED-NIFTY-17-Feb-2026.csv
+#     expiry: "2026-02-17T15:30:00"
+#   - path: testdata/snapshots/16-02-2026/option-chain-ED-NIFTY-24-Feb-2026.csv
+#     expiry: "2026-02-24T15:30:00"
+#   - path: testdata/snapshots/16-02-2026/option-chain-ED-NIFTY-02-Mar-2026.csv
+#     expiry: "2026-03-02T15:30:00"
+#   - path: testdata/snapshots/16-02-2026/option-chain-ED-NIFTY-10-Mar-2026.csv
+#     expiry: "2026-03-10T15:30:00"
+#   - path: testdata/snapshots/16-02-2026/option-chain-ED-NIFTY-30-Mar-2026.csv
+#     expiry: "2026-03-30T15:30:00"
+#   - path: testdata/snapshots/16-02-2026/option-chain-ED-NIFTY-28-Apr-2026.csv
+#     expiry: "2026-04-28T15:30:00"
 
 
