@@ -1,0 +1,2 @@
+pos_id,strategy_id,entry_time,exit_time,entry_cost,exit_credit,pnl_inr,status,hold_days,entry_fee,exit_fee,total_fees
+pos_000001,ic_SBIN_20260526_IC-3,2026-05-11T02:08:58Z,,4065.75,0.00,0.00,OPEN,0.0,80.00,0.00,80.00

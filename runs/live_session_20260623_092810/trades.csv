@@ -1,0 +1,2 @@
+pos_id,strategy_id,entry_time,exit_time,entry_cost,exit_credit,pnl_inr,status,hold_days,entry_fee,exit_fee,total_fees
+pos_000001,bcs_NIFTY_20260707_BCS-4,2026-06-23T03:58:10Z,,2366.00,0.00,0.00,OPEN,0.0,40.00,0.00,40.00

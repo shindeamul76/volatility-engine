@@ -44,7 +44,7 @@ func NewEngine(cfg *config.Config) *Engine {
 	}
 }
 
-// RunSnapshot builds merged snapshot + runs your 3-pass pipeline + returns candidates and state.
+// RunSnapshot builds merged snapshot + runs 3-pass pipeline + returns candidates and state.
 func (e *Engine) RunSnapshot(in SnapshotInput) (*EngineOutput, error) {
 	cfg := e.cfg
 
@@ -125,7 +125,7 @@ func (e *Engine) RunSnapshot(in SnapshotInput) (*EngineOutput, error) {
 		RejectedQuotes: rejected,
 	}
 
-	// 2) Multi-expiry pipeline (your same logic)
+	// 2) Multi-expiry pipeline (same logic)
 	var expiryContexts []*market.ExpiryContext
 	var mu sync.Mutex
 	var wg sync.WaitGroup

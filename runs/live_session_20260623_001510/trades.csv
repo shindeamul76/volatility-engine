@@ -1,0 +1,2 @@
+pos_id,strategy_id,entry_time,exit_time,entry_cost,exit_credit,pnl_inr,status,hold_days,entry_fee,exit_fee,total_fees
+pos_000001,ic_NIFTY_20260630_IC-4,2026-06-22T18:45:10Z,,4117.75,0.00,0.00,OPEN,0.0,80.00,0.00,80.00
